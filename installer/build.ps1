@@ -10,6 +10,8 @@ param(
   [ValidateSet('test')][string]$Channel
 )
 $ErrorActionPreference = 'Stop'
+# build_info.py names the channel by the version: the setup must do what it says
+if ($Channel -eq 'test' -and $Version -notmatch '^0\.900\.\d+$') { throw "a test build is 0.900.N, not $Version" }
 
 # PowerShell 5 makes each stderr line of a program an error: only the exit code counts
 function Run($name, [scriptblock]$cmd) {

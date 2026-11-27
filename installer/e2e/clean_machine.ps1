@@ -2,7 +2,8 @@
 # with 1 and changes nothing. With it, it installs in silence into a folder that is not the
 # default, and then again over itself, as an update does: it must find that folder alone.
 # The uninstaller then takes it all out, and of the lines both setups left in its log, each
-# RunOnceId runs once. It refuses a PC where Ritmelli is.
+# RunOnceId runs once. Last, it installs once more with no folder given: it must go to the
+# default. It refuses a PC where Ritmelli is.
 # Usage: clean_machine.ps1 -Build <the folder with build-info.json and the setup>
 #Requires -RunAsAdministrator
 param([Parameter(Mandatory)][string]$Build)
@@ -96,6 +97,11 @@ try {
   $diff = @(Compare-State $before (Read-State $app) '') -notmatch '^hook'
   if ($diff -or (Test-Path "$env:ProgramFiles\Ritmelli*")) { $diff; throw 'the uninstaller left the lines above, or a folder' }
   "the uninstaller ran the five lines once each, skipped the $skipped of the first setup, and took it all out"
+
+  Install 0 (Join-Path $logs 'default.log')
+  $where = (Get-ItemProperty -LiteralPath $Is1).InstallLocation
+  if ($where -ne "$env:ProgramFiles\Ritmelli\") { throw "with nothing installed before, the setup went to '$where'" }
+  "with nothing installed before, the setup went to $where"
 } finally {
   Remove-Item -LiteralPath $RitmelliKey -Recurse -Force -ErrorAction SilentlyContinue
 }
