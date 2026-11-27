@@ -17,14 +17,15 @@ on:
 permissions:
   contents: read
 
+env:
+  VERSION: ${{ inputs.version || '0.900.0' }}
+
 jobs:
   build:
     name: Build
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
     runs-on: windows-2025
     timeout-minutes: 20
-    env:
-      VERSION: ${{ inputs.version || '0.900.0' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -32,9 +33,10 @@ jobs:
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
         with:
           version: "0.12.15"
+      - uses: ./.github/actions/inno-setup
       - name: Freeze
         shell: powershell
-        run: installer\build.ps1 -Version $env:VERSION
+        run: installer\build.ps1 -Version $env:VERSION -Channel test
       - name: The exe
         shell: powershell
         run: |
@@ -82,7 +84,7 @@ jobs:
         run: |
           $env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\ritmelli-next-build"
           # from the describe.json the exe wrote in the step above
-          uv run --no-sync python installer\build_info.py "$env:RUNNER_TEMP\describe.json" dist\build-info.json dist\ritmelli\ritmelli.exe
+          uv run --no-sync python installer\build_info.py "$env:RUNNER_TEMP\describe.json" dist\build-info.json dist\ritmelli\ritmelli.exe "dist\Ritmelli-$env:VERSION-setup.exe"
           if ($LASTEXITCODE -ne 0) { throw "build_info.py exited with $LASTEXITCODE" }
           Get-Content dist\build-info.json
           $sources = Get-Content dist\ritmelli\_internal\microfone\micfx.sources -Raw
@@ -93,6 +95,7 @@ jobs:
           path: |
             dist/build-info.json
             dist/ritmelli/ritmelli.exe
+            dist/Ritmelli-${{ env.VERSION }}-setup.exe
           if-no-files-found: error
       - name: The sources digest follows the top of filter/apo/ only
         shell: powershell
@@ -141,3 +144,20 @@ jobs:
           uv run --no-sync python installer\build_info.py "$bare\describe.json" "$bare\build-info.json" "$bare\ritmelli\ritmelli.exe"
           if ($LASTEXITCODE -ne 1) { throw "build_info.py exited with $LASTEXITCODE, not 1" }
           $global:LASTEXITCODE = 0
+
+  e2e-clean:
+    name: Clean machine
+    needs: build
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: build-${{ env.VERSION }}
+          path: ${{ runner.temp }}/build
+      - name: The setup without the hook, then with it, over itself, and uninstalled
+        shell: powershell
+        run: installer\e2e\clean_machine.ps1 -Build "$env:RUNNER_TEMP\build"
