@@ -1,0 +1,17 @@
+{
+ "formato": 1,
+ "app": "ritmelli",
+ "versao": "0.900.1",
+ "data": "2026-11-27",
+ "notas": [
+  "Test manifest, signed by the fixed test seed"
+ ],
+ "notas_en": [
+  "Test manifest, signed by the fixed test seed"
+ ],
+ "instalador": {
+  "url": "https://example.invalid/v0.900.1/Ritmelli-0.900.1-setup.exe",
+  "sha256": "35cc0eb1576ddff8c5a71e8a797360e145a24f26286cb919254a363b008779bf",
+  "tamanho": 11264
+ }
+}
