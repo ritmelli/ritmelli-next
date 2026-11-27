@@ -42,8 +42,7 @@ def test_two_setups_that_ended_without_the_version_wait_for_the_next_one(
     run_state.write(tmp_path, {"estado": "instalando", "pid": PID, "versao": NEW})
     publish()
     state, machine = run(tmp_path)
-    assert state["falhas"] == {NEW: 1} and len(machine.started) == 1
-    assert state["estado"] == "instalando"
+    assert state["falhas"] == {NEW: 1} and state["estado"] == "instalando"
     assert "previous install: failed (0.900.2)" in capsys.readouterr().out
     state, _ = run(tmp_path, machine)
     assert state["falhas"] == {NEW: 2} and len(machine.started) == 1

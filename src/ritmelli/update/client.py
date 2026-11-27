@@ -24,6 +24,7 @@ SETUP_TRIES = 2
 SETUP_ARGS = ("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART")
 # The name v0.7.0 gives a download cut in the middle. Its clean-up deletes it.
 DOWNLOADING = ".baixando"
+PROGRESS_EVERY_S = 2.0
 
 
 @dataclass(frozen=True)
@@ -60,8 +61,7 @@ def run_round(config: Config, machine: Machine) -> None:
 def _round(config: Config, machine: Machine) -> None:
     _settle(config, machine)
     _clean(config)
-    found = _wanted(config)
-    if found is None:
+    if (found := _wanted(config)) is None:
         return
     try:
         setup = _download(config, found)
@@ -163,7 +163,7 @@ def _download(config: Config, found: Manifest) -> Path:
     shown = [time.monotonic()]
 
     def progress(done: float) -> None:
-        if time.monotonic() - shown[0] >= 2.0:
+        if time.monotonic() - shown[0] >= PROGRESS_EVERY_S:
             shown[0] = time.monotonic()
             run_state.write(folder, {"estado": "baixando", "progresso": round(done, 3)})
 

@@ -1,11 +1,11 @@
 import hashlib
 import http.server
 import json
-import shutil
 import threading
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import ClassVar
+from unittest import mock
 
 import pytest
 
@@ -22,7 +22,7 @@ STATES = FIXTURES / "state"
 class Served(http.server.BaseHTTPRequestHandler):
     """The release: the bytes of each path, and the paths asked for."""
 
-    files: ClassVar[dict[str, bytes]] = {}
+    files: ClassVar[dict[str, bytes]] = {"/setup.exe": SETUP}
     asked: ClassVar[list[str]] = []
 
     def do_GET(self) -> None:
@@ -64,7 +64,6 @@ def publish(version: str = NEW, sha256: str = SHA256) -> None:
     fields = {"formato": 1, "app": "ritmelli", "versao": version, **notes}
     data = json.dumps({**fields, "instalador": installer}).encode()
     Served.files.update({"/manifest.json": data, "/manifest.json.sig": sign(data)})
-    Served.files["/setup.exe"] = SETUP
     Served.asked.clear()
 
 
@@ -98,16 +97,18 @@ def test_an_open_ritmelli_keeps_the_setup_ready_until_it_closes(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(client, "CLOSE_WAIT_S", 0.0)
+    monkeypatch.setattr(client, "PROGRESS_EVERY_S", 0.0)
     publish()
-    state, machine = run(tmp_path, Fake(open=True))
+    with mock.patch.object(run_state, "write", wraps=run_state.write) as spy:
+        state, machine = run(tmp_path, Fake(open=True))
+    spy.assert_any_call(tmp_path, {"estado": "baixando", "progresso": 1.0})
     setup = tmp_path / "Ritmelli-0.900.2-setup.exe"
     assert state["estado"] == "pronta" and not machine.started
     assert setup.read_bytes() == SETUP and state["setup"] == setup.name
     shown = json.loads((STATES / "ready.json").read_bytes())["nova"]
     assert state["nova"] == shown | {"versao": NEW, "data": None, "tamanho": len(SETUP)}
     publish()
-    machine.open = False
-    state, _ = run(tmp_path, machine)
+    state, machine = run(tmp_path)
     log = tmp_path / "instalador-0.900.2.log"
     silent = [str(setup), "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART"]
     assert machine.started == [[*silent, f"/LOG={log}"]]
@@ -120,7 +121,7 @@ def test_the_round_after_a_v0_7_0_install_settles_it_as_done(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """installing.json is the v0.7.0 state with the setup of 0.900.1 started."""
-    shutil.copyfile(STATES / "installing.json", tmp_path / run_state.NAME)
+    (tmp_path / run_state.NAME).write_bytes((STATES / "installing.json").read_bytes())
     publish(VERSION)
     state, _ = run(tmp_path)
     assert set(json.loads((STATES / "installing.json").read_bytes())) <= set(state)
