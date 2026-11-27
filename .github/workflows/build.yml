@@ -141,3 +141,6 @@ jobs:
           uv run --no-sync python installer\build_info.py "$bare\describe.json" "$bare\build-info.json" "$bare\ritmelli\ritmelli.exe"
           if ($LASTEXITCODE -ne 1) { throw "build_info.py exited with $LASTEXITCODE, not 1" }
           $global:LASTEXITCODE = 0
+      - name: The filter DLL placed twice, and the second time the sound goes on
+        if: ${{ !cancelled() }}
+        run: installer\e2e\filter_dll.ps1 -Dll dist\ritmelli\_internal\microfone\micfx.dll

@@ -14,6 +14,10 @@ MIC_MODE, MIC_ACTIONS = "--microfone", ("instala-todos", "remove")
 # The key of the hook, in HKLM, which only an administrator writes.
 HOOK_KEY = r"SOFTWARE\Ritmelli\Atualizador"
 
+# The key of the mic setup, in HKLM. At its root, what decides whether the filter DLL
+# is replaced.
+SAVED_KEY = r"SOFTWARE\Ritmelli\Microfone"
+
 
 def system32(program: str) -> str:
     """A Windows program by its full path. By bare name Windows looks first in the
