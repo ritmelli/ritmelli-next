@@ -5,6 +5,7 @@
 #   crossing_photo.ps1 -Step finish -Proof <folder>             (also alone, when the crossing died halfway)
 # Dot-sourced without -Step, it only defines the functions. The crossing keeps the pid of its local server in
 # server.pid, the served folder in served\ and the throwaway public key in public.txt, all in the proof folder.
+#Requires -RunAsAdministrator
 param([string]$Step, [string]$Proof, [string]$Setup)
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
@@ -171,25 +172,31 @@ function Get-Busy([string]$App) {
     ($_.Name -eq 'ritmelli.exe' -and $_.ExecutablePath -like "$App\*") }
 }
 
+# reg import cannot write the keys of a microphone: Administrators only set values there, as the mic setup does.
+# So the tree goes to a .reg file, and the values of each microphone, with their kinds, to mics.xml.
 function Save-Registry {
   $reg = (New-Item -ItemType Directory (Join-Path $Proof 'reg')).FullName
-  $keys = @(Get-Item -LiteralPath $TreeKey -ErrorAction SilentlyContinue)
-  $props = 'Windows Registry Editor Version 5.00', ''
+  $tree = Get-Item -LiteralPath $TreeKey -ErrorAction SilentlyContinue
+  if ($tree) {
+    $r = Invoke-Tool reg.exe export, $tree.Name, (Join-Path $reg 'tree.reg'), /y
+    if ($r.Code) { throw "reg export $($tree.Name): $($r.Out)" }
+  }
+  $values = @()
   foreach ($k in Get-ChildItem -LiteralPath $CaptureKey -ErrorAction SilentlyContinue) {
-    $keys += @(Get-Item -LiteralPath "$($k.PSPath)\FxProperties" -ErrorAction SilentlyContinue)
+    $fx = Get-Item -LiteralPath "$($k.PSPath)\FxProperties" -ErrorAction SilentlyContinue
+    foreach ($n in @(if ($fx) { $fx.GetValueNames() })) {
+      $values += [pscustomobject]@{ Key = $fx.Name; Name = $n; Kind = "$($fx.GetValueKind($n))"
+        Value = $fx.GetValue($n, $null, 'DoNotExpandEnvironmentNames') }
+    }
     $p = Get-Item -LiteralPath "$($k.PSPath)\Properties" -ErrorAction SilentlyContinue
     if (-not $p) { continue }
     $v = $p.GetValue($NoEnhancements)
-    if ($null -eq $v) { $data = '-' }
-    elseif ($p.GetValueKind($NoEnhancements) -eq 'DWord') { $data = 'dword:{0:x8}' -f $v }
-    else { throw "$($p.Name): $NoEnhancements is not a DWORD" }
-    $props += "[$($p.Name)]", "`"$NoEnhancements`"=$data", ''
+    if ($null -ne $v -and $p.GetValueKind($NoEnhancements) -ne 'DWord') {
+      throw "$($p.Name): $NoEnhancements is not a DWORD"
+    }
+    $values += [pscustomobject]@{ Key = $p.Name; Name = $NoEnhancements; Kind = 'DWord'; Value = $v }
   }
-  for ($n = 0; $n -lt $keys.Count; $n++) {
-    $r = Invoke-Tool reg.exe export, $keys[$n].Name, (Join-Path $reg "$n.reg"), /y
-    if ($r.Code) { throw "reg export $($keys[$n].Name): $($r.Out)" }
-  }
-  Set-Content -LiteralPath (Join-Path $reg 'properties.reg') -Value $props -Encoding Unicode
+  $values | Export-Clixml -LiteralPath (Join-Path $reg 'mics.xml')
 }
 
 function Invoke-Photo([string]$Setup) {
@@ -237,17 +244,28 @@ function Invoke-BeforeUninstall {
   Save-Map (Read-State ($photo['app|Inno Setup: App Path'] -replace $Kind)) 'before-uninstall.json'
 }
 
-# The .reg files go back only when a microphone is not on the original that 0.7.0 saved, or that original changed:
+# The registry goes back only when a microphone is not on the original that 0.7.0 saved, or that original changed:
 # after a full uninstall the microphones are on the vendor effects, and the photo has the filter of 0.7.0 on them.
-function Restore-Registry($Photo, [string]$App) {
-  $cur = Read-State $App
+function Restore-Registry($Photo) {
+  $cur = [ordered]@{}
+  Add-Mics $cur
   $ids = Get-MicIds $Photo 'saved'
   $both = @(Get-MicIds $cur 'saved' | Where-Object { $ids -contains $_ })
   $changed = $both -and (Compare-State $Photo $cur @($both | ForEach-Object { "saved|$_|" }))
   if (-not ((Test-Path -LiteralPath $Is1) -or (Find-NotAtOriginal $Photo $cur $ids) -or $changed)) { return }
-  foreach ($f in Get-ChildItem -LiteralPath (Join-Path $Proof 'reg') -Filter *.reg) {
-    $r = Invoke-Tool reg.exe import, $f.FullName
-    if ($r.Code) { throw "reg import $($f.Name): $($r.Out)" }
+  $tree = Join-Path $Proof 'reg\tree.reg'
+  if (Test-Path -LiteralPath $tree) {
+    $r = Invoke-Tool reg.exe import, $tree
+    if ($r.Code) { throw "reg import tree.reg: $($r.Out)" }
+  }
+  foreach ($v in Import-Clixml -LiteralPath (Join-Path $Proof 'reg\mics.xml')) {
+    $sub = $v.Key -replace '^HKEY_LOCAL_MACHINE\\'
+    $k = [Microsoft.Win32.Registry]::LocalMachine.OpenSubKey($sub, 'ReadWriteSubTree', 'SetValue, ReadKey')
+    if (-not $k) { continue }
+    if ($null -eq $v.Value) { $k.DeleteValue($v.Name, $false) }
+    elseif ($v.Kind -eq 'MultiString') { $k.SetValue($v.Name, [string[]]$v.Value, $v.Kind) }
+    else { $k.SetValue($v.Name, $v.Value, $v.Kind) }
+    $k.Close()
   }
   'the microphones and their saved originals are back from the photo'
 }
@@ -292,7 +310,7 @@ function Invoke-Finish {
   }
   $served = $pidFile, (Join-Path $Proof 'served'), (Join-Path $Proof 'public.txt')
   Remove-Item -LiteralPath $served -Recurse -Force -ErrorAction SilentlyContinue
-  Restore-Registry $photo $app
+  Restore-Registry $photo
   $voices = Join-Path $Proof 'vozes'
   if (Test-Path -LiteralPath $voices) {
     $r = Invoke-Tool robocopy.exe $voices, (Join-Path $app 'vozes'), /MIR, /R:2, /W:1, /NJH, /NJS, /NP
@@ -310,8 +328,7 @@ function Invoke-Finish {
   Remove-ItemProperty -LiteralPath $TreeKey -Name _sources, _dll_sha256 -ErrorAction SilentlyContinue
   if (-not $photo['hook']) { Remove-Item -LiteralPath $HookKey -Recurse -ErrorAction SilentlyContinue }
   $cur = Read-State $app
-  $prefixes = @('app|', 'exe', 'reg|', 'hook', 'task|', 'firewall', 'link|', 'dll', 'vozes|', 'tree|',
-    'local|library\', 'local|config.json', 'local|celulares.json')
+  $prefixes = @('app|', 'exe', 'reg|', 'hook', 'task|', 'firewall', 'link|', 'dll', 'vozes|', 'tree|', 'local|library\')
   $prefixes += @(Get-MicIds $photo | ForEach-Object { "fx|$_|", "props|$_|", "saved|$_|" })
   $diff += @(Compare-State $photo $cur $prefixes)
   if (Test-Path -LiteralPath (Join-Path $Proof 'before-uninstall.json')) {
@@ -323,11 +340,7 @@ function Invoke-Finish {
 }
 
 if ($Step) {
-  $admin = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
-  $admin = $admin.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-  if (-not $admin -or -not [Environment]::Is64BitProcess) {
-    throw 'run it as administrator, in the 64-bit PowerShell'
-  }
+  if (-not [Environment]::Is64BitProcess) { throw 'run it in the 64-bit PowerShell' }
   if (-not $Proof) { throw 'give the proof folder: -Proof <folder>' }
   $Proof = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Proof)
   switch ($Step) {
