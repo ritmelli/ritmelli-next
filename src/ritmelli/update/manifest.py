@@ -1,6 +1,6 @@
-"""The manifest of a version, read with the limits and the format of v0.7.0, so one
-manifest passes both readers. Only app "ritmelli" passes. The partial setup and the
-file list are ignored: the new line never uses them."""
+"""The manifest of a version, read with the limits and the format of v0.7.0. Only app
+"ritmelli" passes. The partial setup and the file list are ignored: the new line
+never uses them."""
 
 import json
 import re

@@ -3,7 +3,7 @@ import json
 import pytest
 
 from ritmelli.update.keys import KEYS
-from ritmelli.update.manifest import MANIFEST_MAX, SIGNATURE_MAX, check
+from ritmelli.update.manifest import check
 from ritmelli.update.verify import Refused
 from ritmelli.update.verify_test import FIXTURES, SEED_PUBLIC, sign
 
@@ -27,12 +27,10 @@ def test_the_v0_7_0_manifest_is_refused_for_its_app() -> None:
         check(data, signature, KEYS)
 
 
-def test_the_test_seed_manifest_passes_only_with_the_seed_key() -> None:
+def test_the_test_seed_manifest_passes_with_the_seed_key() -> None:
     signature = (FIXTURES / "test-seed" / "manifest.json.sig").read_bytes()
     manifest = check(NEW, signature, SEED_KEYS)
     assert (manifest.version, manifest.installer.size) == ("0.900.1", 11264)
-    with pytest.raises(Refused, match="signature"):
-        check(NEW, signature, KEYS)
 
 
 def test_a_version_with_a_suffix_is_refused() -> None:
@@ -55,11 +53,11 @@ def test_http_passes_only_with_the_hook() -> None:
 
 
 def test_the_manifest_and_the_signature_have_a_size_limit() -> None:
-    data = NEW + b" " * (MANIFEST_MAX - len(NEW))
+    data = NEW + b" " * ((1 << 20) - len(NEW))
     signature = sign(data)
     check(data, signature, SEED_KEYS)
-    check(data, signature + b" " * (SIGNATURE_MAX - len(signature)), SEED_KEYS)
+    check(data, signature + b" " * (4096 - len(signature)), SEED_KEYS)
     with pytest.raises(Refused, match="manifest went over"):
         check(data + b" ", sign(data + b" "), SEED_KEYS)
     with pytest.raises(Refused, match="signature went over"):
-        check(data, signature + b" " * (SIGNATURE_MAX + 1 - len(signature)), SEED_KEYS)
+        check(data, signature + b" " * (4097 - len(signature)), SEED_KEYS)

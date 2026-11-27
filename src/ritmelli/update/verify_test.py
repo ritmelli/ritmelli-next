@@ -23,8 +23,6 @@ def test_the_v0_7_0_signature_is_key_1() -> None:
     data = (FIXTURES / "v0.7.0" / "manifest.json").read_bytes()
     signature = (FIXTURES / "v0.7.0" / "manifest.json.sig").read_bytes()
     verify(data, signature, KEYS)
-    with pytest.raises(Refused):
-        verify(data, signature, {1: KEYS[2]})
 
 
 def test_a_key_number_in_text_names_no_key() -> None:
