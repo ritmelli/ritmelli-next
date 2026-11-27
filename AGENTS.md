@@ -53,3 +53,20 @@ If this file and the code disagree, the code wins.
 The proof of a PR is what its kind says in `proof`.
 A verifier that did not write the code runs it and reports PASS or FAIL.
 The merge queue takes only PASS.
+
+## Findings
+
+Look for the name before you record a finding: the same problem keeps the same name.
+Record it after its command ran again and reproduced, with that output saved to a file.
+Fill in the upper-case words. KIND is bug, leftover or rule. `--dry-run` prints what it would do and writes nothing.
+
+```text
+uv run python tools/finding.py list
+uv run python tools/finding.py record --name NAME --kind KIND --pr N --file PATH --line N \
+  --command "COMMAND" --output-file FILE
+```
+
+An issue with the label `promote` gets one PR that adds a lint rule and closes the issue.
+A ready ruff rule comes first: its code in `select` in ruff.toml, and each occurrence in tools/lint/ruff/<CODE>/pr<n>.py.
+With no ruff rule, write tools/lint/<name>.py and a <name>_test.py that cites both PRs.
+CONTRIBUTING.md walks through a whole example.

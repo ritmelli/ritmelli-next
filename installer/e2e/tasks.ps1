@@ -1,7 +1,8 @@
 # The two SYSTEM tasks of machine/tasks.py, on Windows as an administrator: created,
-# read back from the Task Scheduler field by field, and deleted. Then the hook, written
-# in HKLM and read by machine/update_hook.py. It refuses a PC that already has either
-# task or HKLM\SOFTWARE\Ritmelli.
+# read back from the Task Scheduler field by field, and deleted. Then --atualizador
+# remove on the update task, and the hook, written in HKLM and read by
+# machine/update_hook.py. It refuses a PC that already has either task or
+# HKLM\SOFTWARE\Ritmelli.
 # Usage: tasks.ps1 [-UpdateTask <name>] [-MicTask <name>] [-Exe <path>]
 param(
   [string]$UpdateTask = 'Ritmelli Atualiza',
@@ -66,6 +67,18 @@ try {
   Tasks "tasks.delete(sys.argv[1], end=True); tasks.delete(sys.argv[2]); sys.exit($either and 'a task is still there')" $UpdateTask, $MicTask
 }
 'both tasks were created as in v0.7.0, and deleted'
+
+# --atualizador remove, as the uninstaller runs it, on the update task by its real name.
+Tasks "sys.exit(tasks.exists(tasks.UPDATE_TASK) and 'the update task is there already')"
+try {
+  Tasks 'code, out = tasks.create(tasks.UPDATE_TASK, tasks.UPDATE_XML, sys.argv[1]); sys.exit(code and out)' $Exe
+  uv run --project $root python -m ritmelli.app --atualizador remove
+  if ($LASTEXITCODE -ne 0) { throw "--atualizador remove exited with $LASTEXITCODE" }
+  Tasks "sys.exit(tasks.exists(tasks.UPDATE_TASK) and '--atualizador remove left the task')"
+} finally {
+  Tasks 'tasks.delete(tasks.UPDATE_TASK)'
+}
+'--atualizador remove deleted the update task, outside the frozen exe'
 
 # The hook in its real key. pytest leaves it alone: a SYSTEM update task would read it.
 $ritmelli = 'HKLM:\SOFTWARE\Ritmelli'

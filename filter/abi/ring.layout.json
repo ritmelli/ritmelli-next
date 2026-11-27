@@ -1,0 +1,71 @@
+{
+  "map": "Global\\RitmelliMicFx5",
+  "magic": 1481002322,
+  "version": 5,
+  "constants": {
+    "MICFX_PRESET_BYTES": 65536,
+    "MICFX_TAXA": 48000,
+    "MICFX_CANAIS": 2,
+    "MICFX_QUADROS": 32768,
+    "MICFX_VOZ_QUADROS": 16384,
+    "MICFX_LEITORES": 8,
+    "MICFX_BATIDA_MS": 500,
+    "MICFX_APP_MS": 1000,
+    "MICFX_PISTA_QUADROS": 16384,
+    "MICFX_PISTA_MS": 1000
+  },
+  "MicFxLeitor": {
+    "size": 32,
+    "fields": [
+      {"name": "lido", "offset": 0, "size": 8},
+      {"name": "batida", "offset": 8, "size": 8},
+      {"name": "dono", "offset": 16, "size": 4},
+      {"name": "taxa", "offset": 20, "size": 4},
+      {"name": "ep", "offset": 24, "size": 4},
+      {"name": "reservado", "offset": 28, "size": 4}
+    ]
+  },
+  "MicFxAnel": {
+    "size": 590288,
+    "fields": [
+      {"name": "magia", "offset": 0, "size": 4},
+      {"name": "versao", "offset": 4, "size": 4},
+      {"name": "taxa", "offset": 8, "size": 4},
+      {"name": "canais", "offset": 12, "size": 4},
+      {"name": "quadros", "offset": 16, "size": 4},
+      {"name": "leitores", "offset": 20, "size": 4},
+      {"name": "escrito", "offset": 24, "size": 8},
+      {"name": "ganho", "offset": 32, "size": 4},
+      {"name": "sem_voz", "offset": 36, "size": 4},
+      {"name": "batida_app", "offset": 40, "size": 8},
+      {"name": "alvo", "offset": 48, "size": 4},
+      {"name": "voz_taxa", "offset": 52, "size": 4},
+      {"name": "voz_escrito", "offset": 56, "size": 8},
+      {"name": "leitor", "offset": 64, "size": 256},
+      {"name": "dados", "offset": 320, "size": 262144},
+      {"name": "voz", "offset": 262464, "size": 65536},
+      {"name": "fx_escrito", "offset": 328000, "size": 8},
+      {"name": "preset_seq", "offset": 328008, "size": 4},
+      {"name": "preset_n", "offset": 328012, "size": 4},
+      {"name": "preset_feito", "offset": 328016, "size": 4},
+      {"name": "preset_erro", "offset": 328020, "size": 4},
+      {"name": "voz_fx", "offset": 328024, "size": 65536},
+      {"name": "preset", "offset": 393560, "size": 65536},
+      {"name": "voz_dono", "offset": 459096, "size": 4},
+      {"name": "fx_dono", "offset": 459100, "size": 4},
+      {"name": "voz_batida", "offset": 459104, "size": 8},
+      {"name": "fx_batida", "offset": 459112, "size": 8},
+      {"name": "pista_ligada", "offset": 459120, "size": 4},
+      {"name": "pista_reservado", "offset": 459124, "size": 4},
+      {"name": "pista_escrito", "offset": 459128, "size": 8},
+      {"name": "pista_batida", "offset": 459136, "size": 8},
+      {"name": "pista_inicio", "offset": 459144, "size": 8},
+      {"name": "pista_lido", "offset": 459152, "size": 64},
+      {"name": "pista", "offset": 459216, "size": 131072}
+    ]
+  },
+  "hash": [
+    {"id": "{00000000-0000-0000-0000-000000000000}", "value": 187665937},
+    {"id": "{A1B2C3D4-E5F6-4711-8899-AABBCCDDEEFF}", "value": 25684882}
+  ]
+}
