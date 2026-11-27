@@ -8,8 +8,10 @@ import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
-EXAMPLE = """example:
+EXAMPLE = """examples:
+  uv run python tools/finding.py list
   uv run python tools/finding.py record --name redundant-process-flag --kind leftover \\
     --pr 123 --file src/ritmelli/ports/process/run.py --line 40 \\
     --command "uv run ruff check" --output-file ruff.txt --dry-run
@@ -26,7 +28,7 @@ LABELS = {
     "rule-missed": ("b60205", "Its lint rule let it through"),
 }
 ISSUES = "repos/{owner}/{repo}/issues?labels=finding&state=all&per_page=100"
-SHAPE = ".[] | {number, title, state, labels: [.labels[].name]}"
+SHAPE = ".[] | {number, title, state, url: .html_url, labels: [.labels[].name]}"
 NAME = "[a-z][a-z0-9-]{2,60}"
 OCCURRENCE = re.compile(r"^<!-- occurrence pr=(\d+) ", re.MULTILINE)
 LIMIT = 4000
@@ -37,6 +39,8 @@ Step = tuple[str, list[str]]
 @dataclass(frozen=True)
 class Issue:
     number: str
+    title: str
+    url: str
     open: bool
     labels: frozenset[str]
     prs: frozenset[int]
@@ -60,12 +64,11 @@ def read_output(path: str) -> str:
 
 
 def parse(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        epilog=EXAMPLE,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    parser.add_argument("action", choices=["record"], metavar="record")
+    text = {"epilog": EXAMPLE, "formatter_class": argparse.RawDescriptionHelpFormatter}
+    top = argparse.ArgumentParser(description=__doc__, **text)
+    actions = top.add_subparsers(dest="action", required=True)
+    actions.add_parser("list", help="print the findings, promote first")
+    parser = actions.add_parser("record", help="record one occurrence", **text)
     parser.add_argument("--name", type=valid_name, required=True)
     parser.add_argument("--kind", choices=["bug", "leftover", "rule"], required=True)
     parser.add_argument("--pr", type=int, required=True)
@@ -76,7 +79,7 @@ def parse(argv: list[str]) -> argparse.Namespace:
         "--output-file", dest="output", metavar="FILE", type=read_output, required=True
     )
     parser.add_argument("--dry-run", action="store_true", help="read and print only")
-    return parser.parse_args(argv)
+    return top.parse_args(argv)
 
 
 def note(args: argparse.Namespace) -> str:
@@ -87,17 +90,36 @@ def note(args: argparse.Namespace) -> str:
     return f"<!-- occurrence {machine} -->\n{where}\n\n{fence}\n{text}\n{fence}\n"
 
 
+def listed(gh: Callable[..., str]) -> list[dict[str, Any]]:
+    found = gh("api", ISSUES, "--paginate", "--jq", SHAPE)
+    return [json.loads(line) for line in found.splitlines()]
+
+
+def read(gh: Callable[..., str], item: dict[str, Any]) -> Issue:
+    number, title, url = str(item["number"]), item["title"], item["url"]
+    view = json.loads(gh("issue", "view", number, "--json", "body,comments"))
+    texts = [view["body"], *(comment["body"] for comment in view["comments"])]
+    prs = frozenset(int(n) for text in texts for n in OCCURRENCE.findall(text))
+    labels = frozenset(item["labels"])
+    return Issue(number, title, url, item["state"] == "open", labels, prs)
+
+
 def find(gh: Callable[..., str], name: str) -> Issue | None:
-    listed = gh("api", ISSUES, "--paginate", "--jq", SHAPE)
-    for item in map(json.loads, listed.splitlines()):
+    for item in listed(gh):
         if item["title"] == f"finding: {name}":
-            number = str(item["number"])
-            view = json.loads(gh("issue", "view", number, "--json", "body,comments"))
-            texts = [view["body"], *(comment["body"] for comment in view["comments"])]
-            prs = frozenset(int(n) for text in texts for n in OCCURRENCE.findall(text))
-            labels = frozenset(item["labels"])
-            return Issue(number, item["state"] == "open", labels, prs)
+            return read(gh, item)
     return None
+
+
+def table(gh: Callable[..., str]) -> list[str]:
+    issues = [read(gh, item) for item in listed(gh)]
+    lines: list[str] = []
+    for issue in sorted(issues, key=lambda i: ("promote" not in i.labels, i.title)):
+        count = f"{len(issue.prs)} PR" + "s" * (len(issue.prs) != 1)
+        labels = sorted(issue.labels & {"promote", "rule-missed"})
+        name = issue.title.removeprefix("finding: ")
+        lines.append("  ".join([name, count, *labels, issue.url]))
+    return lines or ["no findings yet"]
 
 
 def plan(name: str, pr: int, occurrence: str, issue: Issue | None) -> list[Step]:
@@ -127,6 +149,9 @@ def run_gh(*args: str) -> str:
 
 def main(argv: list[str], gh: Callable[..., str] = run_gh) -> int:
     args = parse(argv)
+    if args.action == "list":
+        print(*table(gh), sep="\n")
+        return 0
     steps = plan(args.name, args.pr, note(args), find(gh, args.name))
     if args.dry_run:
         print(f"would ensure labels {', '.join(LABELS)}")
