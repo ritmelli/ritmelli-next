@@ -1,0 +1,20 @@
+[project]
+name = "ritmelli"
+version = "0.0.0"
+description = "Ritmelli, the next version: work repository"
+license = "GPL-3.0-only"
+requires-python = "==3.12.*"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "import-linter",
+    "pyright",
+    "pytest",
+    "pytest-timeout",
+    "ruff",
+]
+
+[build-system]
+requires = ["uv_build>=0.12,<0.13"]
+build-backend = "uv_build"
