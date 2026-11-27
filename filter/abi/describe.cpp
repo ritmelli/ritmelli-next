@@ -1,7 +1,6 @@
 // Writes the ring layout of ../apo/anel.h as this compiler lays it out. The check compares the file with
-// ring.layout.json byte for byte, under g++ and under the cl that builds the filter. Usage: describe <out.json>
+// ring.layout.json byte for byte, under g++ and under the cl that builds the filter.
 // A field added to anel.h is listed here too: the listed sizes must add up to sizeof, or describe fails.
-#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
 #include <iterator>
