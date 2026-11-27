@@ -1,0 +1,46 @@
+[importlinter]
+root_package = ritmelli
+include_external_packages = True
+
+[importlinter:contract:audio-core]
+name = audio.core imports no app layer and nothing that blocks the sound thread
+type = forbidden
+source_modules =
+    ritmelli.audio.core
+forbidden_modules =
+    ritmelli.features
+    ritmelli.kernel
+    ritmelli.sources
+    ritmelli.ports
+    ritmelli.storage
+    ritmelli.transports
+    threading
+    subprocess
+    io
+    logging
+    socket
+
+[importlinter:contract:no-windows]
+name = kernel, features, audio, storage and update import nothing from Windows
+type = forbidden
+source_modules =
+    ritmelli.kernel
+    ritmelli.features
+    ritmelli.audio
+    ritmelli.storage
+    ritmelli.update
+forbidden_modules =
+    winreg
+    winsound
+    msvcrt
+    _winapi
+    ctypes
+    comtypes
+
+[importlinter:contract:subprocess]
+name = Only ritmelli.ports.process may import subprocess, and it does not exist yet
+type = forbidden
+source_modules =
+    ritmelli
+forbidden_modules =
+    subprocess
