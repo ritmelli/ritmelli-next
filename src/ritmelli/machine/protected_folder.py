@@ -45,7 +45,7 @@ class Entry:
     children: Callable[[], list[str]] | None = None
 
 
-def _sid(kernel: ctypes.WinDLL, advapi: ctypes.WinDLL, pointer: int) -> str | None:
+def _sid(kernel: ctypes.CDLL, advapi: ctypes.CDLL, pointer: int) -> str | None:
     text = ctypes.c_wchar_p()
     if not advapi.ConvertSidToStringSidW(ctypes.c_void_p(pointer), byref(text)):
         raise ctypes.WinError(ctypes.get_last_error())
@@ -54,7 +54,7 @@ def _sid(kernel: ctypes.WinDLL, advapi: ctypes.WinDLL, pointer: int) -> str | No
     return value
 
 
-def _aces(kernel: ctypes.WinDLL, advapi: ctypes.WinDLL, dacl: int) -> tuple[Ace, ...]:
+def _aces(kernel: ctypes.CDLL, advapi: ctypes.CDLL, dacl: int) -> tuple[Ace, ...]:
     aces: list[Ace] = []
     for i in range(ctypes.c_uint16.from_address(dacl + 4).value):
         ace = ctypes.c_void_p()
