@@ -30,3 +30,47 @@ jobs:
       - name: The two SYSTEM tasks and the hook
         if: ${{ !cancelled() }}
         run: ./installer/e2e/tasks.ps1
+
+  filter:
+    name: Windows filter
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: The seven sources are those of v0.7.0
+        run: |
+          $v070 = [ordered]@{
+            'anel.h' = 'db22c4b8fe832a0a1ab772144f2d72deb0c81411'
+            'micfx.cpp' = 'c477075b48c20e1acf859d3d5565f3c8f4fa0bae'
+            'micfx.def' = 'f9980533d67e35228c149445c28c87e3ad6cffdd'
+            'reamostra.h' = 'a14eee08b2cd6b453185ea3c59d051b522afe656'
+            'version.rc' = '7cba3c1006c8dc306daff21ed8cb1180cf7f4b70'
+            'voz.cpp' = '6e365029aacf1870fcd6bc9109410d9cedf3f6d2'
+            'voz.h' = 'db1d8ae97617272517b22bb9f7b04ef3a0d308f0'
+          }
+          $tree = git ls-tree --format='%(objectname) %(path)' HEAD -- filter/apo/
+          $tree
+          foreach ($name in $v070.Keys) {
+            if ("$($v070[$name]) filter/apo/$name" -cnotin $tree) { throw "filter/apo/$name is not the v0.7.0 source" }
+          }
+      - name: Build the two DLLs
+        shell: cmd
+        run: filter\apo\compila.bat 0.900.0
+      - name: Version resource of the DLLs
+        run: filter\apo\check_version.ps1 -Folder filter\apo\saida -Version 0.900.0
+      - name: Static CRT and the four exports
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $dumpbin = & $vswhere -latest -products * -find 'VC\Tools\MSVC\**\bin\Hostx64\x64\dumpbin.exe' | Select-Object -First 1
+          foreach ($dll in 'micfx.dll', 'voz.dll') {
+            $dependents = & $dumpbin /nologo /dependents "filter\apo\saida\$dll"
+            $dependents
+            if ($dependents -match 'VCRUNTIME|MSVCP') { throw "$dll needs the Visual C++ runtime" }
+          }
+          $exports = & $dumpbin /nologo /exports filter\apo\saida\micfx.dll
+          $exports
+          foreach ($name in 'DllGetClassObject', 'DllCanUnloadNow', 'DllRegisterServer', 'DllUnregisterServer') {
+            if (-not ($exports -match " $name$")) { throw "micfx.dll does not export $name" }
+          }
