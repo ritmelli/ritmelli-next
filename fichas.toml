@@ -44,7 +44,7 @@ core = false
 name = "youtube"
 title = "YouTube fix, in our code or by raising the yt-dlp pin"
 paths = ["src/ritmelli/sources/youtube/**", "pyproject.toml", "uv.lock"]
-proof = "Replays the failing search or link named in the PR through the youtube source child, then runs the source conformance."
+proof = "Replays the failing search or link named in the PR through the youtube source child on the owner's PC, because YouTube blocks CI servers, then runs the source conformance."
 core = false
 
 [[ficha]]
@@ -79,7 +79,7 @@ core = false
 name = "sound"
 title = "Feature that crosses the sound path"
 paths = ["src/ritmelli/audio/**", "src/ritmelli/features/**", "src/ritmelli/storage/settings.py", "ui/src/pieces/**"]
-proof = "Runs the bench scripts for the sound path, PASS or FAIL per item, and the command in --mock when the PR adds one."
+proof = "Runs the short sound measures of the Check and the command in --mock when the PR adds one. The bench on the owner's PC gates the version, not the merge."
 core = false
 
 [[ficha]]

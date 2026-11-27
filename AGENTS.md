@@ -9,7 +9,7 @@ After the first line, the body has up to 15 lines on what changes for the person
 
 ## House rules
 
-- A PR changes at most 400 lines. uv.lock, fixtures, pixel sheets and ring.layout.json do not count. Bigger: split it.
+- A PR changes at most 400 lines. uv.lock, src/ritmelli/storage/legacy/fixtures/, ui/src/pixel/sheets/ and filter/abi/ring.layout.json do not count. Bigger: split it.
 - At most 3 pushes after the PR opens. Past that, close it and start again with a smaller plan.
 - A fix brings the input that failed, as a scenario next to the code.
 - Tests sit next to the code: at most 3 scenarios per command, 6 per test file elsewhere. A new voice effect, source or piece brings none; the catalog conformance covers it.
@@ -43,7 +43,7 @@ CORE, owner only: kernel/, update/, machine/, storage/legacy/, filter/, installe
 ## Core
 
 Core is the CORE line above, and every path no other ficha covers. Only the `core` ficha covers it.
-Paths in .github/CODEOWNERS also need the owner's approval, given on the evidence card, not on the code.
+A core PR fails the Budget check on purpose. The owner merges it after its proof card, without reading the code. An agent never bypasses a check.
 kernel/ stays under 900 lines.
 
 If this file and the code disagree, the code wins.
