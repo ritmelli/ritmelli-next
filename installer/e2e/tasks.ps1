@@ -1,6 +1,7 @@
 # The two SYSTEM tasks of machine/tasks.py, on Windows as an administrator: created,
-# read back from the Task Scheduler field by field, and deleted. It refuses a PC that
-# already has either task.
+# read back from the Task Scheduler field by field, and deleted. Then the hook, written
+# in HKLM and read by machine/update_hook.py. It refuses a PC that already has either
+# task or HKLM\SOFTWARE\Ritmelli.
 # Usage: tasks.ps1 [-UpdateTask <name>] [-MicTask <name>] [-Exe <path>]
 param(
   [string]$UpdateTask = 'Ritmelli Atualiza',
@@ -12,7 +13,7 @@ $root = Resolve-Path "$PSScriptRoot\..\.."
 
 function Tasks([string]$code, [string[]]$arguments) {
   uv run --project $root python -c "import sys; from ritmelli.machine import tasks; $code" @arguments
-  if ($LASTEXITCODE -ne 0) { throw "machine/tasks.py exited with $LASTEXITCODE" }
+  if ($LASTEXITCODE -ne 0) { throw "python exited with $LASTEXITCODE" }
 }
 
 # What users may do with the task, from the ACL Windows enforces: as in v0.7.0's check,
@@ -65,3 +66,18 @@ try {
   Tasks "tasks.delete(sys.argv[1], end=True); tasks.delete(sys.argv[2]); sys.exit($either and 'a task is still there')" $UpdateTask, $MicTask
 }
 'both tasks were created as in v0.7.0, and deleted'
+
+# The hook in its real key. pytest leaves it alone: a SYSTEM update task would read it.
+$ritmelli = 'HKLM:\SOFTWARE\Ritmelli'
+if (Test-Path $ritmelli) { throw "$ritmelli is there already: run this on a PC without Ritmelli" }
+$url, $public = 'http://127.0.0.1:8765/v0.900.1/manifest.json', 'a test public key'
+try {
+  New-Item "$ritmelli\Atualizador" -Force | Out-Null
+  New-ItemProperty "$ritmelli\Atualizador" Manifesto -PropertyType String -Value $url | Out-Null
+  New-ItemProperty "$ritmelli\Atualizador" Chave -PropertyType String -Value $public | Out-Null
+  New-ItemProperty "$ritmelli\Atualizador" SoHttps -PropertyType DWord -Value 0 | Out-Null
+  Tasks 'from ritmelli.machine import update_hook; sys.exit(update_hook.read() != (sys.argv[1], {1: sys.argv[2]}, False))' $url, $public
+} finally {
+  if (Test-Path $ritmelli) { Remove-Item $ritmelli -Recurse -Force }
+}
+'the hook was read from HKLM: the test manifest, the test key alone, http allowed'
