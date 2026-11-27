@@ -9,10 +9,11 @@ This file says when a review stops. Where another review rule disagrees, this fi
 
 ## Findings
 
-- A finding blocks only with proof of use: an input that happened.
-- Proof of use is a log line, a crash report, a counter from the app, a written usage script, or an item of the old app's list of what every theme covers.
-- An input that can only be built by hand does not block.
-- A finding without proof is dropped. It does not become an issue.
+- A finding blocks only with the command the reviewer ran and its output. Without them, it is dropped.
+- It is one of three kinds: `bug` (a wrong result or a crash), `leftover` (something that does nothing now) or `rule` (a written rule broken, that no check catches yet).
+- Before the fix, run the command again. A finding that does not reproduce is dropped.
+- Personal taste is not a finding.
+- Every finding that reproduced is recorded with `tools/finding.py record`, after its name is checked with `tools/finding.py list`.
 - The fix for a finding changes a scenario of the command. It does not add one.
 - A finding that was turned down does not come back without a new argument.
 

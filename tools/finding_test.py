@@ -6,23 +6,30 @@ import pytest
 
 import finding
 
+ISSUES = "https://github.com/ritmelli/ritmelli-next/issues"
+
 
 class FakeGh:
     def __init__(self) -> None:
         self.issue: dict[str, Any] = {}
+        self.issues: list[dict[str, Any]] = []
 
     def __call__(self, *args: str) -> str:
-        verb, issue = args[:2], self.issue
+        verb, issues = args[:2], self.issues
+        issue = issues[int(args[2]) - 1] if args[2].isdigit() else {}
         arg = dict(zip(args[2:], args[3:], strict=False))
         if verb[0] == "api":
-            keys = ("number", "title", "state", "labels")
-            return json.dumps({key: issue[key] for key in keys}) if issue else ""
+            keys = ("number", "title", "state", "url", "labels")
+            return "\n".join(json.dumps({key: i[key] for key in keys}) for i in issues)
         if verb == ("issue", "view"):
             return json.dumps(issue)
         if verb == ("issue", "create"):
-            self.issue = {"number": 1, "state": "open", "comments": []}
+            number = len(issues) + 1
+            self.issue = {"number": number, "state": "open", "comments": []}
             self.issue |= {"title": arg["--title"], "body": arg["--body"]}
             self.issue["labels"] = [arg["--label"]]
+            self.issue["url"] = f"{ISSUES}/{number}"
+            issues.append(self.issue)
         elif verb == ("issue", "comment"):
             issue["comments"].append({"body": arg["--body"]})
         elif verb == ("issue", "reopen"):
