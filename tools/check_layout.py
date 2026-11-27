@@ -1,69 +1,52 @@
 import ast
 import sys
+from importlib.util import resolve_name
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "src"
-LINE_LIMIT = 300
-LIMITED_FOLDERS = ("ritmelli/features", "ritmelli/kernel")
-CORE_FOLDER = "ritmelli/audio/core"
-CORE_IMPORTS = (
-    "numpy",
-    "math",
-    "time",
-    "collections",
-    "dataclasses",
-    "typing",
-    "ritmelli.audio.messages",
-    "ritmelli.audio.core",
+CORE = (
+    "__future__ numpy math time collections dataclasses typing"
+    " ritmelli.audio.messages ritmelli.audio.core"
+).split()
+CORE_FIX = (
+    "audio/core imports only numpy, math, time, collections, dataclasses, typing"
+    " and ritmelli.audio.messages. Move the code that needs it out of audio/core."
 )
 
 
-def is_allowed(name: str) -> bool:
-    return any(name == root or name.startswith(f"{root}.") for root in CORE_IMPORTS)
+def allowed(name: str) -> bool:
+    return any(name == root or name.startswith(f"{root}.") for root in CORE)
 
 
-def imported_names(path: Path) -> list[str]:
-    package = path.relative_to(SRC).parent.parts
+def imported(path: Path) -> list[str]:
+    package = ".".join(path.relative_to(ROOT / "src").parent.parts)
     names: list[str] = []
     for node in ast.walk(ast.parse(path.read_bytes())):
         if isinstance(node, ast.Import):
             names += [alias.name for alias in node.names]
         elif isinstance(node, ast.ImportFrom):
-            base = (
-                ".".join(package[: len(package) + 1 - node.level]) if node.level else ""
-            )
-            module = ".".join(part for part in (base, node.module) if part)
+            module = resolve_name("." * node.level + (node.module or ""), package)
             names += [
-                module if is_allowed(module) else f"{module}.{alias.name}"
-                for alias in node.names
+                module if allowed(module) else f"{module}.{a.name}" for a in node.names
             ]
     return names
 
 
-def problems() -> list[str]:
-    found: list[str] = []
-    for folder in LIMITED_FOLDERS:
-        for path in sorted((SRC / folder).rglob("*.py")):
-            count = len(path.read_text(encoding="utf-8").splitlines())
-            if count > LINE_LIMIT:
-                found.append(
-                    f"{path.relative_to(ROOT).as_posix()}: {count} lines, the limit is"
-                    f" {LINE_LIMIT}. Split it: one command, reaction or operation per file."
-                )
-    for path in sorted((SRC / CORE_FOLDER).rglob("*.py")):
-        for name in imported_names(path):
-            if not is_allowed(name):
-                found.append(
-                    f"{path.relative_to(ROOT).as_posix()}: imports {name}. audio/core imports"
-                    " only numpy, math, time, collections, dataclasses, typing and"
-                    " ritmelli.audio.messages. Move the code that needs it out of audio/core."
-                )
-    return found
-
-
-if __name__ == "__main__":
-    lines = problems()
-    for line in lines:
-        print(line)
-    sys.exit(1 if lines else 0)
+found: list[str] = []
+for path in sorted((ROOT / "src").rglob("*.py")):
+    where = path.relative_to(ROOT).as_posix()
+    lines = len(path.read_text(encoding="utf-8").splitlines())
+    limited = where.startswith(("src/ritmelli/features/", "src/ritmelli/kernel/"))
+    if limited and lines > 300:
+        found.append(
+            f"{where}: {lines} lines, over 300. Split it: one command or operation per file."
+        )
+    if path.name.startswith("test_"):
+        found.append(f"{where}: pytest skips it. Name it {path.name[5:-3]}_test.py.")
+    if where.startswith("src/ritmelli/audio/core/"):
+        for name in imported(path):
+            if not allowed(name):
+                found.append(f"{where}: imports {name}. {CORE_FIX}")
+for line in found:
+    print(line)
+sys.exit(1 if found else 0)
