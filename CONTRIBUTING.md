@@ -81,6 +81,8 @@ first. A core PR fails the Budget check on purpose. The owner merges it after it
 Each kind has a `proof` in `kinds.toml`: what to run to show that the change works.
 Someone who did not write the code runs it and reports PASS or FAIL in the PR, with each command and what it printed.
 That report is the proof card. The merge queue takes only PASS.
+The card sits under `## Proof` in the PR body and ends with the line `Verdict: PASS on <head>`. The Budget check reads
+that line on the current head, so a push after the proof asks for the proof again.
 
 ## Review
 
