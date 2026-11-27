@@ -12,12 +12,14 @@ mode of app.py is refused.
 
 import hashlib
 import json
+import pkgutil
 import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import Any
 
+import ritmelli
 from ritmelli.app import MODES
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -36,24 +38,14 @@ def sources_digest() -> str:
     and neither does the version the build writes into the DLL. The mic setup copies
     the DLL only when the digest changes, so the sound stops only then."""
     lines = git("ls-tree", "HEAD", "--", "filter/apo/").splitlines()
-    blobs = sorted(
-        (line for line in lines if line.split()[1] == "blob"),
-        key=lambda line: line.split("\t", 1)[1],
-    )
+    blobs = [line for line in lines if line.split()[1] == "blob"]
     return hashlib.sha256("".join(f"{line}\n" for line in blobs).encode()).hexdigest()
 
 
 def source_modules() -> list[str]:
-    """The modules under src/ritmelli, as the recipe freezes them: without the tests."""
-    src = ROOT / "src"
-    found = (src / "ritmelli").rglob("*.py")
-    names = (path.relative_to(src).with_suffix("").parts for path in found)
-    return sorted(
-        ".".join(parts[:-1] if parts[-1] == "__init__" else parts)
-        for parts in names
-        if not parts[-1].endswith(("_test", "_measure"))
-        and parts != ("ritmelli", "__init__")
-    )
+    """The modules of the package, as the recipe freezes them: without the tests."""
+    found = pkgutil.walk_packages(ritmelli.__path__, "ritmelli.")
+    return sorted(m.name for m in found if not m.name.endswith(("_test", "_measure")))
 
 
 def sha256(path: Path) -> str:

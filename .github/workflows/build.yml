@@ -87,6 +87,13 @@ jobs:
           Get-Content dist\build-info.json
           $sources = Get-Content dist\ritmelli\_internal\microfone\micfx.sources -Raw
           if ((Get-Content dist\build-info.json -Raw | ConvertFrom-Json).filter_sources -ne $sources) { throw "filter_sources is not the micfx.sources $sources" }
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: build-${{ env.VERSION }}
+          path: |
+            dist/build-info.json
+            dist/ritmelli/ritmelli.exe
+          if-no-files-found: error
       - name: The sources digest follows the top of filter/apo/ only
         shell: powershell
         run: |
