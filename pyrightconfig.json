@@ -1,6 +1,7 @@
 {
   "include": ["src"],
   "pythonVersion": "3.12",
+  "pythonPlatform": "Windows",
   "typeCheckingMode": "strict",
   "enableTypeIgnoreComments": false
 }

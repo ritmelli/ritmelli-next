@@ -9,7 +9,7 @@ After the first line, the body has up to 15 lines on what changes for the person
 
 ## House rules
 
-- A PR changes at most 400 lines. uv.lock, src/ritmelli/storage/legacy/fixtures/, ui/src/pixel/sheets/ and filter/abi/ring.layout.json do not count. Bigger: split it.
+- A PR changes at most 400 lines. uv.lock, src/ritmelli/storage/legacy/fixtures/, src/ritmelli/update/fixtures/, src/ritmelli/machine/fixtures/, ui/src/pixel/sheets/, filter/abi/ring.layout.json and the seven filter sources kept as in v0.7.0 (filter/apo/anel.h, filter/apo/voz.h, filter/apo/reamostra.h, filter/apo/micfx.cpp, filter/apo/voz.cpp, filter/apo/micfx.def, filter/apo/version.rc) do not count. Bigger: split it.
 - At most 3 pushes after the PR opens. Past that, close it and start again with a smaller plan.
 - A fix brings the input that failed, as a scenario next to the code.
 - Tests sit next to the code: at most 3 scenarios per command, 6 per test file elsewhere. A new voice effect, source or piece brings none; the catalog conformance covers it.

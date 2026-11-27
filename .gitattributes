@@ -1,1 +1,10 @@
 * text=auto eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.iss text eol=crlf
+*.isl text eol=crlf
+installer/*.txt text eol=crlf
+*.exe binary
+*.png binary
+src/ritmelli/update/fixtures/** -text
+src/ritmelli/machine/fixtures/** -text

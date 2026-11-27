@@ -29,7 +29,11 @@ jobs:
           persist-credentials: false
       - name: Size
         run: |
-          lines=$(git diff --numstat "$BASE...$HEAD" -- . ':!uv.lock' ':!src/ritmelli/storage/legacy/fixtures' ':!ui/src/pixel/sheets' ':!filter/abi/ring.layout.json' | awk '{n += $1 + $2} END {print n + 0}')
+          lines=$(git diff --numstat "$BASE...$HEAD" -- . ':!uv.lock' ':!ui/src/pixel/sheets' \
+            ':!src/ritmelli/storage/legacy/fixtures' ':!src/ritmelli/update/fixtures' ':!src/ritmelli/machine/fixtures' \
+            ':!filter/abi/ring.layout.json' ':!filter/apo/anel.h' ':!filter/apo/voz.h' ':!filter/apo/reamostra.h' \
+            ':!filter/apo/micfx.cpp' ':!filter/apo/voz.cpp' ':!filter/apo/micfx.def' ':!filter/apo/version.rc' \
+            | awk '{n += $1 + $2} END {print n + 0}')
           [ "$lines" -le 400 ] || { echo "::error::split this PR ($lines lines changed, the limit is 400)"; exit 1; }
       - name: Pushes
         if: ${{ !cancelled() }}
