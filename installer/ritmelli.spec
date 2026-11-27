@@ -13,11 +13,15 @@ version_file = os.path.join(workpath, "version.txt")
 with open(version_file, "w", encoding="ascii") as f:
     f.write(VERSION)
 icon = os.path.join(SPECPATH, "ritmelli.ico")
+# the filter and its sources digest, which build.ps1 makes first; the mic setup takes
+# them from _internal\microfone
+filter_build = os.path.join(SPECPATH, os.pardir, "filter", "apo", "saida")
+filter_files = [(os.path.join(filter_build, name), "microfone") for name in ("micfx.dll", "voz.dll", "micfx.sources")]
 
 a = Analysis(
     [os.path.join(SPECPATH, os.pardir, "src", "ritmelli", "app.py")],
     # the setup takes the icon from _internal\icone
-    datas=[(version_file, "."), (icon, "icone")],
+    datas=[(version_file, "."), (icon, "icone"), *filter_files],
     # Modules found by folder have no import to follow, so each one is named here,
     # from the package installed in the venv. The tests stay out: they import pytest.
     hiddenimports=collect_submodules("ritmelli", filter=lambda name: not name.endswith(("_test", "_measure"))),
