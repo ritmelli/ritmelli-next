@@ -26,7 +26,6 @@ jobs:
         run: |
           files=$(git diff --name-only "$BASE...$HEAD" -- src/ritmelli/machine/ src/ritmelli/ports/ src/ritmelli/update/ \
             src/ritmelli/app.py filter/ installer/)
-          echo "$files"
           if [ -n "$files" ]; then echo run=true; else echo run=false; fi | tee -a "$GITHUB_OUTPUT"
 
   pytest:
