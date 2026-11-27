@@ -1,0 +1,90 @@
+[[ficha]]
+name = "command"
+title = "Command, new or changed, and its button"
+paths = ["src/ritmelli/features/**", "ui/src/pieces/**"]
+proof = "Starts the app in --mock, sends the command through the same door as the screen, checks the state and the reply, and attaches a screenshot when there is a button."
+core = false
+
+[[ficha]]
+name = "io-command"
+title = "Command whose reply waits for I/O, such as a search"
+paths = ["src/ritmelli/features/**"]
+proof = "Starts the app in --mock, sends the command, lets the mock rail answer its effect, and checks that the reply carries the outcome."
+core = false
+
+[[ficha]]
+name = "shared-rule"
+title = "Rule that several commands use"
+paths = ["src/ritmelli/features/**/ops/**"]
+proof = "Starts the app in --mock and drives each command that calls the operation through the case the PR names."
+core = false
+
+[[ficha]]
+name = "port"
+title = "New side effect at the edge, such as a file dialog"
+paths = ["src/ritmelli/ports/**"]
+proof = "Runs the new run.py once against the real library, on the Windows job when it needs Windows, and checks the event it returns."
+core = false
+
+[[ficha]]
+name = "voice-effect"
+title = "Voice effect, new or tuned, with primitives that exist"
+paths = ["src/ritmelli/features/voice/effects/**"]
+proof = "Runs the effect conformance (both rates, 3 s of fixed speech, no NaN, no clipping, within 6 LU) and attaches a screenshot of the pedal in --mock."
+core = false
+
+[[ficha]]
+name = "source"
+title = "New music source"
+paths = ["src/ritmelli/sources/*/**", "src/ritmelli/features/**", "ui/src/pieces/**"]
+proof = "Runs the source conformance through the child process, one search and one resolve against the real source, and presses the new button in --mock when there is one."
+core = false
+
+[[ficha]]
+name = "youtube"
+title = "YouTube fix, in our code or by raising the yt-dlp pin"
+paths = ["src/ritmelli/sources/youtube/**", "pyproject.toml", "uv.lock"]
+proof = "Replays the failing search or link named in the PR through the youtube source child, then runs the source conformance."
+core = false
+
+[[ficha]]
+name = "theme"
+title = "Visual tweak to a screen piece"
+paths = ["ui/src/pieces/**"]
+proof = "Starts the app in --mock and attaches screenshots of the piece before and after the change."
+core = false
+
+[[ficha]]
+name = "piece"
+title = "New screen piece and its place in a layout"
+paths = ["ui/src/pieces/**", "ui/src/layouts/**"]
+proof = "Checks that the piece has the same keys in pt and en, starts the app in --mock, and attaches a screenshot of the layout with the piece."
+core = false
+
+[[ficha]]
+name = "tuning"
+title = "Tuned number"
+paths = ["src/ritmelli/features/**/tuning.py", "src/ritmelli/audio/**/tuning.py"]
+proof = "Runs what the changed Constant says in repeat= and reports the value it measured."
+core = false
+
+[[ficha]]
+name = "setting"
+title = "New preference that is saved"
+paths = ["src/ritmelli/features/**/state.py", "src/ritmelli/storage/settings.py"]
+proof = "Starts the app in --mock, changes the preference, restarts it on the same data folder, and checks that the value came back."
+core = false
+
+[[ficha]]
+name = "sound"
+title = "Feature that crosses the sound path"
+paths = ["src/ritmelli/audio/**", "src/ritmelli/features/**", "src/ritmelli/storage/settings.py", "ui/src/pieces/**"]
+proof = "Runs the bench scripts for the sound path, PASS or FAIL per item, and the command in --mock when the PR adds one."
+core = false
+
+[[ficha]]
+name = "core"
+title = "Core change the owner asked for"
+paths = ["**"]
+proof = "Runs the proof the owner names when asking for the change: the bench, the clean-machine install, or a scenario in --mock."
+core = true
