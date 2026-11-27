@@ -1,0 +1,303 @@
+name: I5b proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  HEAD_SHA: 9c53c5136fedb3097e07d951915d9e330006fb23
+  SETUP_SHA: F0AEE549CCA67359B09E2B404AD864C34E4E9F834FA3FAC1BB108E93992E5A1E
+
+jobs:
+  proof:
+    name: I5b proof ${{ matrix.variant }}
+    runs-on: windows-2025
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [uninstall, uninstall-before, no-uninstall]
+    env:
+      VARIANT: ${{ matrix.variant }}
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+
+      - name: The script is the head blob
+        run: |
+          git fetch -q --no-tags --depth=1 origin $env:HEAD_SHA
+          $a = git rev-parse HEAD:installer/e2e/crossing_photo.ps1
+          $b = git rev-parse "$($env:HEAD_SHA):installer/e2e/crossing_photo.ps1"
+          "checkout $a, head $b"
+          git ls-files --eol installer/e2e/crossing_photo.ps1
+          if ($a -ne $b) { throw 'the script differs from the head' }
+
+      - name: Helpers
+        run: |
+          Set-Content -LiteralPath "$env:RUNNER_TEMP\helpers.ps1" -Encoding UTF8 -Value @'
+          $ErrorActionPreference = 'Stop'
+          $ProgressPreference = 'SilentlyContinue'
+          $Script = Join-Path $env:GITHUB_WORKSPACE 'installer\e2e\crossing_photo.ps1'
+          $Setup = 'C:\published\Ritmelli-0.7.0-setup.exe'
+          $App = 'C:\Program Files\Ritmelli'
+          $Is1 = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{320EB2BD-48BC-420D-8F52-C22F644E47D4}_is1'
+          $Hook = 'HKLM:\SOFTWARE\Ritmelli\Atualizador'
+          $Tree = 'HKLM:\SOFTWARE\Ritmelli\Microfone'
+          $Round = '^(<=|=>) file C:\\Program Files\\Ritmelli\\atualizacao\\'
+          $Clsids = '{C17A1D48-D473-40D9-9ED3-D024AA46EBE2}', '{D6EB08E6-2DDA-44F3-88C8-2D0EA00C6C8E}',
+            '{9FEF5C33-9ED4-4CC6-8624-4F017BB71678}', '{ED59B560-1ECA-4491-9179-EC121791159D}',
+            '{1663A464-C189-435F-89BD-9C9E9BAF1C23}'
+
+          function Invoke-Native([string]$Exe, [string[]]$Argv) {
+            $ErrorActionPreference = 'Continue'
+            $out = (& $Exe @Argv 2>&1 | ForEach-Object { "$_" }) -join "`n"
+            [pscustomobject]@{ Code = $LASTEXITCODE; Out = $out }
+          }
+
+          function Invoke-Step([string[]]$Argv) {
+            $ps = "$env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+            $r = Invoke-Native $ps (@('-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', $Script) + $Argv)
+            Write-Host "--- crossing_photo.ps1 $($Argv -join ' ') exited $($r.Code)"
+            Write-Host $r.Out
+            $r
+          }
+
+          function Wait-For([int]$Seconds, [scriptblock]$Done) {
+            $end = (Get-Date).AddSeconds($Seconds)
+            while ((Get-Date) -lt $end) {
+              if (& $Done) { return $true }
+              Start-Sleep 2
+            }
+            $false
+          }
+
+          function Get-Setups {
+            @(Get-CimInstance Win32_Process | Where-Object {
+              $_.Name -like 'Ritmelli-*-setup*' -or $_.Name -like 'unins000*' -or $_.Name -like '_iu*.tmp' -or
+              $_.ExecutablePath -like "$App\*" })
+          }
+
+          function Get-Snap([switch]$Quick) {
+            $o = [System.Collections.Generic.List[string]]::new()
+            $keys = @('HKLM\SOFTWARE\Ritmelli', $Is1)
+            foreach ($c in $Clsids) {
+              $keys += "HKLM\SOFTWARE\Classes\CLSID\$c", "HKLM\SOFTWARE\Classes\AudioEngine\AudioProcessingObjects\$c"
+            }
+            $tmp = Join-Path $env:RUNNER_TEMP 'snap.reg'
+            foreach ($k in $keys) {
+              Remove-Item -LiteralPath $tmp -ErrorAction SilentlyContinue
+              $r = Invoke-Native reg.exe export, $k, $tmp, /y
+              if ($r.Code) { $o.Add("reg absent $k"); continue }
+              foreach ($l in Get-Content -LiteralPath $tmp) {
+                if ($l -and $l -notlike 'Windows Registry Editor*') { $o.Add("reg $l") }
+              }
+            }
+            foreach ($t in 'Ritmelli Atualiza', 'Ritmelli\Microfone') {
+              $r = Invoke-Native schtasks.exe /query, /tn, "\$t", /xml
+              if ($r.Code) { $o.Add("task absent $t"); continue }
+              foreach ($l in $r.Out -split "`n") { $o.Add("task $t $($l.TrimEnd())") }
+              $tc = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Schedule\TaskCache\Tree\$t"
+              $sd = (Get-ItemProperty -LiteralPath $tc -Name SD -ErrorAction SilentlyContinue).SD
+              $o.Add("task $t SD $(if ($sd) { [BitConverter]::ToString($sd) })")
+            }
+            foreach ($l in (Invoke-Native netsh.exe advfirewall, firewall, show, rule, name=Ritmelli, verbose).Out -split "`n") {
+              $o.Add("firewall $($l.TrimEnd())")
+            }
+            $sh = New-Object -ComObject WScript.Shell
+            foreach ($l in "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Ritmelli.lnk", "$env:PUBLIC\Desktop\Ritmelli.lnk") {
+              if (-not (Test-Path -LiteralPath $l)) { $o.Add("link absent $l"); continue }
+              $s = $sh.CreateShortcut($l)
+              $o.Add("link $l -> $($s.TargetPath) [$($s.Arguments)] in $($s.WorkingDirectory) icon $($s.IconLocation)")
+            }
+            foreach ($root in $App, "$env:LOCALAPPDATA\Ritmelli", "$env:LOCALAPPDATA\Vitrola") {
+              if (-not (Test-Path -LiteralPath $root)) { $o.Add("dir absent $root"); continue }
+              foreach ($f in Get-ChildItem -LiteralPath $root -Recurse -File -Force) {
+                $id = if ($Quick -and $root -eq $App) { "$($f.Length) $($f.LastWriteTimeUtc.Ticks)" }
+                  else { (Get-FileHash -LiteralPath $f.FullName).Hash }
+                $o.Add("file $($f.FullName) $id")
+              }
+            }
+            $o.Add("proof-guard exists $(Test-Path -LiteralPath 'C:\proof-guard')")
+            $o.ToArray()
+          }
+
+          function Compare-Snap($A, $B) {
+            @(Compare-Object -CaseSensitive @($A) @($B) | ForEach-Object { "$($_.SideIndicator) $($_.InputObject)" })
+          }
+
+          function Set-Hook([hashtable]$Values) {
+            if (-not (Test-Path -LiteralPath $Hook)) { New-Item $Hook | Out-Null }
+            foreach ($n in $Values.Keys) {
+              $type = if ($n -eq 'SoHttps') { 'DWord' } else { 'String' }
+              New-ItemProperty -LiteralPath $Hook -Name $n -Value $Values[$n] -PropertyType $type -Force | Out-Null
+            }
+          }
+          '@
+
+      - name: 1. The published 0.7.0, installed with its sha256 checked
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          . "$env:RUNNER_TEMP\helpers.ps1"
+          $d = Invoke-Native gh.exe release, download, v0.7.0, --repo, ritmelli/ritmelli-releases, --pattern, Ritmelli-0.7.0-setup.exe, --dir, C:\published
+          if ($d.Code) { throw "download: $($d.Out)" }
+          $h = (Get-FileHash -LiteralPath $Setup).Hash
+          "sha256 $h"
+          if ($h -ne $env:SETUP_SHA) { throw 'this is not the published 0.7.0 setup' }
+          $argv = '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LOG=C:\install.log', '/LANG=pt', '/metricas=1',
+            '/MERGETASKS="desktopicon"'
+          $p = Start-Process -FilePath $Setup -ArgumentList $argv -PassThru
+          $null = $p.Handle
+          $p.WaitForExit()
+          if (-not (Wait-For 300 { -not (Get-Setups) })) { throw 'the setup still runs' }
+          "setup exited $($p.ExitCode)"
+          Get-Content -LiteralPath C:\install.log -Tail 4
+          $is1 = Get-ItemProperty -LiteralPath "Registry::$Is1"
+          "DisplayVersion $($is1.DisplayVersion), Language $($is1.'Inno Setup: Language'), Tasks $($is1.'Inno Setup: Selected Tasks')"
+          "ritmelli.exe $((Get-Item -LiteralPath "$App\ritmelli.exe").VersionInfo.ProductVersion)"
+          (Invoke-Native reg.exe query, HKLM\SOFTWARE\Ritmelli, /s).Out
+          "voices: $(@(Get-ChildItem -LiteralPath "$App\vozes" -Recurse -File).Count) files"
+          if ($p.ExitCode -ne 0 -or $is1.DisplayVersion -ne '0.7.0') { throw 'the published 0.7.0 did not install' }
+          exit 0
+
+      - name: The data of the person using the app
+        run: |
+          $l = "$env:LOCALAPPDATA\Ritmelli"
+          New-Item -ItemType Directory -Force "$l\library", "$l\logs" | Out-Null
+          Set-Content -LiteralPath "$l\library\config.json" '{"volume": 7}'
+          Set-Content -LiteralPath "$l\library\celulares.json" '[]'
+          Set-Content -LiteralPath "$l\logs\ritmelli.log" 'opened'
+          if ($env:VARIANT -eq 'uninstall-before') {
+            Set-Content -LiteralPath "$l\metricas.json" '{"id": "proof-ritmelli"}'
+            New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\Vitrola" | Out-Null
+            Set-Content -LiteralPath "$env:LOCALAPPDATA\Vitrola\metricas.json" '{"id": "proof-vitrola"}'
+          }
+          Get-ChildItem -LiteralPath $l, "$env:LOCALAPPDATA\Vitrola" -Recurse -File -ErrorAction SilentlyContinue |
+            ForEach-Object { "$($_.FullName) $($_.Length)" }
+
+      - name: Guard case. The hook written before the photo, the photo stops and the finish does not run
+        if: matrix.variant == 'uninstall'
+        run: |
+          . "$env:RUNNER_TEMP\helpers.ps1"
+          $url = 'http://127.0.0.1:8765/v0.900.1/manifest.json'
+          $cases = @{ Manifesto = $url }, @{ Chave = 'proof' }, @{ SoHttps = 0 },
+            @{ Manifesto = $url; Chave = 'proof'; SoHttps = 0 }
+          $bad = @()
+          foreach ($c in $cases) {
+            $names = @($c.Keys) -join ', '
+            $s0 = Get-Snap -Quick
+            $had = Test-Path -LiteralPath $Hook
+            Set-Hook $c
+            $s1 = Get-Snap -Quick
+            $photo = Invoke-Step @('-Step', 'photo', '-Proof', 'C:\proof-guard', '-Setup', $Setup)
+            $folder = Test-Path -LiteralPath C:\proof-guard
+            $finish = Invoke-Step @('-Step', 'finish', '-Proof', 'C:\proof-guard')
+            $changed = @(Compare-Snap $s1 (Get-Snap -Quick) | Where-Object { $_ -notmatch $Round })
+            Remove-ItemProperty -LiteralPath $Hook -Name @($c.Keys)
+            if (-not $had) { Remove-Item -LiteralPath $Hook }
+            $back = @(Compare-Snap $s0 (Get-Snap -Quick) | Where-Object { $_ -notmatch $Round })
+            "hook [$names]: photo exit $($photo.Code), proof folder $folder, finish exit $($finish.Code), changed lines $($changed.Count), not back $($back.Count)"
+            $changed
+            $back
+            $why = $photo.Out -match 'the hook has a value' -and $finish.Out -match 'photo\.json is missing'
+            if (-not $photo.Code -or $folder -or -not $finish.Code -or $changed -or $back -or -not $why) { $bad += $names }
+          }
+          if ($bad) { throw "failed for: $($bad -join ' | ')" }
+          'PASS: each hook value stops the photo, no proof folder, the finish does not run, nothing changed'
+          exit 0
+
+      - name: 2. The photo
+        run: |
+          . "$env:RUNNER_TEMP\helpers.ps1"
+          $p0 = Get-Snap
+          $p0 | Set-Content -LiteralPath "$env:RUNNER_TEMP\p0.txt" -Encoding UTF8
+          "snapshot before the photo: $($p0.Count) lines"
+          $r = Invoke-Step @('-Step', 'photo', '-Proof', 'C:\proof', '-Setup', $Setup)
+          $moved = @(Compare-Snap $p0 (Get-Snap) | Where-Object { $_ -notmatch $Round })
+          "the photo changed $($moved.Count) lines of the machine"
+          $moved
+          (Invoke-Native icacls.exe C:\proof).Out
+          Get-ChildItem -LiteralPath C:\proof -Recurse -Force -File | ForEach-Object { "$($_.FullName) $($_.Length)" }
+          $photo = Get-Content -LiteralPath C:\proof\photo.json -Raw -Encoding UTF8 | ConvertFrom-Json
+          $names = @($photo.PSObject.Properties.Name)
+          $names | ForEach-Object { ($_ -split '\|')[0] } | Group-Object | ForEach-Object { "photo $($_.Name): $($_.Count)" }
+          $names -match '^(app|reg|hook|link|dll|exe|tree)' | ForEach-Object { "photo $_ = $($photo.$_)" }
+          if ($r.Code -or $moved) { throw 'the photo failed or changed the machine' }
+          exit 0
+
+      - name: 3. What the crossing changes, by hand
+        run: |
+          . "$env:RUNNER_TEMP\helpers.ps1"
+          Set-Hook @{ Manifesto = 'http://127.0.0.1:8765/v0.900.1/manifest.json'; Chave = 'proof-public-key'; SoHttps = 0 }
+          if (-not (Test-Path -LiteralPath $Tree)) { New-Item $Tree | Out-Null }
+          New-ItemProperty -LiteralPath $Tree -Name _sources -Value ('a' * 64) -PropertyType String -Force | Out-Null
+          New-ItemProperty -LiteralPath $Tree -Name _dll_sha256 -Value ('B' * 64) -PropertyType String -Force | Out-Null
+          if ($env:VARIANT -eq 'no-uninstall') {
+            New-Item -ItemType Directory -Force "$App\atualizacao" | Out-Null
+            Set-Content -LiteralPath "$App\atualizacao\Ritmelli-0.900.1-setup.exe" 'test build'
+            $voice = Get-ChildItem -LiteralPath "$App\vozes" -Recurse -File | Select-Object -First 1
+            Remove-Item -LiteralPath $voice.FullName
+            "removed the voice $($voice.FullName)"
+          }
+          if ($env:VARIANT -eq 'uninstall-before') {
+            $log = "$env:LOCALAPPDATA\Ritmelli\logs\ritmelli.log"
+            Add-Content -LiteralPath $log 'opened again'
+            $h = (Get-FileHash -LiteralPath $log).Hash
+            $p0 = @(Get-Content -LiteralPath "$env:RUNNER_TEMP\p0.txt" -Encoding UTF8) |
+              ForEach-Object { if ($_.StartsWith("file $log ")) { "file $log $h" } else { $_ } }
+            $p0 | Set-Content -LiteralPath "$env:RUNNER_TEMP\p0.txt" -Encoding UTF8
+            "the app opened between the photo and the uninstall: $log is now $h"
+            $r = Invoke-Step @('-Step', 'before-uninstall', '-Proof', 'C:\proof')
+            Get-ChildItem -LiteralPath C:\proof -Filter '*.json' | ForEach-Object { "$($_.Name) $($_.Length)" }
+            if ($r.Code) { throw 'before-uninstall failed' }
+          }
+          (Invoke-Native reg.exe query, HKLM\SOFTWARE\Ritmelli, /s).Out
+          if ($env:VARIANT -ne 'no-uninstall') {
+            $argv = '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/LOG=C:\uninstall.log'
+            Start-Process -FilePath "$App\unins000.exe" -ArgumentList $argv | Out-Null
+            $start = Get-Date
+            $ok = Wait-For 300 {
+              -not (Get-Setups) -and -not (Test-Path -LiteralPath "Registry::$Is1") -and
+                -not (Test-Path -LiteralPath "$App\ritmelli.exe") }
+            "uninstall ended: $ok, in $([int]((Get-Date) - $start).TotalSeconds) s"
+            "app folder there: $(Test-Path -LiteralPath $App)"
+            (Invoke-Native reg.exe query, HKLM\SOFTWARE\Ritmelli, /s).Out
+            foreach ($t in '\Ritmelli Atualiza', '\Ritmelli\Microfone') { "task $t code $((Invoke-Native schtasks.exe /query, /tn, $t).Code)" }
+            "metricas.json there: $(Test-Path -LiteralPath "$env:LOCALAPPDATA\Ritmelli\metricas.json")"
+            Get-Content -LiteralPath C:\uninstall.log | Select-String -Pattern 'Running Exec|Run filename|Parameters' | ForEach-Object { "$_" }
+            if (-not $ok) { throw 'the uninstall did not end in 5 min' }
+          }
+          exit 0
+
+      - name: 4. The finish alone puts everything back
+        run: |
+          . "$env:RUNNER_TEMP\helpers.ps1"
+          $r = Invoke-Step @('-Step', 'finish', '-Proof', 'C:\proof')
+          $p0 = @(Get-Content -LiteralPath "$env:RUNNER_TEMP\p0.txt" -Encoding UTF8)
+          $diff = Compare-Snap $p0 (Get-Snap)
+          "independent comparison with the snapshot before the photo: $($diff.Count) lines"
+          $diff
+          $kept = @($Round, '^(<=|=>) file C:\\Program Files\\Ritmelli\\unins000\.dat ', '^(<=|=>) reg "EstimatedSize"=')
+          if ($p0 -notcontains 'reg [HKEY_LOCAL_MACHINE\SOFTWARE\Ritmelli\Microfone]') {
+            'no tree key at the photo (no microphone here): step 3 created it for _sources, so the empty key may stay'
+            $kept += '^=> reg \[HKEY_LOCAL_MACHINE\\SOFTWARE\\Ritmelli\\Microfone\]$'
+          }
+          $other = @($diff | Where-Object { $l = $_; -not ($kept | Where-Object { $l -match $_ }) })
+          "differences outside the expected ones: $($other.Count)"
+          $other
+          '--- atualizador.log'
+          Get-Content -LiteralPath "$App\atualizacao\atualizador.log" -ErrorAction SilentlyContinue
+          '--- setup-0.7.0.log'
+          Get-Content -LiteralPath C:\proof\setup-0.7.0.log -Tail 4 -ErrorAction SilentlyContinue
+          "proof folder now: $(@(Get-ChildItem -LiteralPath C:\proof -Force).Name -join ', ')"
+          if ($r.Code) { throw 'the finish did not exit 0' }
+          if ($r.Out -notmatch 'the PC is back on Ritmelli 0\.7\.0 as in the photo') { throw 'no success line' }
+          if ($other) { throw "$($other.Count) lines differ from before the photo" }
+          'PASS: the finish exited 0, and nothing but the expected lines differs from before the photo'
+          exit 0
