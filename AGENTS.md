@@ -53,6 +53,8 @@ If this file and the code disagree, the code wins.
 The proof of a PR is what its kind says in `proof`.
 A verifier that did not write the code runs it and reports PASS or FAIL.
 The merge queue takes only PASS.
+Its report, the proof card, sits under `## Proof` in the PR body and ends with `Verdict: PASS on <head>`.
+The Budget check reads it on the current head: a push after the proof asks for the proof again.
 
 ## Findings
 
