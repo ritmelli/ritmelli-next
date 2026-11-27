@@ -34,6 +34,12 @@ jobs:
         if: ${{ !cancelled() }}
       - run: uv run pytest
         if: ${{ !cancelled() }}
+      - name: The ring layout under g++
+        if: ${{ !cancelled() }}
+        run: |
+          g++ -std=c++17 -Wall -Wextra -o "$RUNNER_TEMP/describe" filter/abi/describe.cpp
+          "$RUNNER_TEMP/describe" "$RUNNER_TEMP/ring.layout.json"
+          diff -u filter/abi/ring.layout.json "$RUNNER_TEMP/ring.layout.json"
       - name: actionlint
         if: ${{ !cancelled() }}
         run: |
