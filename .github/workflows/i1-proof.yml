@@ -1,0 +1,122 @@
+name: I1 proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  clean:
+    name: I1 proof on a clean machine
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: build-0.900.0
+          run-id: 46084061819
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/build
+      - name: Verifier, without the hook
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $b = "$env:RUNNER_TEMP\build"
+          $info = Get-Content "$b\build-info.json" -Raw | ConvertFrom-Json
+          $name = "Ritmelli-$($info.version)-setup.exe"
+          $sha = (Get-FileHash "$b\$name").Hash
+          "setup $name sha256 $sha; build-info $($info.artifacts.$name.sha256); channel $($info.channel); commit $($info.commit)"
+          if ($sha -ne $info.artifacts.$name.sha256) { throw 'the setup is not the one in build-info.json' }
+          function Snap {
+            $is1 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{320EB2BD-48BC-420D-8F52-C22F644E47D4}_is1'
+            [ordered]@{
+              pf = @(Get-ChildItem $env:ProgramFiles -Directory -Force | ForEach-Object Name) -join ','
+              ritmelli = Test-Path 'HKLM:\SOFTWARE\Ritmelli'
+              is1 = Test-Path $is1
+              rule = @(Get-NetFirewallRule -DisplayName 'Ritmelli' -ErrorAction SilentlyContinue).Count
+              link = Test-Path (Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'Ritmelli.lnk')
+              desktop = Test-Path (Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'Ritmelli.lnk')
+              tasks = @(Get-ScheduledTask | Where-Object { $_.TaskName -like 'Ritmelli*' -or $_.TaskPath -like '\Ritmelli\*' }).Count
+            } | ConvertTo-Json -Compress
+          }
+          $before = Snap
+          $log = "$env:RUNNER_TEMP\v-no-hook.log"
+          $clock = [Diagnostics.Stopwatch]::StartNew()
+          $p = Start-Process "$b\$name" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$log`"" -PassThru
+          $null = $p.Handle
+          $p.WaitForExit()
+          $after = Snap
+          "exit $($p.ExitCode) in $([int]$clock.Elapsed.TotalSeconds) s"
+          "before $before"
+          "after  $after"
+          Get-Content $log | Select-String 'test build|Setup version|Log opened|Log closed|Exception|exit'
+          if ($p.ExitCode -ne 1 -or $before -ne $after) { throw 'without the hook: not exit 1, or the machine changed' }
+      - name: The author's script, unchanged
+        shell: powershell
+        run: installer\e2e\clean_machine.ps1 -Build "$env:RUNNER_TEMP\build"
+      - name: The logs of that run
+        if: ${{ !cancelled() }}
+        shell: powershell
+        run: |
+          $d = Join-Path $env:TEMP 'clean-machine'
+          Get-ChildItem $d | ForEach-Object Name
+          '--- no-hook.log'
+          Get-Content "$d\no-hook.log" | Select-String 'test build|Log closed'
+          '--- uninstall.log (two setups in its log)'
+          Get-Content "$d\uninstall.log" | Select-String 'RunOnceId|Running Exec|Process exit code|Log opened|Log closed'
+      - name: Verifier, the default install the script left, then its uninstall
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $app = "$env:ProgramFiles\Ritmelli"
+          $is1 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{320EB2BD-48BC-420D-8F52-C22F644E47D4}_is1'
+          $link = Join-Path ([Environment]::GetFolderPath('CommonPrograms')) 'Ritmelli.lnk'
+          $e = Get-ItemProperty $is1
+          $rule = Get-NetFirewallRule -DisplayName 'Ritmelli'
+          $found = [ordered]@{
+            DisplayName = $e.DisplayName
+            DisplayVersion = $e.DisplayVersion
+            InstallLocation = $e.InstallLocation
+            UninstallString = $e.UninstallString
+            Language = $e.'Inno Setup: Language'
+            top = @(Get-ChildItem $app -Force | ForEach-Object Name | Sort-Object) -join ','
+            microfone = @(Get-ChildItem "$app\_internal\microfone" | ForEach-Object Name | Sort-Object) -join ','
+            license = (Get-FileHash "$app\LICENSE.txt").Hash -eq (Get-FileHash LICENSE).Hash
+            exe = (Get-Item "$app\ritmelli.exe").VersionInfo.ProductVersion
+            link = (New-Object -ComObject WScript.Shell).CreateShortcut($link).TargetPath
+            desktop = Test-Path (Join-Path ([Environment]::GetFolderPath('CommonDesktopDirectory')) 'Ritmelli.lnk')
+            rule = "$($rule.Direction) $($rule.Action) $($rule.Enabled) $($rule.Profile) $(($rule | Get-NetFirewallApplicationFilter).Program)"
+          }
+          $found.GetEnumerator() | ForEach-Object { "$($_.Key) = $($_.Value)" }
+          $want = [ordered]@{
+            DisplayName = 'Ritmelli'; InstallLocation = "$app\"; UninstallString = "`"$app\unins000.exe`""
+            license = 'True'; link = "$app\ritmelli.exe"; desktop = 'False'
+            rule = "Inbound Allow True Private, Public $app\ritmelli.exe"
+          }
+          foreach ($k in $want.Keys) { if ("$($found[$k])" -ne $want[$k]) { throw "$k is '$($found[$k])', not '$($want[$k])'" } }
+          if ($found.microfone -notmatch 'micfx\.dll' -or $found.microfone -notmatch 'voz\.dll') { throw 'a filter DLL is missing' }
+          if ((Test-Path "$app\microfone") -or (Test-Path "$app\bin")) { throw '{app}\microfone or {app}\bin is there' }
+
+          $log = "$env:RUNNER_TEMP\v-uninstall.log"
+          $clock = [Diagnostics.Stopwatch]::StartNew()
+          Start-Process "$app\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$log`""
+          while ($clock.Elapsed.TotalSeconds -lt 300) {
+            $busy = Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'unins000*' -or $_.Name -like '_unins*' -or $_.Name -like '_iu*' }
+            if (-not $busy -and -not (Test-Path $app)) { break }
+            Start-Sleep 1
+          }
+          "uninstall state reached in $([int]$clock.Elapsed.TotalSeconds) s"
+          Get-Content $log | Select-String 'RunOnceId|Running Exec|Process exit code|Log opened|Log closed'
+          $after = [ordered]@{
+            is1 = Test-Path $is1; app = Test-Path $app; link = Test-Path $link
+            rule = @(Get-NetFirewallRule -DisplayName 'Ritmelli' -ErrorAction SilentlyContinue).Count
+            ritmelliKey = Test-Path 'HKLM:\SOFTWARE\Ritmelli'
+            folders = @(Get-ChildItem $env:ProgramFiles -Directory -Force | Where-Object Name -like 'Ritmelli*').Count
+          }
+          $after.GetEnumerator() | ForEach-Object { "after the uninstall: $($_.Key) = $($_.Value)" }
+          if ($after.is1 -or $after.app -or $after.link -or $after.rule -or $after.ritmelliKey -or $after.folders) { throw 'the uninstall left something' }
