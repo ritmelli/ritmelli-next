@@ -53,7 +53,8 @@ def run_round(config: Config, machine: Machine) -> None:
         _round(config, machine)
     except Exception as error:
         reason = f"{type(error).__name__}: {error}"
-        _write(config, f"error: {reason}", estado="parado", erro=reason)
+        _log(f"error: {reason}")
+        run_state.write(config.folder, {"estado": "parado", "erro": reason})
 
 
 def _round(config: Config, machine: Machine) -> None:
@@ -93,7 +94,7 @@ def _settle(config: Config, machine: Machine) -> None:
         _write(config, line, estado="instalada", instalada=ended, falhas={}, erro=None)
         return
     failures = _failures(state)
-    failures[ended] = failures.get(ended, 0) + 1
+    failures[ended] = int(failures.get(ended, 0)) + 1
     reason = f"the installer for {ended} didn't finish (see {state.get('log')})"
     line, kept = f"previous install: failed ({ended})", state.get("instalada")
     _write(config, line, estado="parado", instalada=kept, falhas=failures, erro=reason)
@@ -101,9 +102,7 @@ def _settle(config: Config, machine: Machine) -> None:
 
 def _failures(state: Mapping[str, object]) -> dict[str, int]:
     """How many setups of each version ended without it."""
-    found = state.get("falhas")
-    counts = cast(dict[str, object], found) if isinstance(found, dict) else {}
-    return {key: count for key, count in counts.items() if isinstance(count, int)}
+    return dict(cast(dict[str, int], state.get("falhas") or {}))
 
 
 def _clean(config: Config) -> None:
@@ -134,7 +133,7 @@ def _wanted(config: Config) -> Manifest | None:
         line = f"no new version (installed {mine}, published {version})"
         _write(config, line, estado="parado", nova=None, progresso=0.0)
         return None
-    tried = _failures(run_state.read(config.folder)).get(version, 0)
+    tried = int(_failures(run_state.read(config.folder)).get(version, 0))
     if tried >= SETUP_TRIES:
         line = f"{version}: the installer failed {tried} times; not trying again"
         reason = f"the installer for {version} failed {tried} times; waiting for the next version"
@@ -161,10 +160,17 @@ def _download(config: Config, found: Manifest) -> Path:
     if final.exists() and download.sha256(final) == installer.sha256:
         return final
     partial = final.with_name(final.name + DOWNLOADING)
+    shown = [time.monotonic()]
+
+    def progress(done: float) -> None:
+        if time.monotonic() - shown[0] >= 2.0:
+            shown[0] = time.monotonic()
+            run_state.write(folder, {"estado": "baixando", "progresso": round(done, 3)})
+
     try:
         with partial.open("wb") as out:
             url, size = installer.url, installer.size
-            download.download(url, size, out, config.https_only, lambda _: None)
+            download.download(url, size, out, config.https_only, progress)
         if download.sha256(partial) != installer.sha256:
             raise Refused("the downloaded installer doesn't match the manifest")
         partial.replace(final)
@@ -189,7 +195,6 @@ def _install(config: Config, machine: Machine, setup: Path, found: Manifest) -> 
 
 
 def _write(config: Config, line: str, **changes: object) -> None:
-    """Merges changes into the estado.json and says line in the log."""
     run_state.write(config.folder, changes)
     _log(line)
 
