@@ -12,7 +12,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 FOLDERS = ("src", "installer", "tools")
-RUFF_CASES = Path("tools/lint/ruff")
 MODULES = {"ast", "re", "tokenize", "pathlib", "dataclasses", "typing", "collections"}
 MAX_LINES = 60
 
@@ -57,8 +56,6 @@ def hits(root: Path, checks: dict[str, Check]) -> list[str]:
     found: list[str] = []
     for path in sorted(p for f in FOLDERS for p in (root / f).rglob("*.py")):
         where = path.relative_to(root)
-        if where.is_relative_to(RUFF_CASES):
-            continue
         source = path.read_text(encoding="utf-8")
         tree = ast.parse(source, filename=str(where))
         for name, check in checks.items():

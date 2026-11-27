@@ -34,7 +34,7 @@ class FakeGh:
 
 def record(gh: FakeGh, tmp_path: Path, **fields: str | None) -> int:
     output = tmp_path / "ruff.txt"
-    output.write_text("src/a.py:3:89: E501 Line too long (91 > 88)\n", "utf-8")
+    output.write_text("src/a.py:3:89: E501 Line too long (91 > 88)\n", "utf-16")
     given = {"name": "long-line", "kind": "rule", "pr": "7", "file": "src/a.py"}
     given |= {"line": "3", "command": "uv run ruff check --select E501", **fields}
     argv = [part for key, v in given.items() if v for part in (f"--{key}", v)]

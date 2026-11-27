@@ -50,7 +50,8 @@ def valid_name(text: str) -> str:
 
 def read_output(path: str) -> str:
     try:
-        text = Path(path).read_text(encoding="utf-8")
+        data = Path(path).read_bytes()
+        text = data.decode("utf-16" if data[:2] == b"\xff\xfe" else "utf-8", "replace")
     except OSError as error:
         raise argparse.ArgumentTypeError(str(error)) from error
     if not text.strip():
