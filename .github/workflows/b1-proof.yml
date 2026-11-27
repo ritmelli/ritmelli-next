@@ -1,0 +1,77 @@
+name: B1 proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  HEAD_SHA: 35fdfae422636cd6619e405bca6811743472b753
+
+jobs:
+  linux:
+    name: B1 proof Linux
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: The checkout has the head trees
+        run: |
+          test "$(git rev-parse HEAD:installer)" = "$(git rev-parse "$HEAD_SHA:installer")"
+          test "$(git rev-parse HEAD:.github/actions)" = "$(git rev-parse "$HEAD_SHA:.github/actions")"
+      - name: Blob ids against ritmelli/ritmelli@dfc8bf8
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api 'repos/ritmelli/ritmelli/git/trees/dfc8bf8?recursive=1' --jq '.truncated' | grep -qx false
+          gh api 'repos/ritmelli/ritmelli/git/trees/dfc8bf8?recursive=1' --jq '.tree[] | select(.type=="blob") | select((.path|startswith("instalador/bootloader/")) or .path=="instalador/msys2.ps1" or (.path|startswith(".github/actions/inno-setup/"))) | "\(.mode) \(.sha) \(.path)"' | sed 's#^\([0-9]* [0-9a-f]* \)instalador/#\1installer/#' | sort -k3 > "$RUNNER_TEMP/old.txt"
+          git ls-tree -r "$HEAD_SHA" -- installer .github/actions | awk '{print $1" "$3" "$4}' | sort -k3 > "$RUNNER_TEMP/new.txt"
+          cat "$RUNNER_TEMP/new.txt"
+          wc -l "$RUNNER_TEMP/old.txt" "$RUNNER_TEMP/new.txt"
+          test "$(wc -l < "$RUNNER_TEMP/old.txt")" -eq 9
+          diff "$RUNNER_TEMP/old.txt" "$RUNNER_TEMP/new.txt"
+      - name: sha256 of the four exe against FONTE.txt
+        working-directory: installer/bootloader/bin
+        run: |
+          test "$(grep -cE '^[0-9a-f]{64}  ' FONTE.txt)" -eq 4
+          grep -E '^[0-9a-f]{64}  ' FONTE.txt | sha256sum -c -
+
+  windows:
+    name: B1 proof Windows
+    runs-on: windows-2025
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: The action is the head blob, and no user Inno yet
+        shell: powershell
+        run: |
+          git fetch --no-tags --depth=1 origin $env:HEAD_SHA
+          if ((git rev-parse HEAD:.github/actions) -ne (git rev-parse "$($env:HEAD_SHA):.github/actions")) { throw 'the action differs from the head' }
+          if (Test-Path "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") { throw 'a user Inno is already there' }
+          New-Item -ItemType Directory .github/actions/bad-hash | Out-Null
+          (Get-Content .github/actions/inno-setup/action.yml) -replace '9C73C3BAE7ED', '0C73C3BAE7ED' | Set-Content .github/actions/bad-hash/action.yml
+      - name: A wrong hash stops the action
+        id: bad
+        continue-on-error: true
+        uses: ./.github/actions/bad-hash
+      - name: The wrong hash failed before installing
+        shell: powershell
+        run: |
+          if ('${{ steps.bad.outcome }}' -ne 'failure') { throw 'the wrong hash did not fail' }
+          if (Test-Path "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") { throw 'Inno was installed with a wrong hash' }
+      - name: The action
+        uses: ./.github/actions/inno-setup
+      - name: Inno Setup 6.7.3 in the user folder
+        shell: powershell
+        run: |
+          $v = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Inno Setup 6_is1').DisplayVersion
+          $f = (Get-Item "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe").VersionInfo.ProductVersion
+          "DisplayVersion=$v ISCC ProductVersion=$f"
+          (Get-FileHash "$env:RUNNER_TEMP\innosetup-6.7.3.exe" -Algorithm SHA256).Hash
+          if ($v -ne '6.7.3') { throw "DisplayVersion is $v" }
