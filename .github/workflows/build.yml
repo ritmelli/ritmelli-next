@@ -1,0 +1,78 @@
+name: Build
+
+on:
+  pull_request:
+    paths:
+      - installer/**
+      - filter/**
+      - src/ritmelli/machine/**
+      - src/ritmelli/update/**
+      - src/ritmelli/app.py
+  workflow_dispatch:
+    inputs:
+      version:
+        description: The version of the test build, 0.900.N
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: windows-2025
+    timeout-minutes: 20
+    env:
+      VERSION: ${{ inputs.version || '0.900.0' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
+        with:
+          version: "0.12.15"
+      - name: Freeze
+        shell: powershell
+        run: installer\build.ps1 -Version $env:VERSION
+      - name: The exe
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = (Resolve-Path dist\ritmelli\ritmelli.exe).Path
+          $info = (Get-Item $exe).VersionInfo
+          if ($info.ProductName -ne 'Ritmelli' -or $info.ProductVersion -ne $env:VERSION) { throw "the exe says $($info.ProductName) $($info.ProductVersion)" }
+          $runw = (Select-String installer\bootloader\bin\FONTE.txt -Pattern '^([0-9a-f]{64})  runw\.exe$').Matches[0].Groups[1].Value
+          $venv = "$env:LOCALAPPDATA\ritmelli-next-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel"
+          if ((Get-FileHash "$venv\runw.exe" -Algorithm SHA256).Hash -ne $runw) { throw 'the runw.exe of the venv is not the one in FONTE.txt' }
+          # a mode must not show a window, leave a process listening on a port, or create a file in LOCALAPPDATA
+          $watcher = [IO.FileSystemWatcher]::new($env:LOCALAPPDATA)
+          $watcher.IncludeSubdirectories = $true
+          $null = Register-ObjectEvent $watcher Created -SourceIdentifier created
+          function Exits($code, $arguments) {
+            $watcher.EnableRaisingEvents = $true
+            # not by the shell, which writes its own caches in LOCALAPPDATA
+            $start = [Diagnostics.ProcessStartInfo]::new($exe, $arguments)
+            $start.UseShellExecute = $false
+            $started = Get-Date
+            $clock = [Diagnostics.Stopwatch]::StartNew()
+            $p = [Diagnostics.Process]::Start($start)
+            $window = $false
+            while (-not $p.WaitForExit(20)) {
+              $p.Refresh(); $window = $window -or $p.MainWindowHandle -ne 0
+              if ($clock.Elapsed.TotalSeconds -ge 5) { $p.Kill(); throw "ritmelli.exe $arguments still runs after 5 s; window: $window" }
+            }
+            $seconds = $clock.Elapsed.TotalSeconds
+            Start-Sleep -Milliseconds 500
+            $watcher.EnableRaisingEvents = $false
+            $files = @(Get-Event -SourceIdentifier created -ErrorAction SilentlyContinue | ForEach-Object { $_.SourceEventArgs.FullPath; Remove-Event -EventIdentifier $_.EventIdentifier })
+            $ports = @(Get-NetTCPConnection -State Listen | Where-Object { (Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).StartTime -ge $started } | ForEach-Object LocalPort)
+            "ritmelli.exe $arguments exited with $($p.ExitCode) in $seconds s; window: $window; new ports: $ports; new files: $files"
+            if ($p.ExitCode -ne $code -or $seconds -ge 5 -or $window -or $ports -or $files) { throw "ritmelli.exe $arguments should exit with $code in under 5 s and leave nothing" }
+          }
+          Exits 2 '--nao-existe'
+          $json = Join-Path $env:RUNNER_TEMP 'describe.json'
+          Exits 0 "--describe `"$json`""
+          $described = (Get-Content $json -Raw | ConvertFrom-Json).version
+          if ($described -ne $env:VERSION) { throw "--describe wrote the version $described" }
+          Exits 0 ''
