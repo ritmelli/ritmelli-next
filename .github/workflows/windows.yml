@@ -9,7 +9,6 @@ on:
       - src/ritmelli/app.py
       - filter/**
       - installer/**
-      - .github/workflows/windows.yml
 
 permissions:
   contents: read

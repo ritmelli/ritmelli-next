@@ -20,7 +20,6 @@ def run(argv: Sequence[str], timeout: float) -> tuple[int, str]:
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             timeout=timeout,
-            text=True,
             encoding="oem",
             errors="replace",
             creationflags=subprocess.CREATE_NO_WINDOW,
@@ -45,6 +44,6 @@ def spawn_detached(argv: Sequence[str]) -> int:
     )
     breakaway = flags | subprocess.CREATE_BREAKAWAY_FROM_JOB
     try:
-        return subprocess.Popen(argv, creationflags=breakaway, close_fds=True).pid
+        return subprocess.Popen(argv, creationflags=breakaway).pid
     except OSError:
-        return subprocess.Popen(argv, creationflags=flags, close_fds=True).pid
+        return subprocess.Popen(argv, creationflags=flags).pid

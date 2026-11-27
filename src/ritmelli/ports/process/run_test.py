@@ -18,9 +18,8 @@ spawn_detached([sys.argv[1], "-c", sys.argv[2], str(os.getpid()), sys.argv[3]])
 """
 CHILD = """
 import _winapi, pathlib, sys
-SYNCHRONIZE = 0x00100000
 try:
-    parent = _winapi.OpenProcess(SYNCHRONIZE, False, int(sys.argv[1]))
+    parent = _winapi.OpenProcess(_winapi.SYNCHRONIZE, False, int(sys.argv[1]))
 except OSError:
     parent = None
 if parent is None or _winapi.WaitForSingleObject(parent, 5000) == _winapi.WAIT_OBJECT_0:
@@ -63,9 +62,7 @@ def test_spawn_detached_stays_in_a_job_that_refuses_breakaway(
     class Popen:
         pid = 7
 
-        def __init__(
-            self, argv: Sequence[str], creationflags: int, close_fds: bool
-        ) -> None:
+        def __init__(self, argv: Sequence[str], creationflags: int) -> None:
             flags.append(creationflags)
             if creationflags & subprocess.CREATE_BREAKAWAY_FROM_JOB:
                 raise PermissionError(13, "Access is denied")
