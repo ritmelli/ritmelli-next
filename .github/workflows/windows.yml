@@ -74,3 +74,11 @@ jobs:
           foreach ($name in 'DllGetClassObject', 'DllCanUnloadNow', 'DllRegisterServer', 'DllUnregisterServer') {
             if (-not ($exports -match " $name$")) { throw "micfx.dll does not export $name" }
           }
+      - name: The ring layout under cl
+        if: ${{ !cancelled() }}
+        shell: cmd
+        run: |
+          for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do call "%%i\VC\Auxiliary\Build\vcvars64.bat" >nul
+          cl /nologo /std:c++17 /Fo%RUNNER_TEMP%\ /Fe%RUNNER_TEMP%\describe.exe filter\abi\describe.cpp || exit /b 1
+          %RUNNER_TEMP%\describe.exe %RUNNER_TEMP%\ring.layout.json || exit /b 1
+          git diff --no-index filter/abi/ring.layout.json %RUNNER_TEMP%\ring.layout.json
