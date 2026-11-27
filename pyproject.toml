@@ -5,6 +5,7 @@ description = "Ritmelli, the next version: work repository"
 license = "GPL-3.0-only"
 requires-python = "==3.12.*"
 dependencies = [
+    "certifi",
     "pycryptodomex==3.24.2",
 ]
 
