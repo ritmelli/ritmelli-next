@@ -1,0 +1,65 @@
+name: Budget
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  merge_group:
+
+permissions:
+  contents: read
+  actions: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  budget:
+    name: Budget
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    env:
+      BASE: ${{ github.event.pull_request.base.sha }}
+      HEAD: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Size
+        run: |
+          lines=$(git diff --numstat "$BASE...$HEAD" -- . ':!uv.lock' ':!src/ritmelli/storage/legacy/fixtures' ':!ui/src/pixel/sheets' ':!filter/abi/ring.layout.json' | awk '{n += $1 + $2} END {print n + 0}')
+          echo "lines changed: $lines, the limit is 400"
+          [ "$lines" -le 400 ] || { echo "::error::split this PR ($lines lines changed, the limit is 400)"; exit 1; }
+      - name: Pushes
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.head_ref }}
+          OPENED: ${{ github.event.pull_request.created_at }}
+        run: |
+          heads=$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/budget.yml/runs" -f event=pull_request -f branch="$BRANCH" -f created=">=$OPENED" -f per_page=100 --paginate --jq '.workflow_runs[].head_sha')
+          pushes=$(( $(sort -u <<< "$heads"$'\n'"$HEAD" | grep -c .) - 1 ))
+          echo "pushes since the PR opened: $pushes, the limit is 3"
+          [ "$pushes" -le 3 ] || { echo "::error::close this PR and start again with a smaller plan ($pushes pushes since it opened, the limit is 3)"; exit 1; }
+      - name: Plan
+        if: ${{ !cancelled() }}
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          re='^Ficha: ([^[:space:]]+)$'
+          [[ $(head -n 1 <<< "$BODY" | tr -d '\r') =~ $re ]] || { echo "::error::the first line of the PR body must be 'Ficha: <name>'"; exit 1; }
+          name=${BASH_REMATCH[1]}
+          git cat-file -e "$BASE:fichas.toml" 2>/dev/null || { echo "::error::fichas.toml is missing on the base branch"; exit 1; }
+          paths=$(git show "$BASE:fichas.toml" | python3 -c '
+          import sys, tomllib
+          fichas = {f["name"]: f["paths"] for f in tomllib.load(sys.stdin.buffer)["ficha"]}
+          if sys.argv[1] not in fichas:
+              sys.exit(1)
+          print(*fichas[sys.argv[1]], sep="\n")
+          ' "$name") || { echo "::error::ficha $name is not in fichas.toml on the base branch"; exit 1; }
+          mapfile -t patterns <<< "$paths"
+          outside=$(git diff --no-renames --name-only "$BASE...$HEAD" -- . "${patterns[@]/#/:(exclude,glob)}")
+          while IFS= read -r file; do [ -z "$file" ] || echo "::error::$file is outside the ficha $name"; done <<< "$outside"
+          [ -z "$outside" ]
