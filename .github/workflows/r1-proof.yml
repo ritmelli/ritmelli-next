@@ -1,0 +1,28 @@
+name: R1 proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  eol:
+    name: R1 proof
+    runs-on: windows-2025
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Line endings after checkout
+        run: |
+          git config --get core.autocrlf || true
+          git ls-files --eol filter/apo/proof.bat installer/proof.ps1 src/ritmelli/update/fixtures/crlf.json
+          git ls-files --eol filter/apo/proof.bat | grep -q 'w/crlf'
+          git ls-files --eol installer/proof.ps1 | grep -q 'w/crlf'
+          git ls-files --eol src/ritmelli/update/fixtures/crlf.json | grep -q 'attr/-text'
+          echo "d98f3f426e03417d6ee481631078614525cbefb7985407ac1688ddded152dd7e  src/ritmelli/update/fixtures/crlf.json" | sha256sum -c -
