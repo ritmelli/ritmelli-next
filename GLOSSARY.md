@@ -10,7 +10,7 @@ One English name per concept. The Portuguese term is on the left. Use the Englis
 - hospedeiro = host (our APO that takes a vendor MFX slot and runs the vendor APO inside it)
 - montagem de teste = test build (a setup built from main for the crossing, never published)
 - passagem = transition
-- pasta protegida = protected folder (a folder that only SYSTEM, Administrators or TrustedInstaller can write)
+- pasta protegida = protected folder
 - prateleira = shelf
 - prato = deck
 - preparo do microfone = mic setup (the --microfone mode: puts the filter on each microphone and takes it off)
