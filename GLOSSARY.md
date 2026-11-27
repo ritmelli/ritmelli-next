@@ -4,7 +4,6 @@ One English name per concept. The Portuguese term is on the left. Use the Englis
 
 - achado = finding (a problem a review reproduced, kept as the GitHub issue `finding: <name>`)
 - anel = ring
-- escapou da regra = rule-missed (the label of a finding that came back after its lint rule)
 - ficha = kind (a kind of change, in kinds.toml)
 - filtro = filter (the audio effect DLL, an APO, that the microphone passes through)
 - folga = headroom

@@ -1,6 +1,4 @@
-"""Record a review finding as a GitHub issue. A second PR adds the label promote.
-
-list prints each finding: its name, how many PRs had it, its labels and its address."""
+"""Record a review finding as a GitHub issue. A second PR adds the label promote."""
 
 import argparse
 import json

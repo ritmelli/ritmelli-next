@@ -10,6 +10,7 @@ This file says when a review stops. Where another review rule disagrees, this fi
 ## Findings
 
 - A finding blocks only with the command the reviewer ran and its output. Without them, it is dropped.
+- An input that can only be built by hand does not block.
 - It is one of three kinds: `bug` (a wrong result or a crash), `leftover` (something that does nothing now) or `rule` (a written rule broken, that no check catches yet).
 - Before the fix, run the command again. A finding that does not reproduce is dropped.
 - Personal taste is not a finding.

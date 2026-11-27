@@ -29,7 +29,6 @@ uv run pytest
 
 `--ignore-noqa` means a `# noqa` comment silences nothing. Fix the code instead.
 The Check also runs actionlint on `.github/workflows/`.
-A PR that touches `machine/`, `ports/`, `update/`, `app.py`, `filter/` or `installer/` also runs pytest on Windows.
 
 ## A PR
 
