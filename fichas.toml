@@ -15,14 +15,14 @@ core = false
 [[ficha]]
 name = "shared-rule"
 title = "Rule that several commands use"
-paths = ["src/ritmelli/features/**/ops/**"]
+paths = ["src/ritmelli/features/**"]
 proof = "Starts the app in --mock and drives each command that calls the operation through the case the PR names."
 core = false
 
 [[ficha]]
 name = "port"
 title = "New side effect at the edge, such as a file dialog"
-paths = ["src/ritmelli/ports/**"]
+paths = ["src/ritmelli/ports/**", "pyproject.toml", "uv.lock"]
 proof = "Runs the new run.py once against the real library, on the Windows job when it needs Windows, and checks the event it returns."
 core = false
 
@@ -30,13 +30,13 @@ core = false
 name = "voice-effect"
 title = "Voice effect, new or tuned, with primitives that exist"
 paths = ["src/ritmelli/features/voice/effects/**"]
-proof = "Runs the effect conformance (both rates, 3 s of fixed speech, no NaN, no clipping, within 6 LU) and attaches a screenshot of the pedal in --mock."
+proof = "Runs the effect conformance and attaches a screenshot of the pedal in --mock."
 core = false
 
 [[ficha]]
 name = "source"
 title = "New music source"
-paths = ["src/ritmelli/sources/*/**", "src/ritmelli/features/**", "ui/src/pieces/**"]
+paths = ["src/ritmelli/sources/*/**", "src/ritmelli/features/**", "ui/src/pieces/**", "pyproject.toml", "uv.lock"]
 proof = "Runs the source conformance through the child process, one search and one resolve against the real source, and presses the new button in --mock when there is one."
 core = false
 
@@ -50,14 +50,14 @@ core = false
 [[ficha]]
 name = "theme"
 title = "Visual tweak to a screen piece"
-paths = ["ui/src/pieces/**"]
+paths = ["ui/src/pieces/**", "ui/src/pixel/**"]
 proof = "Starts the app in --mock and attaches screenshots of the piece before and after the change."
 core = false
 
 [[ficha]]
 name = "piece"
 title = "New screen piece and its place in a layout"
-paths = ["ui/src/pieces/**", "ui/src/layouts/**"]
+paths = ["ui/src/pieces/**", "ui/src/layouts/**", "ui/src/pixel/**"]
 proof = "Checks that the piece has the same keys in pt and en, starts the app in --mock, and attaches a screenshot of the layout with the piece."
 core = false
 
@@ -86,5 +86,5 @@ core = false
 name = "core"
 title = "Core change the owner asked for"
 paths = ["**"]
-proof = "Runs the proof the owner names when asking for the change: the bench, the clean-machine install, or a scenario in --mock."
+proof = "Runs the proof the owner named when asking for this change (the bench, the clean-machine install, or a scenario in --mock), and fails when the owner did not ask for it."
 core = true

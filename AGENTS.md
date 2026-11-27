@@ -3,8 +3,8 @@
 Before you write anything, say which ficha the change is: one entry of fichas.toml.
 The first line of the PR body is `Ficha: <name>`.
 Every file the PR changes must match one of that ficha's paths.
-The Budget check reads fichas.toml from the base branch and fails an unknown name or a file outside the ficha.
-If no ficha fits, the change is core: stop and ask the owner.
+The Budget check enforces this with fichas.toml from the base branch.
+If no ficha fits, the change is core: stop and ask the owner. Write `Ficha: core` only when the owner asked for the change.
 After the first line, the body has up to 15 lines on what changes for the person using the app.
 
 ## House rules
@@ -28,8 +28,8 @@ Screen piece, text, visual tweak ........... ui/src/pieces/
 Where a piece sits on the screen ........... ui/src/layouts/
 A tuned number ............................. the tuning.py next to the code that uses it
 What is saved to disk ...................... src/ritmelli/storage/
-CORE, owner only: kernel/, update/, machine/, storage/legacy/, filter/, installer/, .github/,
-                  tools/, and every file at the root but pyproject.toml and uv.lock
+CORE, owner only: kernel/, update/, machine/, storage/legacy/, filter/, installer/, .github/, tools/,
+                  .claude/, sources/conformance.py, and every file at the root but pyproject.toml and uv.lock
 ```
 
 ## What to read first, after this file
@@ -42,8 +42,7 @@ CORE, owner only: kernel/, update/, machine/, storage/legacy/, filter/, installe
 
 ## Core
 
-Core is the CORE line above. Only the `core` ficha covers it.
-A core PR starts only when the owner asks for it. It gets three review rounds.
+Core is the CORE line above, and every path no other ficha covers. Only the `core` ficha covers it.
 Paths in .github/CODEOWNERS also need the owner's approval, given on the evidence card, not on the code.
 kernel/ stays under 900 lines.
 
