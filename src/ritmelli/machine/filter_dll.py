@@ -114,7 +114,6 @@ def place(dll: str, folder: str, key: str = SAVED_KEY) -> bool:
             if _state() != "Running":
                 _service("Start")
         raise
-    print("DLL replaced")
     return True
 
 
@@ -124,13 +123,15 @@ def restart(only_service: bool) -> str | None:
     with it. With only_service, when only the DLL changed, the new audiodg.exe loads it
     and the AudioEndpointBuilder, which builds every device again, stays as it is.
 
-    The error of the AudioEndpointBuilder, or None. An audio service that does not
-    come back raises.
+    The error of the AudioEndpointBuilder, past the timeout too, or None. An audio
+    service that does not come back raises.
     """
     error = None
     if not only_service:
         command = "Restart-Service AudioEndpointBuilder -Force -ErrorAction Stop"
-        code, out = _powershell(command)
+        code, out = -1, f"it ran past {TIMEOUT_S} s"
+        with contextlib.suppress(TimeoutError):
+            code, out = _powershell(command)
         if code:
             error = f"the AudioEndpointBuilder didn't restart ({code}): {out.strip()}"
     _service("Start")
@@ -145,5 +146,4 @@ def forget(key: str = SAVED_KEY) -> None:
         winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key, 0, winreg.KEY_SET_VALUE) as k,
     ):
         for name in (SOURCES, DLL_SHA256):
-            with contextlib.suppress(OSError):
-                winreg.DeleteValue(k, name)
+            winreg.DeleteValue(k, name)

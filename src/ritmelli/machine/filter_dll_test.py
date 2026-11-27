@@ -50,12 +50,12 @@ class Registry:
 
 class PC:
     """Each program run, in order: PowerShell by its command, the others by name. The
-    audio service follows what PowerShell does to it."""
+    audio service follows what PowerShell does to it. The slow one is killed."""
 
     def __init__(self) -> None:
         self.calls: list[str] = []
         self.args: dict[str, list[str]] = {}
-        self.audio, self.regsvr32 = "Running", 0
+        self.audio, self.regsvr32, self.slow = "Running", 0, ""
         self.registry = Registry()
 
     def run(self, argv: Sequence[str], timeout: float) -> tuple[int, str]:
@@ -67,6 +67,8 @@ class PC:
             return 0, f"{self.audio}\r\n"
         after = {STOP: "Stopped", BUILDER: "Stopped", START: "Running"}
         self.audio = after.get(call, self.audio)
+        if call == self.slow:
+            raise TimeoutError(f"{argv[0]} ran past {timeout} s")
         return (self.regsvr32 if name == "regsvr32.exe" else 0), ""
 
     def pair(self) -> Values:
@@ -135,10 +137,13 @@ def test_the_same_dll_stays_and_gets_its_digest(pc: PC, tmp_path: Path) -> None:
 
 
 def test_new_sources_or_v0_7_0_put_back_stop_the_sound_once(
-    pc: PC, capsys: pytest.CaptureFixture[str], tmp_path: Path
+    pc: PC, tmp_path: Path
 ) -> None:
     # The filter changed, and only the DLL; or v0.7.0, put back by hand, left its DLL
-    # under the digest of the new line, and a microphone changed too.
+    # under the digest of the new line, a microphone changed too, and the
+    # AudioEndpointBuilder, which stops the audio service with it, ran past the timeout.
+    pc.slow = BUILDER
+    late = "the AudioEndpointBuilder didn't restart (-1): it ran past 60.0 s"
     for n, (old, saved, only_service) in enumerate(
         ((b"0.900.1", OTHER, True), (b"0.7.0", DIGEST, False))
     ):
@@ -147,13 +152,12 @@ def test_new_sources_or_v0_7_0_put_back_stop_the_sound_once(
         dll, installed = app_dll(tmp_path / str(n), b"0.900.2", installed=old)
         assert filter_dll.place(dll, str(installed.parent))
         pc.calls.append("mic setup")
-        assert filter_dll.restart(only_service) is None
+        assert filter_dll.restart(only_service) == (None if only_service else late)
         replaced = ["icacls.exe", STOP, STATUS, "copy", "regsvr32.exe", "mic setup"]
         builder = [] if only_service else [BUILDER]
         assert pc.calls == [*replaced, *builder, START, STATUS]
         assert installed.read_bytes() == b"0.900.2"
         assert pc.pair() == {"_sources": DIGEST, "_dll_sha256": sha(b"0.900.2")}
-        assert capsys.readouterr().out == "DLL replaced\n"
         assert pc.audio == "Running"
 
 

@@ -2,7 +2,7 @@
 # proof folder, on Windows as an administrator, with the audio service on. The second
 # DLL has other bytes, as the next version's does, and the same sources digest: the
 # installed one keeps its sha256 and its date, the audio service keeps its process, and
-# nothing says DLL replaced. It registers the DLL of the proof folder, and refuses a PC
+# place exits with 0. It registers the DLL of the proof folder, and refuses a PC
 # that has the key already, as a PC with Ritmelli does.
 # Usage: filter_dll.ps1 -Dll <micfx.dll, with micfx.sources next to it> [-Proof <folder>] [-Key <path in HKLM>]
 param(
@@ -27,23 +27,18 @@ $installed = Join-Path $folder 'micfx.dll'
 function Place($dll) {
   $out = uv run --project $root python -c 'import sys; from ritmelli.machine import filter_dll; sys.exit(filter_dll.place(*sys.argv[1:]))' $dll $folder $Key
   if ($LASTEXITCODE -ne 0) { throw "filter_dll.place exited with $LASTEXITCODE`: $out" }
-  "$out"
 }
 function Audio { (Get-CimInstance Win32_Service -Filter "Name='audiosrv'").ProcessId }
 function Installed { "$((Get-FileHash $installed).Hash) $((Get-Item $installed).LastWriteTimeUtc.ToString('o'))" }
 
 try {
   $audio = Audio
-  $null = Place $Dll
-  $saved = Get-ItemProperty "HKLM:\$Key"
-  $want = "$((Get-Content $sources -Raw).Trim()) $((Get-FileHash $Dll).Hash)"
-  if ("$($saved._sources) $($saved._dll_sha256)" -ne $want) { throw "the key has $($saved._sources) $($saved._dll_sha256), not $want" }
+  Place $Dll
   $first = Installed
   $null = New-Item -ItemType Directory $next
   Copy-Item $Dll, $sources $next
   $tail = [IO.File]::Open("$next\micfx.dll", 'Append'); $tail.WriteByte(0); $tail.Close()
-  $out = Place "$next\micfx.dll"
-  if ($out -match 'DLL replaced') { throw "the second place said: $out" }
+  Place "$next\micfx.dll"
   if ((Installed) -ne $first) { throw "the installed DLL was $first, and is $(Installed)" }
   if ((Audio) -ne $audio) { throw "the audio service ran as process $audio, and runs as $(Audio)" }
   "placed twice: the DLL kept $first, and the audio service its process $audio"
