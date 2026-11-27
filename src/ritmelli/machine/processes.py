@@ -4,7 +4,6 @@ SYSTEM, sees those of every session. This module is the Windows side of the roun
 import ctypes
 import os
 import sys
-from collections.abc import Sequence
 from pathlib import Path
 
 from ritmelli.ports.process.run import spawn_detached
@@ -68,11 +67,11 @@ def _image(pid: int) -> str | None:
         kernel.CloseHandle(handle)
 
 
-def app_open(folder: str | None = None) -> bool:
-    """A ritmelli.exe of the folder (by default, this exe's) runs, other than this
-    process, such as Ritmelli or the mic task. One whose path cannot be read counts as
-    open: in doubt, the new version waits."""
-    here = (Path(sys.executable).parent if folder is None else Path(folder)).resolve()
+def app_open() -> bool:
+    """A ritmelli.exe of this exe's folder runs, other than this process, such as
+    Ritmelli or the mic task. One whose path cannot be read counts as open: in doubt,
+    the new version waits."""
+    here = Path(sys.executable).parent.resolve()
     mine = os.getpid()
     for pid, name in _processes():
         if pid == mine or name.lower() != "ritmelli.exe":
@@ -87,7 +86,5 @@ def alive(pid: int) -> bool:
     return any(found == pid for found, _ in _processes())
 
 
-def launch(argv: Sequence[str]) -> int:
-    """The setup, detached: it replaces the ritmelli.exe of the round, which exits
-    right after."""
-    return spawn_detached(argv)
+# The setup, detached: it replaces the ritmelli.exe of the round, which exits right after.
+launch = spawn_detached

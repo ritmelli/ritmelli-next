@@ -18,7 +18,9 @@ def test_the_list_finds_this_process() -> None:
 
 
 @windows
-def test_a_ritmelli_exe_of_the_folder_counts_as_open(tmp_path: Path) -> None:
+def test_a_ritmelli_exe_of_the_folder_counts_as_open(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     app, other = tmp_path / "app", tmp_path / "other"
     app.mkdir()
     other.mkdir()
@@ -26,8 +28,10 @@ def test_a_ritmelli_exe_of_the_folder_counts_as_open(tmp_path: Path) -> None:
     fake = shutil.copy(ping, app / "ritmelli.exe")
     pid = spawn_detached([str(fake), "-n", "30", "127.0.0.1"])
     try:
-        assert processes.app_open(str(app))
-        assert not processes.app_open(str(other))
+        monkeypatch.setattr(sys, "executable", str(app / "ritmelli.exe"))
+        assert processes.app_open()
+        monkeypatch.setattr(sys, "executable", str(other / "ritmelli.exe"))
+        assert not processes.app_open()
     finally:
         os.kill(pid, signal.SIGTERM)
 
@@ -40,7 +44,7 @@ def test_this_process_does_not_count_and_one_it_cannot_look_at_does(
 
     mine = [(os.getpid(), "ritmelli.exe"), (8, "Ritmelli.EXE")]
     monkeypatch.setattr(processes, "_processes", lambda: mine[:1])
-    assert not processes.app_open("app")
+    assert not processes.app_open()
     monkeypatch.setattr(processes, "_processes", lambda: mine)
     monkeypatch.setattr(processes, "_image", unreadable)
-    assert processes.app_open("app")
+    assert processes.app_open()
