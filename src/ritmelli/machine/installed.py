@@ -24,7 +24,6 @@ HOST_CLSIDS = (
     "{1663A464-C189-435F-89BD-9C9E9BAF1C23}",
 )
 OUR_CLSIDS = (FILTER_CLSID, *HOST_CLSIDS)
-APO_KEY = r"SOFTWARE\Classes\AudioEngine\AudioProcessingObjects"
 CAPTURE_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Capture"
 # The original slots of each microphone, under its id. At the root, _hospede<n> is
 # the vendor MFX that host n runs, which the filter reads.

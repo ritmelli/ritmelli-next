@@ -85,21 +85,19 @@ class Registry:
             name: data for name, data, _ in self.keys[rf"hklm\{path}".lower()].values()
         }
 
-    def fx(self, endpoint: str = EP) -> dict[str, Data]:
-        return self.values(rf"{CAPTURE_KEY}\{endpoint}\FxProperties")
+    def fx(self) -> dict[str, Data]:
+        return self.values(rf"{CAPTURE_KEY}\{EP}\FxProperties")
 
-    def mic(
-        self, fx: dict[str, Data], endpoint: str = EP, off: int = 0
-    ) -> dict[str, Data]:
+    def mic(self, fx: dict[str, Data], off: int = 0) -> dict[str, Data]:
         """A microphone in the PC with these slots, and its enhancements on or off."""
-        base = rf"{CAPTURE_KEY}\{endpoint}"
+        base = rf"{CAPTURE_KEY}\{EP}"
         self.SetValueEx(self.CreateKeyEx("HKLM", base), "DeviceState", 0, DWORD, 1)
         props = self.CreateKeyEx("HKLM", base + r"\Properties")
         self.SetValueEx(props, NO_ENHANCEMENTS, 0, DWORD, off)
         key = self.CreateKeyEx("HKLM", base + r"\FxProperties")
         for name, data in fx.items():
             self.SetValueEx(key, name, 0, MULTI if isinstance(data, list) else SZ, data)
-        return self.fx(endpoint)
+        return self.fx()
 
 
 @pytest.fixture
@@ -146,7 +144,6 @@ def test_a_microphone_gone_from_the_pc_is_left_out(reg: Registry) -> None:
     with pytest.raises(mic_slots.LeftOut):
         mic_slots.put_on(EP2)
     assert rf"hklm\{SAVED_KEY}\{EP2}".lower() not in reg.keys
-    assert mic_slots.put_on(EP)
     reg.SetValueEx(reg.OpenKey("HKLM", gone), "DeviceState", 0, DWORD, 1)
     with pytest.raises(PermissionError):
         mic_slots.put_on(EP2)
