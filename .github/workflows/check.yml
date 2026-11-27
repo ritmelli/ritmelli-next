@@ -30,6 +30,8 @@ jobs:
         if: ${{ !cancelled() }}
       - run: uv run python tools/check_layout.py
         if: ${{ !cancelled() }}
+      - run: uv run python tools/lint/run.py
+        if: ${{ !cancelled() }}
       - run: uv run pytest
         if: ${{ !cancelled() }}
       - name: actionlint
