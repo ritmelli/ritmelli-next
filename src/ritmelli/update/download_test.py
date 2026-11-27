@@ -56,22 +56,24 @@ def url() -> Iterator[str]:
     server.server_close()
 
 
-def run(
-    url: str, path: Path, plan: Sequence[Step], waits: list[float], timeout: float = 5.0
-) -> list[float]:
+def run(url: str, path: Path, plan: Sequence[Step], waits: list[float]) -> list[float]:
     Planned.plan[:] = plan
     seen: list[float] = []
     with path.open("wb") as out:
-        download.download(url, SIZE, out, False, seen.append, waits.append, timeout)
+        download.download(url, SIZE, out, False, seen.append, waits.append)
     return seen
 
 
-def test_a_cut_goes_on_from_where_it_stopped(url: str, tmp_path: Path) -> None:
+def test_a_cut_goes_on_from_where_it_stopped(
+    url: str, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     waits: list[float] = []
     seen = run(url, tmp_path / "setup.exe", [("cut", CUT)], waits)
     assert download.sha256(tmp_path / "setup.exe") == hashlib.sha256(DATA).hexdigest()
     assert Planned.ranges == [None, f"bytes={CUT}-"]
     assert waits == [2.0] and seen[-1] == 1.0
+    log = capsys.readouterr().out
+    assert "stopped at 1.0 of 3.0 MB" in log and log.endswith("again in 2 s\n")
 
 
 def test_six_cuts_that_move_on_reach_the_end(url: str, tmp_path: Path) -> None:
@@ -81,8 +83,11 @@ def test_six_cuts_that_move_on_reach_the_end(url: str, tmp_path: Path) -> None:
     assert len(Planned.ranges) == 7 and waits == [2.0] * 6
 
 
-def test_a_server_that_stops_answering_is_resumed(url: str, tmp_path: Path) -> None:
-    run(url, tmp_path / "setup.exe", [("stall", CUT)], [], timeout=0.2)
+def test_a_server_that_stops_answering_is_resumed(
+    url: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(download, "TIMEOUT_S", 0.2)
+    run(url, tmp_path / "setup.exe", [("stall", CUT)], [])
     assert (tmp_path / "setup.exe").read_bytes() == DATA
     assert Planned.ranges == [None, f"bytes={CUT}-"]
 
@@ -101,6 +106,6 @@ def test_another_piece_from_the_server_starts_over(url: str, tmp_path: Path) -> 
 
 def test_five_stalled_tries_in_a_row_stop_it(url: str, tmp_path: Path) -> None:
     waits: list[float] = []
-    with pytest.raises(OSError, match="stopped at 1000 of"):
+    with pytest.raises(OSError, match=r"stopped at 0\.0 of 3\.0 MB"):
         run(url, tmp_path / "setup.exe", [("cut", 1000)] + [("cut", 0)] * 5, waits)
     assert len(Planned.ranges) == 6 and waits == [2.0, 2.0, 5.0, 15.0, 30.0]

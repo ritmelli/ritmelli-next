@@ -31,7 +31,7 @@ def write(
     folder: Path,
     changes: Mapping[str, object],
     sleep: Callable[[float], None] = time.sleep,
-) -> dict[str, object]:
+) -> None:
     """Merges changes into the state on disk and swaps the whole file at once.
 
     Each write drops the error of the one before and stamps the time, as v0.7.0 does.
@@ -49,7 +49,6 @@ def write(
         with contextlib.suppress(OSError):
             os.unlink(temporary)
         raise
-    return state
 
 
 def _swap(temporary: str, path: Path, sleep: Callable[[float], None]) -> None:

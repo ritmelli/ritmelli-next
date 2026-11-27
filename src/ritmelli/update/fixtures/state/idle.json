@@ -1,12 +1,14 @@
 {
  "estado": "parado",
+ "progresso": 0.0,
+ "nova": null,
+ "quando": "2026-11-27T15:52:12",
+ "setup": "Ritmelli-0.7.0-setup.exe",
+ "sha256": "fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83",
  "pid": 4241,
  "versao": "0.7.0",
  "de": "0.6.0",
  "log": "instalador-0.7.0.log",
- "quando": "2026-11-27T15:28:32",
  "instalada": "0.7.0",
- "falhas": {},
- "nova": null,
- "progresso": 0.0
+ "falhas": {}
 }

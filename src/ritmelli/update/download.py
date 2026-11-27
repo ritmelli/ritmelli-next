@@ -51,11 +51,8 @@ def fetch(url: str, limit: int, https_only: bool) -> bytes:
 
 
 def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
     with path.open("rb") as file:
-        while chunk := file.read(CHUNK):
-            digest.update(chunk)
-    return digest.hexdigest()
+        return hashlib.file_digest(file, "sha256").hexdigest()
 
 
 def download(
@@ -65,7 +62,6 @@ def download(
     https_only: bool,
     progress: Progress,
     sleep: Callable[[float], None] = time.sleep,
-    timeout: float = TIMEOUT_S,
 ) -> None:
     """Writes size bytes of url into out, over https unless the hook has SoHttps 0.
 
@@ -77,25 +73,28 @@ def download(
     stalled = 0
     while True:
         before = out.tell()
-        reason = _attempt(url, size, out, progress, timeout)
+        reason = _attempt(url, size, out, progress)
         done = out.tell()
         if done == size:
             return
         stalled = 0 if done > before else stalled + 1
+        stopped = f"stopped at {done / 2**20:.1f} of {size / 2**20:.1f} MB ({reason})"
         if stalled > len(RETRY_WAITS_S):
-            raise OSError(f"the download stopped at {done} of {size} bytes ({reason})")
-        sleep(RETRY_WAITS_S[max(stalled - 1, 0)])
+            raise OSError(f"the download {stopped}")
+        wait = RETRY_WAITS_S[max(stalled - 1, 0)]
+        print(f"update: the download {stopped}; again in {wait:.0f} s", flush=True)
+        sleep(wait)
 
 
-def _attempt(
-    url: str, size: int, out: BinaryIO, progress: Progress, timeout: float
-) -> object:
+def _attempt(url: str, size: int, out: BinaryIO, progress: Progress) -> object:
     """One request from where out stops. Returns why it ended before size."""
     start = out.tell()
     headers = HEADERS | ({"Range": f"bytes={start}-"} if start else {})
     request = urllib.request.Request(url, headers=headers)
     try:
-        with urllib.request.urlopen(request, timeout=timeout, context=_tls()) as reply:
+        with urllib.request.urlopen(
+            request, timeout=TIMEOUT_S, context=_tls()
+        ) as reply:
             span: str = reply.headers.get("Content-Range", "")
             resumed = reply.status == 206 and span.startswith(f"bytes {start}-")
             if start and not resumed:

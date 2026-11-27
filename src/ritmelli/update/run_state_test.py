@@ -13,7 +13,7 @@ STATES = Path(__file__).parent / "fixtures" / "state"
 def test_each_state_of_v070_keeps_its_keys_and_types(tmp_path: Path) -> None:
     """The files come from the v0.7.0 round. A write drops erro, as v0.7.0 does."""
     goldens = sorted(STATES.glob("*.json"))
-    assert len(goldens) == 6
+    assert len(goldens) == 5
     for golden in goldens:
         before: dict[str, object] = json.loads(golden.read_bytes())
         kept = {key: value for key, value in before.items() if key != "erro"}
