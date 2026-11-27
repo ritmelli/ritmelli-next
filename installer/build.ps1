@@ -1,6 +1,7 @@
 # Freezes ritmelli.exe into dist\ritmelli with ritmelli.spec, by the PyInstaller of the
 # build group, with our bootloaders in place of the ones it ships: the ready-made ones
-# are the start of many malware files, and antivirus marks the app with them.
+# are the start of many malware files, and antivirus marks the app with them. First it
+# builds the filter with the same version and writes its sources digest next to it.
 # Usage: build.ps1 -Version 0.900.N
 param([Parameter(Mandatory)][ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version)
 $ErrorActionPreference = 'Stop'
@@ -18,6 +19,8 @@ $env:RITMELLI_VERSION = $Version
 Push-Location (Split-Path $PSScriptRoot)
 try {
   Run 'uv sync' { uv sync --locked --group build }
+  Run 'compila.bat' { cmd /c filter\apo\compila.bat $Version }
+  Run 'sources digest' { uv run --no-sync python installer\build_info.py sources filter\apo\saida\micfx.sources }
   $ours = Join-Path $PSScriptRoot 'bootloader\bin'
   $venv = Join-Path $env:UV_PROJECT_ENVIRONMENT 'Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel'
   # uv links these files to its cache: a copy over the link would change the cache too
@@ -27,4 +30,5 @@ try {
   $got = (Get-FileHash (Join-Path $venv 'runw.exe') -Algorithm SHA256).Hash
   if ($got -ne $runw) { throw "runw.exe in the venv has hash $got, not the $runw of FONTE.txt" }
   Run 'pyinstaller' { uv run --no-sync pyinstaller --noconfirm --log-level ERROR installer\ritmelli.spec }
+  & filter\apo\check_version.ps1 -Folder dist\ritmelli\_internal\microfone -Version $Version
 } finally { Pop-Location }

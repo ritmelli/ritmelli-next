@@ -59,7 +59,8 @@ jobs:
             $p = [Diagnostics.Process]::Start($start)
             $window = $false
             while (-not $p.WaitForExit(20)) {
-              $p.Refresh(); $window = $window -or $p.MainWindowHandle -ne 0
+              # the handle reads as null, which is -ne 0, when the exe exits between the two calls
+              $p.Refresh(); $window = $window -or [long]$p.MainWindowHandle -ne 0
               if ($clock.Elapsed.TotalSeconds -ge 5) { $p.Kill(); throw "ritmelli.exe $arguments still runs after 5 s; window: $window" }
             }
             $seconds = $clock.Elapsed.TotalSeconds
@@ -76,3 +77,60 @@ jobs:
           $described = (Get-Content $json -Raw | ConvertFrom-Json).version
           if ($described -ne $env:VERSION) { throw "--describe wrote the version $described" }
           Exits 0 ''
+      - name: Build info
+        shell: powershell
+        run: |
+          $env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\ritmelli-next-build"
+          # from the describe.json the exe wrote in the step above
+          uv run --no-sync python installer\build_info.py "$env:RUNNER_TEMP\describe.json" dist\build-info.json dist\ritmelli\ritmelli.exe
+          if ($LASTEXITCODE -ne 0) { throw "build_info.py exited with $LASTEXITCODE" }
+          Get-Content dist\build-info.json
+          $sources = Get-Content dist\ritmelli\_internal\microfone\micfx.sources -Raw
+          if ((Get-Content dist\build-info.json -Raw | ConvertFrom-Json).filter_sources -ne $sources) { throw "filter_sources is not the micfx.sources $sources" }
+      - name: The sources digest follows the top of filter/apo/ only
+        shell: powershell
+        run: |
+          $env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\ritmelli-next-build"
+          $tree = "$env:RUNNER_TEMP\digest"
+          git worktree add --detach $tree HEAD
+          function Digest {
+            uv run --no-sync python "$tree\installer\build_info.py" sources "$env:RUNNER_TEMP\digest.txt"
+            if ($LASTEXITCODE -ne 0) { throw "build_info.py exited with $LASTEXITCODE" }
+            Get-Content "$env:RUNNER_TEMP\digest.txt"
+          }
+          function Commit($path) {
+            Add-Content "$tree\$path" 'rem a comment'
+            git -C $tree add -A
+            git -C $tree -c user.name=build -c user.email=build@localhost commit -q -m "a comment in $path"
+            if ($LASTEXITCODE -ne 0) { throw "git commit exited with $LASTEXITCODE" }
+          }
+          $first = Digest
+          $null = New-Item -ItemType Directory "$tree\filter\abi" -Force
+          Commit filter\abi\layout.txt
+          if ((Digest) -ne $first) { throw 'a commit in filter/abi/ changed the sources digest' }
+          Commit filter\apo\compila.bat
+          $second = Digest
+          "sources digest: $first, then $second"
+          if ($second -eq $first) { throw 'a comment in compila.bat did not change the sources digest' }
+      - name: Without the package in the venv, the exe lacks the modules found by folder and build info refuses
+        shell: powershell
+        run: |
+          # the recipe then freezes only what app.py imports, from src, and no module found by folder
+          $env:UV_PROJECT_ENVIRONMENT = "$env:LOCALAPPDATA\ritmelli-next-build"
+          $env:RITMELLI_VERSION = $env:VERSION
+          $bare = "$env:RUNNER_TEMP\bare"
+          uv pip uninstall --python "$env:UV_PROJECT_ENVIRONMENT\Scripts\python.exe" ritmelli
+          if ($LASTEXITCODE -ne 0) { throw "uv pip uninstall exited with $LASTEXITCODE" }
+          uv run --no-sync pyinstaller --noconfirm --log-level ERROR --distpath $bare --workpath "$bare\work" installer\ritmelli.spec
+          if ($LASTEXITCODE -ne 0) { throw "pyinstaller exited with $LASTEXITCODE" }
+          uv sync --locked --group build
+          if ($LASTEXITCODE -ne 0) { throw "uv sync exited with $LASTEXITCODE" }
+          $exe = [Diagnostics.Process]::Start("$bare\ritmelli\ritmelli.exe", "--describe `"$bare\describe.json`"")
+          if (-not $exe.WaitForExit(5000)) { $exe.Kill(); throw 'ritmelli.exe --describe still runs after 5 s' }
+          $held = @((Get-Content "$bare\describe.json" -Raw | ConvertFrom-Json).modules)
+          $all = @((Get-Content dist\build-info.json -Raw | ConvertFrom-Json).modules)
+          "the exe frozen without the package holds $($held.Count) of the $($all.Count) modules: $held"
+          if ($held.Count -ge $all.Count) { throw 'the exe frozen without the package holds every module' }
+          uv run --no-sync python installer\build_info.py "$bare\describe.json" "$bare\build-info.json" "$bare\ritmelli\ritmelli.exe"
+          if ($LASTEXITCODE -ne 1) { throw "build_info.py exited with $LASTEXITCODE, not 1" }
+          $global:LASTEXITCODE = 0
