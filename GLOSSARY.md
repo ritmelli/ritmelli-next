@@ -3,6 +3,7 @@
 One English name per concept. The Portuguese term is on the left. Use the English name in code and docs.
 
 - anel = ring
+- ficha = kind (a kind of change, in kinds.toml)
 - folga = headroom
 - passagem = transition
 - prateleira = shelf

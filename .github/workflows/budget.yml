@@ -46,25 +46,25 @@ jobs:
         env:
           BODY: ${{ github.event.pull_request.body }}
         run: |
-          re='^Ficha: ([^[:space:]]+)$'
-          [[ $(head -n 1 <<< "$BODY" | tr -d '\r') =~ $re ]] || { echo "::error::the first line of the PR body must be 'Ficha: <name>'"; exit 1; }
+          re='^Kind: ([^[:space:]]+)$'
+          [[ $(head -n 1 <<< "$BODY" | tr -d '\r') =~ $re ]] || { echo "::error::the first line of the PR body must be 'Kind: <name>'"; exit 1; }
           name=${BASH_REMATCH[1]}
-          git cat-file -e "$BASE:fichas.toml" 2>/dev/null || { echo "::error::fichas.toml is missing on the base branch"; exit 1; }
+          git cat-file -e "$BASE:kinds.toml" 2>/dev/null || { echo "::error::kinds.toml is missing on the base branch"; exit 1; }
           code=0
-          paths=$(git show "$BASE:fichas.toml" | python3 -c '
+          paths=$(git show "$BASE:kinds.toml" | python3 -c '
           import sys, tomllib
-          fichas = {f["name"]: f for f in tomllib.load(sys.stdin.buffer)["ficha"]}
-          ficha = fichas.get(sys.argv[1])
-          if ficha is None:
+          kinds = {f["name"]: f for f in tomllib.load(sys.stdin.buffer)["kind"]}
+          kind = kinds.get(sys.argv[1])
+          if kind is None:
               sys.exit(1)
-          if ficha["core"]:
+          if kind["core"]:
               sys.exit(2)
-          print(*ficha["paths"], sep="\n")
+          print(*kind["paths"], sep="\n")
           ' "$name") || code=$?
-          [ "$code" != 1 ] || { echo "::error::ficha $name is not in fichas.toml on the base branch"; exit 1; }
-          [ "$code" != 2 ] || { echo "::error::ficha $name is core: the owner merges this PR after its proof card"; exit 1; }
+          [ "$code" != 1 ] || { echo "::error::kind $name is not in kinds.toml on the base branch"; exit 1; }
+          [ "$code" != 2 ] || { echo "::error::kind $name is core: the owner merges this PR after its proof card"; exit 1; }
           [ "$code" = 0 ] || exit "$code"
           mapfile -t patterns <<< "$paths"
           outside=$(git diff --no-renames --name-only "$BASE...$HEAD" -- . "${patterns[@]/#/:(exclude,glob)}")
-          while IFS= read -r file; do [ -z "$file" ] || echo "::error::$file is outside the ficha $name"; done <<< "$outside"
+          while IFS= read -r file; do [ -z "$file" ] || echo "::error::$file is outside the kind $name"; done <<< "$outside"
           [ -z "$outside" ]

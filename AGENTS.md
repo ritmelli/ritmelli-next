@@ -1,10 +1,10 @@
 # Agents
 
-Before you write anything, say which ficha the change is: one entry of fichas.toml.
-The first line of the PR body is `Ficha: <name>`.
-Every file the PR changes must match one of that ficha's paths.
-The Budget check enforces this with fichas.toml from the base branch.
-If no ficha fits, the change is core: stop and ask the owner. Write `Ficha: core` only when the owner asked for the change.
+Before you write anything, say which kind of change it is: one entry of kinds.toml.
+The first line of the PR body is `Kind: <name>`.
+Every file the PR changes must match one of that kind's paths.
+The Budget check enforces this with kinds.toml from the base branch.
+If no kind fits, the change is core: stop and ask the owner. Write `Kind: core` only when the owner asked for the change.
 After the first line, the body has up to 15 lines on what changes for the person using the app.
 
 ## House rules
@@ -42,7 +42,7 @@ CORE, owner only: kernel/, update/, machine/, storage/legacy/, filter/, installe
 
 ## Core
 
-Core is the CORE line above, and every path no other ficha covers. Only the `core` ficha covers it.
+Core is the CORE line above, and every path no other kind covers. Only the `core` kind covers it.
 A core PR fails the Budget check on purpose. The owner merges it after its proof card, without reading the code. An agent never bypasses a check.
 kernel/ stays under 900 lines.
 
@@ -50,6 +50,6 @@ If this file and the code disagree, the code wins.
 
 ## Proof
 
-The proof of a PR is what its ficha says in `proof`.
+The proof of a PR is what its kind says in `proof`.
 A verifier that did not write the code runs it and reports PASS or FAIL.
 The merge queue takes only PASS.
