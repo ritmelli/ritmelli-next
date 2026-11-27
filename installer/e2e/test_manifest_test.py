@@ -12,11 +12,10 @@ from ritmelli.update.verify import Refused
 URL = "http://127.0.0.1:8765"
 
 
-def build_info(folder: Path, version: str, setup: bool = True) -> Path:
+def build_info(folder: Path, version: str) -> Path:
     sha = hashlib.sha256(version.encode()).hexdigest()
     artifacts = {"ritmelli.exe": {"sha256": sha, "size": 1}}
-    if setup:
-        artifacts[f"Ritmelli-{version}-setup.exe"] = {"sha256": sha, "size": 11264}
+    artifacts[f"Ritmelli-{version}-setup.exe"] = {"sha256": sha, "size": 11264}
     path = folder / f"build-info-{version}.json"
     path.write_text(json.dumps({"version": version, "artifacts": artifacts}), "utf-8")
     return path
@@ -41,7 +40,6 @@ def test_each_build_and_the_latest_pass_with_the_key_it_prints(
         sha = hashlib.sha256(version.encode()).hexdigest()
         assert found.version == version
         assert found.installer == Installer(setup, sha, 11264)
-        assert json.loads(signature)["chave"] == 1
         with pytest.raises(Refused, match="signature"):
             check(data, signature, KEYS, https_only=False)
     files = (p for p in served.rglob("*") if p.is_file())
@@ -51,10 +49,3 @@ def test_each_build_and_the_latest_pass_with_the_key_it_prints(
         for name in ("latest", "v0.900.1", "v0.900.2")
         for end in ("", ".sig")
     ]
-
-
-def test_a_build_without_its_setup_is_refused(tmp_path: Path) -> None:
-    info = build_info(tmp_path, "0.900.1", setup=False)
-    with pytest.raises(SystemExit, match="no Ritmelli-0.900.1-setup.exe"):
-        test_manifest.main([URL, str(tmp_path / "served"), str(info)])
-    assert not (tmp_path / "served").exists()

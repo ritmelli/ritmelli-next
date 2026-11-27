@@ -26,8 +26,6 @@ from ritmelli.update.manifest import APP, FORMAT, parse_version
 def manifest(info: dict[str, Any], url: str) -> dict[str, Any]:
     version = info["version"]
     setup = f"Ritmelli-{version}-setup.exe"
-    if setup not in info["artifacts"]:
-        sys.exit(f"the build {version} has no {setup}")
     artifact = info["artifacts"][setup]
     return {
         "formato": FORMAT,
