@@ -26,8 +26,8 @@ jobs:
         with:
           version: "0.12.15"
       - run: uv sync --locked
-      - run: uv run pytest src/ritmelli/machine src/ritmelli/ports src/ritmelli/update
-      - name: The two SYSTEM tasks and the hook
+      - run: uv run pytest src/ritmelli/machine src/ritmelli/ports src/ritmelli/update src/ritmelli/app_test.py
+      - name: The two SYSTEM tasks, --atualizador remove and the hook
         if: ${{ !cancelled() }}
         run: ./installer/e2e/tasks.ps1
 
