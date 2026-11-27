@@ -58,7 +58,10 @@ jobs:
             $clock = [Diagnostics.Stopwatch]::StartNew()
             $p = [Diagnostics.Process]::Start($start)
             $window = $false
-            while (-not $p.WaitForExit(20)) { $p.Refresh(); $window = $window -or $p.MainWindowHandle -ne 0 }
+            while (-not $p.WaitForExit(20)) {
+              $p.Refresh(); $window = $window -or $p.MainWindowHandle -ne 0
+              if ($clock.Elapsed.TotalSeconds -ge 5) { $p.Kill(); throw "ritmelli.exe $arguments still runs after 5 s; window: $window" }
+            }
             $seconds = $clock.Elapsed.TotalSeconds
             Start-Sleep -Milliseconds 500
             $watcher.EnableRaisingEvents = $false

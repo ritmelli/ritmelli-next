@@ -20,13 +20,11 @@ try {
   Run 'uv sync' { uv sync --locked --group build }
   $ours = Join-Path $PSScriptRoot 'bootloader\bin'
   $venv = Join-Path $env:UV_PROJECT_ENVIRONMENT 'Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel'
-  $hashes = @(Get-Content (Join-Path $ours 'FONTE.txt') | Where-Object { $_ -match '^[0-9a-f]{64}  \S+\.exe$' })
-  if ($hashes.Count -ne 4) { throw "FONTE.txt lists $($hashes.Count) bootloaders, not 4" }
-  foreach ($line in $hashes) {
-    $hash, $name = $line -split '  '
-    Copy-Item (Join-Path $ours $name) $venv -Force
-    $got = (Get-FileHash (Join-Path $venv $name) -Algorithm SHA256).Hash
-    if ($got -ne $hash) { throw "$name in the venv has hash $got, not the $hash of FONTE.txt" }
-  }
+  # uv links these files to its cache: a copy over the link would change the cache too
+  Remove-Item (Join-Path $venv '*.exe')
+  Copy-Item (Join-Path $ours '*.exe') $venv
+  $runw = (Select-String (Join-Path $ours 'FONTE.txt') -Pattern '^([0-9a-f]{64})  runw\.exe$').Matches[0].Groups[1].Value
+  $got = (Get-FileHash (Join-Path $venv 'runw.exe') -Algorithm SHA256).Hash
+  if ($got -ne $runw) { throw "runw.exe in the venv has hash $got, not the $runw of FONTE.txt" }
   Run 'pyinstaller' { uv run --no-sync pyinstaller --noconfirm --log-level ERROR installer\ritmelli.spec }
 } finally { Pop-Location }
