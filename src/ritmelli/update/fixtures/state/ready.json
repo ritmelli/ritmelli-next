@@ -1,0 +1,27 @@
+{
+ "estado": "pronta",
+ "pid": 4242,
+ "versao": "0.900.1",
+ "de": "0.7.0",
+ "log": "instalador-0.900.1.log",
+ "quando": "2026-11-27T15:28:34",
+ "instalada": "0.7.0",
+ "falhas": {
+  "0.900.1": 1
+ },
+ "nova": {
+  "versao": "0.900.1",
+  "data": "2026-11-27",
+  "notas": [
+   "Uma coisa nova."
+  ],
+  "notas_en": [
+   "A new thing."
+  ],
+  "tamanho": 1048576,
+  "parcial": false
+ },
+ "progresso": 1.0,
+ "setup": "Ritmelli-0.900.1-setup.exe",
+ "sha256": "fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83"
+}
