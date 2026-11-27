@@ -1,0 +1,2364 @@
+{
+ "formato": 1,
+ "app": "vitrola",
+ "versao": "0.7.0",
+ "data": "2026-11-27",
+ "notas": [
+  "Prepara o app para as próximas versões"
+ ],
+ "instalador": {
+  "url": "https://github.com/ritmelli/ritmelli-releases/releases/download/v0.7.0/Ritmelli-0.7.0-setup.exe",
+  "sha256": "f0aee549cca67359b09e2b404ad864c34e4e9f834fa3fac1bb108e93992e5a1e",
+  "tamanho": 177666254
+ },
+ "arquivos": [
+  {
+   "caminho": "_internal/_asyncio.pyd",
+   "sha256": "c77de90cad749087a0c5dc5e19d78d24f6ef44e7e5ac19b8420cfc0cea62395d",
+   "tamanho": 74096
+  },
+  {
+   "caminho": "_internal/_brotli.cp312-win_amd64.pyd",
+   "sha256": "3338d63b7f281fa5a745def98e460807d2b3935e9133be71aeb043d6db556dd7",
+   "tamanho": 872960
+  },
+  {
+   "caminho": "_internal/_bz2.pyd",
+   "sha256": "65f610646d10d5babea080e060d244b546ec52c54012e5e937dc72dcc2e2e7bc",
+   "tamanho": 86896
+  },
+  {
+   "caminho": "_internal/_cffi_backend.cp312-win_amd64.pyd",
+   "sha256": "9af5e4f68a41f26b726f2e9424f9d58a4f5666189f6a48be95f406b257102aec",
+   "tamanho": 181248
+  },
+  {
+   "caminho": "_internal/_ctypes.pyd",
+   "sha256": "0e56107a891100535f2da79d85a5ae65ff1227b4765bd108f8593ac1a1110d81",
+   "tamanho": 127480
+  },
+  {
+   "caminho": "_internal/_decimal.pyd",
+   "sha256": "aeacfead2befcc0768063a037bb64bd32109ae09cb144e5f571b04dd7965db9d",
+   "tamanho": 262000
+  },
+  {
+   "caminho": "_internal/_elementtree.pyd",
+   "sha256": "5009a9a53c03ef8387443b5cf6ce08e5c3a79727466a0b931c5bbca915bf89ca",
+   "tamanho": 135160
+  },
+  {
+   "caminho": "_internal/_hashlib.pyd",
+   "sha256": "03d233dbace599168eaffec823de6ed7beec8c2a4ebfe9b8a3d8e042a59af3ba",
+   "tamanho": 68976
+  },
+  {
+   "caminho": "_internal/_lzma.pyd",
+   "sha256": "e3deecc1f59a3b811c608861decd84de1e8df8bafd5e2b39188861318c5a38cf",
+   "tamanho": 161136
+  },
+  {
+   "caminho": "_internal/_multiprocessing.pyd",
+   "sha256": "2c636df7059cb0dd7e978dd735c7c5c8ddb09cf94754cf9e232296b96c5c545a",
+   "tamanho": 37368
+  },
+  {
+   "caminho": "_internal/_overlapped.pyd",
+   "sha256": "662126ff80c3a1b4cedf74074029c12ae4743e6d3b37376e39ac70aacb7d4d3c",
+   "tamanho": 57336
+  },
+  {
+   "caminho": "_internal/_queue.pyd",
+   "sha256": "48e76e0ad63f6932b4a77b5819f41c1e7595636ca8d9e824f0943a14b8bb5035",
+   "tamanho": 33784
+  },
+  {
+   "caminho": "_internal/_socket.pyd",
+   "sha256": "3efa4636cf9e350856f6927d67a4c2564bf9bd2758a00bbf17d3aece5b60016d",
+   "tamanho": 85496
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudio.dylib",
+   "sha256": "f48bedb7f4f79c0ca050776afe943458555db7341e0dae00511d109ccde907c0",
+   "tamanho": 236064
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudio32bit-asio.dll",
+   "sha256": "b96d817debe1747d8ca3a5e5b57d1021bf0207ebbd907242331357b97c65e6d7",
+   "tamanho": 280576
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudio32bit.dll",
+   "sha256": "3d27383a00397dae64b266189791ac20f84a19820778724e05705c2f6012dfd9",
+   "tamanho": 260608
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudio64bit-asio.dll",
+   "sha256": "e38618a0cb83a0287bee3b8bd68a710ae0d34178217ef4fa21ed56f765111943",
+   "tamanho": 343040
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudio64bit.dll",
+   "sha256": "ec080194f01e4095c7fb43dbd7ed05af922c5b34295056a9ff56782741d65481",
+   "tamanho": 307712
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudioarm64-asio.dll",
+   "sha256": "57b7826fd3883daabbb8951814655a4ec253acb822c0ff6ce4002da9463064f5",
+   "tamanho": 316416
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/libportaudioarm64.dll",
+   "sha256": "e39e95e95c0cb262c70ca4e676e440cf34be5643fe5a31cdfe23e8ab6f1422cb",
+   "tamanho": 293888
+  },
+  {
+   "caminho": "_internal/_sounddevice_data/portaudio-binaries/README.md",
+   "sha256": "b3cb053566b6f38c38bdf4822e53f8f8a2a377e05c503fdd69c52e5d1c6c104c",
+   "tamanho": 974
+  },
+  {
+   "caminho": "_internal/_sqlite3.pyd",
+   "sha256": "64b51df2805c58b023a875e8ae3be7ac7f61ef664f32ca6c90f6315da47ef0bc",
+   "tamanho": 126184
+  },
+  {
+   "caminho": "_internal/_ssl.pyd",
+   "sha256": "0bc527d2dbc50009f43b2ed5d5982c4f63f4b647647ffa9eda612dcda80f6040",
+   "tamanho": 179432
+  },
+  {
+   "caminho": "_internal/_uuid.pyd",
+   "sha256": "acce4f281d7ffb2dec0997527faf25b1df62ad7bd3032c568ddcf65c90edc867",
+   "tamanho": 27128
+  },
+  {
+   "caminho": "_internal/_wmi.pyd",
+   "sha256": "a980f1e7a29842bd946863fc2693fbeb555a9dc0f9e1630dfed9a2fcdef3ece2",
+   "tamanho": 40304
+  },
+  {
+   "caminho": "_internal/aiohttp/_http_parser.cp312-win_amd64.pyd",
+   "sha256": "9e57d4cad3b16e6d18444cde0a6d03d12ab3cf1db4b113ec1d941676555c4a86",
+   "tamanho": 303104
+  },
+  {
+   "caminho": "_internal/aiohttp/_http_writer.cp312-win_amd64.pyd",
+   "sha256": "b10cc875ff572eba927ec4dae177b479906983856ca978ce327ad93f5401a9db",
+   "tamanho": 44544
+  },
+  {
+   "caminho": "_internal/aiohttp/_websocket/mask.cp312-win_amd64.pyd",
+   "sha256": "7d9e6a8259d16dfee829d40b491646d19774d1fc3c6d72e308ef152b375691c6",
+   "tamanho": 34816
+  },
+  {
+   "caminho": "_internal/aiohttp/_websocket/reader_c.cp312-win_amd64.pyd",
+   "sha256": "f5d3ec5d3939716f1830073007e90b6fee83d4ed3659d590204bbde333feccbc",
+   "tamanho": 150016
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-console-l1-1-0.dll",
+   "sha256": "88ace577a9c51061cb7d1a36babbbefa48212fadc838ffde98fdfff60de18386",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-datetime-l1-1-0.dll",
+   "sha256": "1bd81dfd19204b44662510d9054852fb77c9f25c1088d647881c9b976cc16818",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-debug-l1-1-0.dll",
+   "sha256": "591358eb4d1531e9563ee0813e4301c552ce364c912ce684d16576eabf195dc3",
+   "tamanho": 21944
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-errorhandling-l1-1-0.dll",
+   "sha256": "d56ce7b1cd76108ad6c137326ec694a14c99d48c3d7b0ace8c3ff4d9bcee3ce8",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-fibers-l1-1-0.dll",
+   "sha256": "91d249d7bc0e38ef6bcb17158b1fdc6dd8888dc086615c9b8b750b87e52a5fb3",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-fibers-l1-1-1.dll",
+   "sha256": "fc9d86cec621383eab636ebc87ddd3f5c19a3cb2a33d97be112c051d0b275429",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-file-l1-1-0.dll",
+   "sha256": "1ca895aba4e7435563a6b43e85eba67a0f8c74aa6a6a94d0fc48fa35535e2585",
+   "tamanho": 26152
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-file-l1-2-0.dll",
+   "sha256": "4cadbc0c39da7c6722206fdcebd670abe5b8d261e7b041dd94f9397a89d1990d",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-file-l2-1-0.dll",
+   "sha256": "93c624b366ba16c643fc8933070a26f03b073ad0cf7f80173266d67536c61989",
+   "tamanho": 21960
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-handle-l1-1-0.dll",
+   "sha256": "39095f59c41d76ec81bb2723d646fde4c148e7cc3402f4980d2ade95cb9c84f9",
+   "tamanho": 21944
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-heap-l1-1-0.dll",
+   "sha256": "8f105771b236dbcb859de271f0a6822ce1cb79c36988dd42c9e3f6f55c5f7eb9",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-interlocked-l1-1-0.dll",
+   "sha256": "53b25e753ca785bf8b695d89dde5818a318890211dc992a89146f16658f0b606",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-kernel32-legacy-l1-1-1.dll",
+   "sha256": "a9b13a1cd1b8c19b0c6b4afcd5bb0dd29c0e2288231ac9e6db8510094ce68ba6",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-libraryloader-l1-1-0.dll",
+   "sha256": "7f39ba298b41e4963047341288cab36b6a241835ee11ba4ad70f44dacd40906c",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-localization-l1-2-0.dll",
+   "sha256": "6ee44dd0d8510dc024c9f7c79b1b9fa88c987b26b6beb6653ddd11751c34e5dc",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-memory-l1-1-0.dll",
+   "sha256": "0512a35316ec9180437f86696a84c5c06a7e4e82e050055a656e5bf9fca206f9",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-namedpipe-l1-1-0.dll",
+   "sha256": "c05f1fffe3b5a2738ea54ce9485cca026fb9635f982626fba1e1dcc531897273",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-processenvironment-l1-1-0.dll",
+   "sha256": "c4eca98c3c67b6395d5b005b00ac1eb0318b86b23aa71035a44c2b1602befba9",
+   "tamanho": 21968
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-processthreads-l1-1-0.dll",
+   "sha256": "5ccb89e93d67bc3288d4e84649c5346e66e15e3d7cd65d989daf3f4cb584be9a",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-processthreads-l1-1-1.dll",
+   "sha256": "4ad565a8ba3ef0ea8ab87221ad11f83ee0bc844ce236607958406663b407333e",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-profile-l1-1-0.dll",
+   "sha256": "7809160932f44e59b021699f5bc68799eb7293ee1fa926d6fcca3c3445302e61",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-rtlsupport-l1-1-0.dll",
+   "sha256": "9dc1e91e71c7c054854bd1487cb4e6946d82c9f463430f1c4e8d1471005172b1",
+   "tamanho": 21960
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-string-l1-1-0.dll",
+   "sha256": "60fc31d2a0c634412f529dba76af3b9bf991352877c6dae528186d3935704cfd",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-synch-l1-1-0.dll",
+   "sha256": "3a72b4f29f39a265d32ad12f0ce15dbf60129c840e10d84d427829ede45e78ad",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-synch-l1-2-0.dll",
+   "sha256": "efc1e4460984a73cf47a3def033af1c8f3b1dbc1a56cd27781d3aacf3e3330cb",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-sysinfo-l1-1-0.dll",
+   "sha256": "b203d862ddef1dd62bf623fc866c7f7a9c317c1c2ae30d1f52cb41f955b5698e",
+   "tamanho": 22072
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-sysinfo-l1-2-0.dll",
+   "sha256": "2703635d835396afd0f138d7c73751afe7e33a24f4225d08c1690b0a371932c0",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-timezone-l1-1-0.dll",
+   "sha256": "33f4fddc181066fce06b2227bded813f95e94ed1f3d785e982c6b6b56c510c57",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-core-util-l1-1-0.dll",
+   "sha256": "6eda016742a6171205a387a14b3c0b331841567740376f56768f8c151724207d",
+   "tamanho": 21944
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-conio-l1-1-0.dll",
+   "sha256": "b762061b688aae679afe788904d2c9970f74a7dac98f3b42463d08f25e483d3f",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-convert-l1-1-0.dll",
+   "sha256": "ebb2ae5535a64f65daeab8235585114fc9dd2cf1a49f5852d446250b998b6ae4",
+   "tamanho": 26056
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-environment-l1-1-0.dll",
+   "sha256": "17d63275d00bdd8670422b95bd264c532998e0a1b041079e54fce4b6b7a55819",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-filesystem-l1-1-0.dll",
+   "sha256": "9a9e2a65a281644e368d0f272b95ba5f6b445d1c35910d06056c5ebeb77402db",
+   "tamanho": 22056
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-heap-l1-1-0.dll",
+   "sha256": "bab9ac3ec83e380ae51e4295ef3bf2c738627812d3a49d1e713661abbc8dc57a",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-locale-l1-1-0.dll",
+   "sha256": "bd14c67ea28e21d6257ad780a37122c9b5773f69e693f5db6bffaee4d839526e",
+   "tamanho": 22080
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-math-l1-1-0.dll",
+   "sha256": "606d66d82db562ea7979179d06486a0f94d079941d26b80a1e2c49d29959df6f",
+   "tamanho": 30248
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-private-l1-1-0.dll",
+   "sha256": "1bc82bed6143d2bf1b6b08a7809f4a5e29317d6fddd338a7da3c0223522e4bbf",
+   "tamanho": 75328
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-process-l1-1-0.dll",
+   "sha256": "f6156b1020380ec4f0e48577ebedaaef5fb1ab1f337d8b4e72e6a33a7567a9cc",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-runtime-l1-1-0.dll",
+   "sha256": "c5902934d026d7e15fbe9917d474f3322846a41a25e66f4b2b1f758801879f4b",
+   "tamanho": 26152
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-stdio-l1-1-0.dll",
+   "sha256": "a9c5a153d8c0286f9b41a2b1c65854ad9e6471b8755b7de87bae4470e60bcab6",
+   "tamanho": 26168
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-string-l1-1-0.dll",
+   "sha256": "25b8f83a7767211b11132775a0e27a45aa4ec8ab4e6572599f9c172ae3606b40",
+   "tamanho": 26176
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-time-l1-1-0.dll",
+   "sha256": "7c7f6393f06de11750adb09cc5698ae55cd9fb27b2e51e207286feb1b5b2b156",
+   "tamanho": 22096
+  },
+  {
+   "caminho": "_internal/api-ms-win-crt-utility-l1-1-0.dll",
+   "sha256": "d8ba5f17b9ffcbf3aeaf3fa1da226832d2fa90f81acce0cd669464e76ce434ac",
+   "tamanho": 21952
+  },
+  {
+   "caminho": "_internal/api-ms-win-eventing-provider-l1-1-0.dll",
+   "sha256": "958b4633267e8191bf54877946ff8442642036fa9a3b469784a450b6148c81c5",
+   "tamanho": 18856
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/INSTALLER",
+   "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+   "tamanho": 4
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/licenses/LICENSE",
+   "sha256": "882115c95dfc2af1eeb6714f8ec6d5cbcabf667caff8729f42420da63f714e9f",
+   "tamanho": 1109
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/METADATA",
+   "sha256": "4cd40e690f23bf37cbcad34efd6758e062df1df07c86833f7e3ce95bf1fa38cc",
+   "tamanho": 8754
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/RECORD",
+   "sha256": "2ee46bdceec39649a98fff1ed8c58f90bff1082abf96db5a2b1691608bcb602f",
+   "tamanho": 3643
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/REQUESTED",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/attrs-26.1.0.dist-info/WHEEL",
+   "sha256": "41c708c5adba6e097513ab8ccb9f1d7865a2fb469e22491a9e01dcc64da459fc",
+   "tamanho": 87
+  },
+  {
+   "caminho": "_internal/base_library.zip",
+   "sha256": "cb1312afb54e097947d000b93f95d79aea4b527d411cea8a0ec9c84186e9db83",
+   "tamanho": 1333717
+  },
+  {
+   "caminho": "_internal/certifi/cacert.pem",
+   "sha256": "2ef52ad56b4803e264045c915e55c236cbfa045b84b81efefc218a19eb44bd2b",
+   "tamanho": 235863
+  },
+  {
+   "caminho": "_internal/certifi/py.typed",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/charset_normalizer/cd.cp312-win_amd64.pyd",
+   "sha256": "2bdbc0805f85565d76f8d6166e451bfafa6d5490b06b36c9f423cd0102b4f149",
+   "tamanho": 115712
+  },
+  {
+   "caminho": "_internal/charset_normalizer/md.cp312-win_amd64.pyd",
+   "sha256": "b08be5d29125f39a92e22d0abe4b9160753f7a790fffd07258319a8e16394afa",
+   "tamanho": 208384
+  },
+  {
+   "caminho": "_internal/clr_loader/ffi/dlls/amd64/ClrLoader.dll",
+   "sha256": "07f62bcb1b70320f221ffb2cfc5ce6133815195f3e7cdb8d833222506188c2ac",
+   "tamanho": 10752
+  },
+  {
+   "caminho": "_internal/clr_loader/ffi/dlls/x86/ClrLoader.dll",
+   "sha256": "3128381d133f4ff746add70100cfef713ce2d78f2b12c02ec24ec453c5dfab0d",
+   "tamanho": 10752
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_ARC4.pyd",
+   "sha256": "2b077c3435324a51fdd25ea5a26bd657caaa5c3f3f208d763cb0fc5cf5fb3d57",
+   "tamanho": 11264
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_chacha20.pyd",
+   "sha256": "02c61d3d7a897fac1d51b1ad5a2a82aec6c6a6283f8245fbf1db5e60a0c23443",
+   "tamanho": 13312
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_pkcs1_decode.pyd",
+   "sha256": "035c9a585f32b9fef57926c7444883148f96b04f5d6bb7dd801bf097b5d97a6e",
+   "tamanho": 13824
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_aes.pyd",
+   "sha256": "2c066fb52dec96d3b03b0d59a4d2bc680793eecc78430d33e5a1942b8ceefd39",
+   "tamanho": 36864
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_aesni.pyd",
+   "sha256": "73c0e4a4c39b4ca889d206141b06939366c383dcce9e48ec77493c77eb8c9350",
+   "tamanho": 15360
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_arc2.pyd",
+   "sha256": "4b7a3231026c274c8a05bd470b26d7c638ff9a12f4f4e87e4d24ce13718c4b90",
+   "tamanho": 15872
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_blowfish.pyd",
+   "sha256": "dbaccc76ccd717fc93edc85763f402f54cf451be921168b7e4c81c83befaaa81",
+   "tamanho": 19456
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_cast.pyd",
+   "sha256": "38243e704f8c87b388ceef8532711256a16f86b9b8a732d3b4c0cbc21ae7ce62",
+   "tamanho": 24064
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_cbc.pyd",
+   "sha256": "650df70c8af6456c0c88c790c56bcc2311970d88394e789f6f4e9c633a782151",
+   "tamanho": 12288
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_cfb.pyd",
+   "sha256": "617ae8897f5b59f714a31ed66e13e32bbcc22041fcedb444c112dcd67b797e85",
+   "tamanho": 13312
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_ctr.pyd",
+   "sha256": "7952ddef6d8122abc55d04e3c3b23f60765dcd9857bc731639a49c01e1351d63",
+   "tamanho": 14848
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_des.pyd",
+   "sha256": "0cbc5d1d1f062208857d6e66e1559aec934c5ff9bf9ed36b1e5b74f7640a9efe",
+   "tamanho": 52736
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_des3.pyd",
+   "sha256": "da0f6951f914ec8e24e280f2868030672dbabf7c00864d7448a2b439f60602ad",
+   "tamanho": 53248
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_ecb.pyd",
+   "sha256": "6d8485092ae6b09efd990c207d1d4257666d2d360a6601c184cf8c57b09c4ea1",
+   "tamanho": 10752
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_eksblowfish.pyd",
+   "sha256": "4ce25cef683c369df88b6aaee4891c2ab909222af623b98876ccd458af4756f1",
+   "tamanho": 21504
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_ocb.pyd",
+   "sha256": "48db0149aaa2305e05c7af6f7f2626feddfcc456cc854a95ee6bc3fc8af99f82",
+   "tamanho": 18432
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_raw_ofb.pyd",
+   "sha256": "e08ab310422fa69fbfca176339021778f8782a904cec60084610422478d088bc",
+   "tamanho": 12288
+  },
+  {
+   "caminho": "_internal/Cryptodome/Cipher/_Salsa20.pyd",
+   "sha256": "bb87f74ab8c7bd39ef2a9c0b9d197f969793bc406d6a9af443ddc0a0cb588609",
+   "tamanho": 13312
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_BLAKE2b.pyd",
+   "sha256": "c32b08338b56b0308b6f1b9198911c4cfbfb995e67e708360c68bee5c0844d98",
+   "tamanho": 14848
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_BLAKE2s.pyd",
+   "sha256": "60ecc78a661a2f1416118202da82aceacbf9f775a1ef83727bc0e042c201108f",
+   "tamanho": 14336
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_ghash_clmul.pyd",
+   "sha256": "adf7db8b403bb5e15c891b2532bc04f5255c5e8690d97e83e6bac5efeba6ad4b",
+   "tamanho": 12800
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_ghash_portable.pyd",
+   "sha256": "9d361391afbd9d415d386c888989cfd66c78930f1baaaaaf760c2d7070f4e58a",
+   "tamanho": 12288
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_keccak.pyd",
+   "sha256": "375a78d65879341d1369961cbb73b20d8fcebf21fd731cf8e300b830c4b2c218",
+   "tamanho": 16896
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_MD2.pyd",
+   "sha256": "c5a96067c82c5ccd6a231b911ad186b552197862bff7f20856016e2b014e30fd",
+   "tamanho": 15360
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_MD4.pyd",
+   "sha256": "62c9bc06674d65fa4a0482cbb611eead430ec702613488cc0a56f42b12466d81",
+   "tamanho": 13824
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_MD5.pyd",
+   "sha256": "8111a554790c0bce631136745d8f47d1cb74b8b7a24653b9dca9abc16f7405b5",
+   "tamanho": 15872
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_poly1305.pyd",
+   "sha256": "114db39e28506836e2c08c9859a67e0e3a65361edec5a50aeca3e4c5b0851363",
+   "tamanho": 14336
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_RIPEMD160.pyd",
+   "sha256": "56ad242b17083d006d583afced56d5639b07a6650f708b83410f656df1e55b3e",
+   "tamanho": 17920
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_SHA1.pyd",
+   "sha256": "12b486c2642a4cb3f0945d446dbc7314a59ebf939c2085943805245a65920891",
+   "tamanho": 18432
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_SHA224.pyd",
+   "sha256": "facde9f5cfae316a6d4b9ee75bddffcfe3b5f5f6a60e73b879e33d99c35282ca",
+   "tamanho": 22528
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_SHA256.pyd",
+   "sha256": "5843cf7090c0df52fb0d9cc0419d0e4e3c3abca61079568ad9a218d3065e5169",
+   "tamanho": 22528
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_SHA384.pyd",
+   "sha256": "ec35372f74c1f16c255c5db2034c9ba9f0fee4994fe541e16c7b0ae7431243e7",
+   "tamanho": 26624
+  },
+  {
+   "caminho": "_internal/Cryptodome/Hash/_SHA512.pyd",
+   "sha256": "17809c3d967ff362fcc3d039b1948f07acba9e556bd9cb982c5d17018b09f789",
+   "tamanho": 27136
+  },
+  {
+   "caminho": "_internal/Cryptodome/Math/_modexp.pyd",
+   "sha256": "b6bc4bf6908758a702fb519f1a63f073372208a4a05f7661c79005cd2c60f3a0",
+   "tamanho": 32256
+  },
+  {
+   "caminho": "_internal/Cryptodome/Protocol/_scrypt.pyd",
+   "sha256": "2028877e75cd6ae4b3fc67dda0056ce92ffef9832be5aeb675431ca56beef655",
+   "tamanho": 12288
+  },
+  {
+   "caminho": "_internal/Cryptodome/PublicKey/_curve25519.pyd",
+   "sha256": "25534785ca08e11cd2f5a8a2fa0a5c02acb74d7b13d66c17f74677b37bb155da",
+   "tamanho": 20992
+  },
+  {
+   "caminho": "_internal/Cryptodome/PublicKey/_curve448.pyd",
+   "sha256": "1e567bb3afca67eb59ce764bf5fa8696f5f4a75deba2a95fee08061fc589d553",
+   "tamanho": 59392
+  },
+  {
+   "caminho": "_internal/Cryptodome/PublicKey/_ec_ws.pyd",
+   "sha256": "974fc6ed63158a16930e09421e45d10b8cc92d7dfe36a8b89a72bbaf4eafb8c5",
+   "tamanho": 756736
+  },
+  {
+   "caminho": "_internal/Cryptodome/PublicKey/_ed25519.pyd",
+   "sha256": "6ca64b7791ad72465864468cd82be1930aea9e7ace2708c257056b5dbf0665a5",
+   "tamanho": 25088
+  },
+  {
+   "caminho": "_internal/Cryptodome/PublicKey/_ed448.pyd",
+   "sha256": "22af46fd4b25e6e8eb1095bf93aa64cf97d69c850e451e9a8f3020a1928c245e",
+   "tamanho": 75776
+  },
+  {
+   "caminho": "_internal/Cryptodome/Util/_cpuid_c.pyd",
+   "sha256": "d4fb1d13244f4a8642ea17bd943c84e78d418408dbad4d28abdc39bfbb785604",
+   "tamanho": 10240
+  },
+  {
+   "caminho": "_internal/Cryptodome/Util/_strxor.pyd",
+   "sha256": "a3dade83c73f4bfeb41b3623efc947936f632b0fca532d497d28e64c2419edf5",
+   "tamanho": 10240
+  },
+  {
+   "caminho": "_internal/frozenlist/_frozenlist.cp312-win_amd64.pyd",
+   "sha256": "ac03ce4d67b103af56efa5a436954c6c5e4da0eafec878a31298f2b8ce9c6f96",
+   "tamanho": 69632
+  },
+  {
+   "caminho": "_internal/gallery/i18n/i18n_en.properties",
+   "sha256": "197ec430286cb42eee811de2ddcafd97547d5ac0672395faa060e8b8d65512d0",
+   "tamanho": 1149
+  },
+  {
+   "caminho": "_internal/gallery/i18n/i18n_pt_BR.properties",
+   "sha256": "7b99ecc5d865d4a272f05619cbabe10f5794c9d7e4f268276a8357a674b29fe6",
+   "tamanho": 1129
+  },
+  {
+   "caminho": "_internal/gallery/index.html",
+   "sha256": "ed5017fb5b6bfcd011ebc5f64ca5f0a29b3d9327d6b093ab439df73bbc049663",
+   "tamanho": 20636
+  },
+  {
+   "caminho": "_internal/icone/ritmelli.ico",
+   "sha256": "5dba9fa84980555911c1adc8aba8d72a064eedcdc39de242d2273d24c76b0b3e",
+   "tamanho": 45335
+  },
+  {
+   "caminho": "_internal/icone/toque.png",
+   "sha256": "c8068e76579d3e79924fb474766ad079acfb6a89027e304ce23468362ec0745e",
+   "tamanho": 1619
+  },
+  {
+   "caminho": "_internal/libcrypto-3.dll",
+   "sha256": "ccfffddcd3defb8d899026298af9af43bc186130f8483d77e97c93233d5f27d7",
+   "tamanho": 5231472
+  },
+  {
+   "caminho": "_internal/libffi-8.dll",
+   "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+   "tamanho": 39696
+  },
+  {
+   "caminho": "_internal/libssl-3.dll",
+   "sha256": "007142039f04d04e0ed607bda53de095e5bc6a8a10d26ecedde94ea7d2d7eefe",
+   "tamanho": 794992
+  },
+  {
+   "caminho": "_internal/microfone/micfx.dll",
+   "sha256": "b188ddcf8d17e6c0e9652d81766448cc0ceb306bf1b6e6a98d1dc0b526fda5c2",
+   "tamanho": 289280
+  },
+  {
+   "caminho": "_internal/microfone/voz.dll",
+   "sha256": "c674801bcf76cea4626e198ee42751778b6eea28e00c1b2a58c4b6eaa39d2bde",
+   "tamanho": 203776
+  },
+  {
+   "caminho": "_internal/modelos/compasso.onnx",
+   "sha256": "d2d833aecbc7dbd0da3bf7d519b32bffbc6673a6713cb8854333de4484e9cd5d",
+   "tamanho": 83106053
+  },
+  {
+   "caminho": "_internal/modelos/LICENSE-beat_this.txt",
+   "sha256": "a9a764d1e4307827644e0d1aac53878f00881530896505a6e290012133105847",
+   "tamanho": 1327
+  },
+  {
+   "caminho": "_internal/msvcp140.dll",
+   "sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde",
+   "tamanho": 575056
+  },
+  {
+   "caminho": "_internal/MSVCP140_1.dll",
+   "sha256": "456aebccb449fcba35f1109c259ba0aa10923e660f4de812a490d35f37f54fc9",
+   "tamanho": 35920
+  },
+  {
+   "caminho": "_internal/multidict/_multidict.cp312-win_amd64.pyd",
+   "sha256": "0f0a3f1afc989c768e02c60c99b5a6acb5bf12ff03887e01b283147423a3e07e",
+   "tamanho": 134144
+  },
+  {
+   "caminho": "_internal/numpy/_core/_multiarray_tests.cp312-win_amd64.pyd",
+   "sha256": "f09f60242eaed510e1af6384284f53ff56ae42770a62e630bd415bc2b6854d66",
+   "tamanho": 65536
+  },
+  {
+   "caminho": "_internal/numpy/_core/_multiarray_umath.cp312-win_amd64.pyd",
+   "sha256": "9c10617e66e992b5ac6d9f78fe7cedd0011618e1c2f89d09a185bb63073e2c90",
+   "tamanho": 3855872
+  },
+  {
+   "caminho": "_internal/numpy/fft/_pocketfft_umath.cp312-win_amd64.pyd",
+   "sha256": "4f008612d6b9e2ab3820ee17a1c758c499e45e80a36764c9dfb7bf304b066f03",
+   "tamanho": 276480
+  },
+  {
+   "caminho": "_internal/numpy/linalg/_umath_linalg.cp312-win_amd64.pyd",
+   "sha256": "03bc9de2d6d8e2d9ea3ec781f3c16bcbc9960095cc02ca588f4229cd1560c661",
+   "tamanho": 112640
+  },
+  {
+   "caminho": "_internal/numpy/random/_bounded_integers.cp312-win_amd64.pyd",
+   "sha256": "927c1673ba698a85e6253b4d8d2223eb019b021792c54604489767c694d2ab93",
+   "tamanho": 208896
+  },
+  {
+   "caminho": "_internal/numpy/random/_common.cp312-win_amd64.pyd",
+   "sha256": "712a7bb4b2d3e56548cdf255eb4e6c1ca0737d7d81d76f09bdccebb0703ae572",
+   "tamanho": 174080
+  },
+  {
+   "caminho": "_internal/numpy/random/_generator.cp312-win_amd64.pyd",
+   "sha256": "0fa509dcf5ae21910cb2b3c74271977d0fac7fab15ffd5f32017e08b97e71de6",
+   "tamanho": 624640
+  },
+  {
+   "caminho": "_internal/numpy/random/_mt19937.cp312-win_amd64.pyd",
+   "sha256": "e6938df4dd3a193b7d9171d3e192702be3a70de2ebe866cf6fcd92f9e368349d",
+   "tamanho": 92672
+  },
+  {
+   "caminho": "_internal/numpy/random/_pcg64.cp312-win_amd64.pyd",
+   "sha256": "8eb5569b221d40884093def83d897376bddd99c9279f182b9db3145b9b897d34",
+   "tamanho": 105984
+  },
+  {
+   "caminho": "_internal/numpy/random/_philox.cp312-win_amd64.pyd",
+   "sha256": "cc0c03e2c1443e8981300ddb9cc5ceb504e7f8494323d4ec0a1ad95ae16fbf75",
+   "tamanho": 89088
+  },
+  {
+   "caminho": "_internal/numpy/random/_sfc64.cp312-win_amd64.pyd",
+   "sha256": "20c551734cd2b2be2425c8773b795f1e92de8826ebbe6c1103cd0fa6b5c94408",
+   "tamanho": 64000
+  },
+  {
+   "caminho": "_internal/numpy/random/bit_generator.cp312-win_amd64.pyd",
+   "sha256": "c7f637df1fa0db9fe4bba6c05dac680d89aed245401423f1ffd16d93366a35a7",
+   "tamanho": 173056
+  },
+  {
+   "caminho": "_internal/numpy/random/mtrand.cp312-win_amd64.pyd",
+   "sha256": "e8bdaf22830ceaabc596854a816d39d96d1d60e96c2e12a9a17950b624d480a1",
+   "tamanho": 522752
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/DELVEWHEEL",
+   "sha256": "071835e9599badbf48ff13018c74eec31bf7e6e566cf17cc6a131eeff34b09ea",
+   "tamanho": 462
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/entry_points.txt",
+   "sha256": "ec26fade0c8bdac211a6c1dd003a65eb16885b925395423e93fcaa115af4052c",
+   "tamanho": 220
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/INSTALLER",
+   "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+   "tamanho": 4
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/LICENSE.txt",
+   "sha256": "a804dff0ead9fadc5293456410bcbfc32bf024be9c4513459663fb7b442d2341",
+   "tamanho": 45831
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+   "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150",
+   "tamanho": 1039
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+   "sha256": "aea41976c720f91bd19725c16916a1ace40eb1ea42620d340e587a5de4bbcea0",
+   "tamanho": 704
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/src/highway/LICENSE",
+   "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763",
+   "tamanho": 21155
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+   "sha256": "b0fd592d4ead563148e3977e7b589169d46a5ef2ff133c755a81af880a3fc919",
+   "tamanho": 1441
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+   "sha256": "a732977853530066790c42817087f4829b518dd98d340c916acbfd227e39d3cb",
+   "tamanho": 1542
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/_core/src/umath/svml/LICENSE",
+   "sha256": "585483905b13d4b42f800c55ba99e89d6e2e33ccd5f503e201c07531d148ff41",
+   "tamanho": 1573
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+   "sha256": "8db000e158c162e7249787852d8c69764706502ccee725c06641b31c1e95c8af",
+   "tamanho": 1523
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+   "sha256": "19060ef465e1797d682ee0fc3081bd25ab1395e995e43d25c9d13c95d9a3cd6b",
+   "tamanho": 2314
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/ma/LICENSE",
+   "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7",
+   "tamanho": 1616
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/LICENSE.md",
+   "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a",
+   "tamanho": 3582
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+   "sha256": "cf5619f25b112d5ce7c896efffc8e610bcb345dfadcc19f2c1460aa48fff2c9e",
+   "tamanho": 2805
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+   "sha256": "92c10699884321f1c2947fe2a70ab23b0fbf1507f756d89dd08f38c61fc3d4fa",
+   "tamanho": 2986
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+   "sha256": "41190663b77bee5302386495a07b7eabfbfa571aa0ae2f11da6764162062fc4f",
+   "tamanho": 1176
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+   "sha256": "322ac46d870c8aeead6c53adcccc839296fb3c8e456eae155081297daf7f8013",
+   "tamanho": 1540
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+   "sha256": "28cad82ce1379dc529df30da78ec012d7d0d1d576b03ddcb93388aee53659f59",
+   "tamanho": 1253
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+   "sha256": "454ec7350e478e037061850b67395753b425b1cb0a34bbc26290b020bf89d763",
+   "tamanho": 340
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/METADATA",
+   "sha256": "e2b909d6a37d76c2bc130f528d7fed0c517322bce16dc7846b6a6df30e200403",
+   "tamanho": 6635
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/RECORD",
+   "sha256": "076e33a23a3106161bedeb6dc78968ae6483fe3fb41467b2ee68661643738412",
+   "tamanho": 113361
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/REQUESTED",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/numpy-2.5.4.dist-info/WHEEL",
+   "sha256": "e743de01ba6503a3e4234858398a1e69c07d512d51e8482ec9f3a7b1c707d165",
+   "tamanho": 85
+  },
+  {
+   "caminho": "_internal/numpy.libs/libscipy_openblas64_-ed4f167a5330424524f45258e7ca2c8d.dll",
+   "sha256": "ed4f167a5330424524f45258e7ca2c8d7f03c0cba1f30ee4985553ac1f88ecf8",
+   "tamanho": 20589056
+  },
+  {
+   "caminho": "_internal/numpy.libs/msvcp140-a4c2229bdc2a2a630acdc095b4d86008.dll",
+   "sha256": "a4c2229bdc2a2a630acdc095b4d86008e5c3e3bc7773174354f3da4f5beb9cde",
+   "tamanho": 575056
+  },
+  {
+   "caminho": "_internal/onnxruntime/capi/DirectML.dll",
+   "sha256": "b73972115320e906a49602f2027a3266622881b0d325ba685e0f165a9482a8d7",
+   "tamanho": 18527776
+  },
+  {
+   "caminho": "_internal/onnxruntime/capi/onnxruntime.dll",
+   "sha256": "302c69f9779d63ef4ab90316e59444c4acbaca7fe3455020d79d10bcfcb00715",
+   "tamanho": 21111832
+  },
+  {
+   "caminho": "_internal/onnxruntime/capi/onnxruntime_providers_shared.dll",
+   "sha256": "f6bbae3af4c0673b0d1e6ca8db900dc85ad959a395b69d361038ec7995cc2652",
+   "tamanho": 21576
+  },
+  {
+   "caminho": "_internal/onnxruntime/capi/onnxruntime_pybind11_state.pyd",
+   "sha256": "40ed801d209e57751643581a8c70fe1a72a3df80b1ce88f26f7950cd1a83ac35",
+   "tamanho": 26509336
+  },
+  {
+   "caminho": "_internal/pasta-protegida.txt",
+   "sha256": "91fbe9ed5963b922f077e40dd939e1addb913c9de0637c80f87175ff94a13279",
+   "tamanho": 208
+  },
+  {
+   "caminho": "_internal/pedalboard_native.cp312-win_amd64.pyd",
+   "sha256": "e44b386fac33b65af5f5d0ab06a5cb331265aa495b5b28c293991788dd34230b",
+   "tamanho": 8280064
+  },
+  {
+   "caminho": "_internal/propcache/_helpers_c.cp312-win_amd64.pyd",
+   "sha256": "56076d1e6a317c70a5d1dc9971d48e2b5fe56b86d40d09eccdee23117ce34c3c",
+   "tamanho": 66048
+  },
+  {
+   "caminho": "_internal/pyexpat.pyd",
+   "sha256": "d615e193d1affcdbfe504e90d3621cbdcff94bf72b79d899126534507fd6d27a",
+   "tamanho": 205304
+  },
+  {
+   "caminho": "_internal/python312.dll",
+   "sha256": "9a0e3435aaa680d868150f87ab3e388ad2eebc22f87e036155c7b4eda8cd2120",
+   "tamanho": 6945272
+  },
+  {
+   "caminho": "_internal/pythonnet/runtime/Python.Runtime.deps.json",
+   "sha256": "1df8757c717cda3d84ba1059d6c0c8d728a64013afcb2564f0edb5fe4582053f",
+   "tamanho": 5984
+  },
+  {
+   "caminho": "_internal/pythonnet/runtime/Python.Runtime.dll",
+   "sha256": "2ebd4492e28442ef1f1af587afe5b3a090c2ebfa220758ded4f1450f2a27f13a",
+   "tamanho": 451584
+  },
+  {
+   "caminho": "_internal/pythonnet/runtime/Python.Runtime.xml",
+   "sha256": "e4f896b8c692f79c55a766c4269c74d0bb2149a7fcef327c4eaf9faff8d28677",
+   "tamanho": 189214
+  },
+  {
+   "caminho": "_internal/scipy/_cyutility.cp312-win_amd64.pyd",
+   "sha256": "5d31b649995f6e9fb95e15f2ba35de18618347c33aee07b9b3eab506a2fdbd8f",
+   "tamanho": 192512
+  },
+  {
+   "caminho": "_internal/scipy/_lib/_ccallback_c.cp312-win_amd64.pyd",
+   "sha256": "4ba005064af61e94ad473f09ba67836523db6773458470a6d8d7e5c1234bbdac",
+   "tamanho": 105984
+  },
+  {
+   "caminho": "_internal/scipy/_lib/_fpumode.cp312-win_amd64.pyd",
+   "sha256": "227637208fefd2c1e41e57da4a161ed08c9b4a52dcb5e90f6a75f1a9f6afa4e0",
+   "tamanho": 11776
+  },
+  {
+   "caminho": "_internal/scipy/_lib/_uarray/_uarray.cp312-win_amd64.pyd",
+   "sha256": "5b759f7df1ef9d0f61061ed528f6e9d0fe5c8938729ae9fcc26c557302403a23",
+   "tamanho": 247296
+  },
+  {
+   "caminho": "_internal/scipy/_lib/messagestream.cp312-win_amd64.pyd",
+   "sha256": "a45ee93e69c84e9c198444df93b6f8ffc4ce09c852f3892137b5b6f6034bae6a",
+   "tamanho": 62464
+  },
+  {
+   "caminho": "_internal/scipy/fft/_duccfft/pyduccfft.cp312-win_amd64.pyd",
+   "sha256": "18398ec2696b44bda1e57036be146534d916a01fdb82d6632c73472a2dfd49af",
+   "tamanho": 2786816
+  },
+  {
+   "caminho": "_internal/scipy/integrate/_dop.cp312-win_amd64.pyd",
+   "sha256": "63cc8187017f0bd2a5e33b7db7d487bb33ae264befb6861467994653dac1e3b1",
+   "tamanho": 87040
+  },
+  {
+   "caminho": "_internal/scipy/integrate/_odepack.cp312-win_amd64.pyd",
+   "sha256": "8cec2d7783e804794aa7eecc6eb80e3380b350af35c92bc419b977ef35d901c1",
+   "tamanho": 98816
+  },
+  {
+   "caminho": "_internal/scipy/integrate/_quadpack.cp312-win_amd64.pyd",
+   "sha256": "03e0ed70dc1910b227f32676d4f4c8621f4b82ab45429e6f167dc582c4c67dd8",
+   "tamanho": 142336
+  },
+  {
+   "caminho": "_internal/scipy/integrate/_vode.cp312-win_amd64.pyd",
+   "sha256": "3b858a16e3408b25b6d3ef03066aa222e3c50f96e0526966d715a5fb93e17e5d",
+   "tamanho": 139776
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_dierckx.cp312-win_amd64.pyd",
+   "sha256": "608680528ee32e54e13316fdd191c6a94e4bf54c64e389bf2b9f59a0ec3f9c2d",
+   "tamanho": 292864
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_fitpack.cp312-win_amd64.pyd",
+   "sha256": "af4120e06472c88e2b44beb834a8e249ecc40de777a2d3d7f74508fa8292b8de",
+   "tamanho": 346112
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_interpnd.cp312-win_amd64.pyd",
+   "sha256": "c3976f6cef4d797f6ad156435cba96782fd164695beb5d44dae2ebe138eb48d1",
+   "tamanho": 235008
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_ppoly.cp312-win_amd64.pyd",
+   "sha256": "a3ef6ca12445cc777e0d07da7890959509e96905701d87b97f368e045fd6bd0d",
+   "tamanho": 206848
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_rbfinterp_pythran.cp312-win_amd64.pyd",
+   "sha256": "d2392f5b85d9fbf0d3422ee8a531dd805fcb502d64ab04afb6cb0eb21e03b5f7",
+   "tamanho": 1144832
+  },
+  {
+   "caminho": "_internal/scipy/interpolate/_rgi_cython.cp312-win_amd64.pyd",
+   "sha256": "430673f962ef25cdfe4587915541fc843ab77c99756af741d1cdf6c9dfe12cdf",
+   "tamanho": 122880
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_batched_linalg.cp312-win_amd64.pyd",
+   "sha256": "4ff2e41e64d34a0f34ca4363d48074451e1e9977bfc366bf0b80d4c2f4a50268",
+   "tamanho": 1165824
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_cythonized_array_utils.cp312-win_amd64.pyd",
+   "sha256": "deab4aaecda674e2b45c4a19742da78dc03f624ce023846417b7a18a8339031f",
+   "tamanho": 198656
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_decomp_interpolative.cp312-win_amd64.pyd",
+   "sha256": "cd4acc7a49f36691c2aeaa128cbe2bcaa8f85ac71b8cf131ea58ef1291b00166",
+   "tamanho": 742400
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_decomp_update.cp312-win_amd64.pyd",
+   "sha256": "2bf6c314edd1a8bf354f238415f3295ae464fde97e1f276ca7efcdc177afe546",
+   "tamanho": 303616
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_fblas.cp312-win_amd64.pyd",
+   "sha256": "4832bd6d4e8f9ba7317985fdfa8656e8661e98ce952ba757671e3c2d236d9389",
+   "tamanho": 739840
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_flapack.cp312-win_amd64.pyd",
+   "sha256": "ea9fc3ba84abfb7bc1be930d94a237ae494df9ede89a919602d661b606f55138",
+   "tamanho": 2301440
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_internal_matfuncs.cp312-win_amd64.pyd",
+   "sha256": "ad0ec88336620b15d80f8588a212cade3700b90c329c90b26bb10c5d4b8579c8",
+   "tamanho": 172032
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_linalg_pythran.cp312-win_amd64.pyd",
+   "sha256": "6ac6bea5e09d9f07f9e986bc2edbe2b632cafacdfab9815865573427814a03e4",
+   "tamanho": 1038336
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_matfuncs_sqrtm_triu.cp312-win_amd64.pyd",
+   "sha256": "ea95b4aa9018f7e059ce81047279d5f569d37ff6fb5eccf9da8511d115c4dc00",
+   "tamanho": 107520
+  },
+  {
+   "caminho": "_internal/scipy/linalg/_solve_toeplitz.cp312-win_amd64.pyd",
+   "sha256": "f7627f12ffc46542802ed6940a7c449589226548d32b8db6dd1c9abc04cd0671",
+   "tamanho": 123904
+  },
+  {
+   "caminho": "_internal/scipy/linalg/cython_blas.cp312-win_amd64.pyd",
+   "sha256": "3b74e06f76feab1041954f5b3efedee516bd1259cc97846338d9570ebd39c0a5",
+   "tamanho": 127488
+  },
+  {
+   "caminho": "_internal/scipy/linalg/cython_lapack.cp312-win_amd64.pyd",
+   "sha256": "5f9f5128647dc62ebbf518b8f4993061b01497adf19cf26ffa1021f9db88ca5b",
+   "tamanho": 203264
+  },
+  {
+   "caminho": "_internal/scipy/ndimage/_nd_image.cp312-win_amd64.pyd",
+   "sha256": "24b51c516e9344dfe459f5fd3932d04049f6ab7f9a131e2789e27c69ea7157fd",
+   "tamanho": 196608
+  },
+  {
+   "caminho": "_internal/scipy/ndimage/_ni_label.cp312-win_amd64.pyd",
+   "sha256": "94e09844b8a3371f1b523a0aa2ce32ada0e3627456afd1e785c5a5e67849a27a",
+   "tamanho": 212480
+  },
+  {
+   "caminho": "_internal/scipy/ndimage/_rank_filter_1d.cp312-win_amd64.pyd",
+   "sha256": "77f996dd45d7f2aa4e563340015791c067cda9971bf55dbaebedc117e26e9dc1",
+   "tamanho": 128000
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_bglu_dense.cp312-win_amd64.pyd",
+   "sha256": "f1932732b5384833a4d36b4ab715e79d36c941d538ad9379445ede7dca77c7ec",
+   "tamanho": 175616
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_direct.cp312-win_amd64.pyd",
+   "sha256": "7ccd80c266d65fa2a15b7e11dd998f3a8e81937fafc48c9f1ba4786fc867a4d7",
+   "tamanho": 70656
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_group_columns.cp312-win_amd64.pyd",
+   "sha256": "7b2ea108304b87833e64c3ba9e5e6e8e6421d0d2e8eda15ed5ea91a1d75ecc4a",
+   "tamanho": 1007616
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_highspy/_core.cp312-win_amd64.pyd",
+   "sha256": "e6beb8321a4905c9bd0ba0eec2dfa7e27d76a01ab7d0abeab81fcce9ae6732e1",
+   "tamanho": 6709248
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_highspy/_highs_options.cp312-win_amd64.pyd",
+   "sha256": "8b3ca9f9f5c5c56152bcd757a44c574f2e9c907fda564ed9ff6a5552cdf0cfa6",
+   "tamanho": 543232
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_lbfgsb.cp312-win_amd64.pyd",
+   "sha256": "3ab8d1a5a2391952c66a4de2126c3f151c7efdaa2e8f340c465bf79b488a2739",
+   "tamanho": 49664
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_lsap.cp312-win_amd64.pyd",
+   "sha256": "34e851d39d8c07b071e1206752073b86d29e5cfb63001bc611805ac1d0db7772",
+   "tamanho": 190976
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_lsq/givens_elimination.cp312-win_amd64.pyd",
+   "sha256": "c7a2d232bc5d4e6afed937df153fb36d128f5c2416527f2eb7cc8306ab6bc970",
+   "tamanho": 70144
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_minpack.cp312-win_amd64.pyd",
+   "sha256": "24fe418dba91526e9aa41cd44902884ba42d63c67261c4c9cab514f608f0ebca",
+   "tamanho": 125952
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_moduleTNC.cp312-win_amd64.pyd",
+   "sha256": "b6d7facc4f94f9c07bade87ad7e9a096a4b112a2ca56fea9b4bc19ded68d0959",
+   "tamanho": 151040
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_pava_pybind.cp312-win_amd64.pyd",
+   "sha256": "8b63297bce9cb14ebf4d51ac87cdad1eb27ed3b6f6867524fe06554623baff1d",
+   "tamanho": 324096
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_slsqplib.cp312-win_amd64.pyd",
+   "sha256": "a108ab846bccb35169dc86b37c14e25a2ec4162b0235ea5282ba28ea057ff011",
+   "tamanho": 48640
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_trlib/_trlib.cp312-win_amd64.pyd",
+   "sha256": "5a24ca0f7984cfce5ab7b0de61bd4d4f61593d1da1817d4cd168061cee3bc99c",
+   "tamanho": 207872
+  },
+  {
+   "caminho": "_internal/scipy/optimize/_zeros.cp312-win_amd64.pyd",
+   "sha256": "8d1797a4cf71c48e1c22d38dafeb4cdd9bf882d7c59a16b2d9670a1a0a1808c2",
+   "tamanho": 23040
+  },
+  {
+   "caminho": "_internal/scipy/signal/_max_len_seq_inner.cp312-win_amd64.pyd",
+   "sha256": "54efee1488634c9367e17c4f7c93f2c7b204a1ec860a89e2c1f02855b8aa2106",
+   "tamanho": 979968
+  },
+  {
+   "caminho": "_internal/scipy/signal/_peak_finding_utils.cp312-win_amd64.pyd",
+   "sha256": "275f93bef335982cd28089ef7f234585828f0fd6e4ee4400a467ebe768f0e2c3",
+   "tamanho": 137728
+  },
+  {
+   "caminho": "_internal/scipy/signal/_sigtools.cp312-win_amd64.pyd",
+   "sha256": "843010bbea19df62b4d79f63a443b219258e7722ca9865d4b592a4e27ebe80c1",
+   "tamanho": 119296
+  },
+  {
+   "caminho": "_internal/scipy/signal/_sosfilt.cp312-win_amd64.pyd",
+   "sha256": "2ce1f4f1039e89a75d2d181c313ce80fac8eb285b8c33c0ca2ed8c4cb11f516c",
+   "tamanho": 110080
+  },
+  {
+   "caminho": "_internal/scipy/signal/_spline.cp312-win_amd64.pyd",
+   "sha256": "f82ca6be35db51c0e5665e2f98a3b3699f7a5a654e205474a77d2214c335ffe5",
+   "tamanho": 59392
+  },
+  {
+   "caminho": "_internal/scipy/signal/_upfirdn_apply.cp312-win_amd64.pyd",
+   "sha256": "b4e7ccb7cf4cf5af0d0c774e1e64ffe8e525028df3be2755e6ef30c7d18ab9ff",
+   "tamanho": 193024
+  },
+  {
+   "caminho": "_internal/scipy/sparse/_csparsetools.cp312-win_amd64.pyd",
+   "sha256": "aed673d21bb62c5c21448c954439522629e6aeba99e031ca60f45731358d2162",
+   "tamanho": 406528
+  },
+  {
+   "caminho": "_internal/scipy/sparse/_sparsetools.cp312-win_amd64.pyd",
+   "sha256": "c582d431dcc2e3f6863de23c1ba875eb88a88b8ba9bda833c15cb0eba306010e",
+   "tamanho": 4239360
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_flow.cp312-win_amd64.pyd",
+   "sha256": "ce057155684ca47b9d27c0f7385e272eae38ea433d642e5c357333cdc7528d04",
+   "tamanho": 185856
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_matching.cp312-win_amd64.pyd",
+   "sha256": "9023df3bdaeb6aedb9a10803c14e10cb12afdc58c29e82c753bb364426138a6f",
+   "tamanho": 183296
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_min_spanning_tree.cp312-win_amd64.pyd",
+   "sha256": "18425046fb2de5d66e0c2505ce117ffd8cdd2dc205dfa8b01764f4c2ebccc5ac",
+   "tamanho": 104448
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_reordering.cp312-win_amd64.pyd",
+   "sha256": "573cf78e0d4a66fd11b49b2a33ed020503afb4aece6d703ad08e4830226b6418",
+   "tamanho": 152576
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_shortest_path.cp312-win_amd64.pyd",
+   "sha256": "c26246270d52776546da89396c8126c906d8b6fe9dfb9c011915e1cfa47f4a6c",
+   "tamanho": 657408
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_tools.cp312-win_amd64.pyd",
+   "sha256": "d0f89d2f11afeea1d8ee26b2ff68daebbef7060306e6befc05cadca870a8b09b",
+   "tamanho": 159232
+  },
+  {
+   "caminho": "_internal/scipy/sparse/csgraph/_traversal.cp312-win_amd64.pyd",
+   "sha256": "4051d206a9080264c95ed2c76e060abd2a7631b34f3a1a4f4fdf7cf0842ad8e1",
+   "tamanho": 504320
+  },
+  {
+   "caminho": "_internal/scipy/sparse/linalg/_dsolve/_superlu.cp312-win_amd64.pyd",
+   "sha256": "44a265b0bf2b4c6e278799a0de9a34fd7cfffd595cb8733736765402781e18bc",
+   "tamanho": 425984
+  },
+  {
+   "caminho": "_internal/scipy/sparse/linalg/_eigen/arpack/_arpacklib.cp312-win_amd64.pyd",
+   "sha256": "e984176605364e73cc249bbba86424e52da831e6a148b865c1def3690f3a696f",
+   "tamanho": 223232
+  },
+  {
+   "caminho": "_internal/scipy/sparse/linalg/_propack.cp312-win_amd64.pyd",
+   "sha256": "faf5c9659a05df0d712632f44baa6acc6537c3f4177eed2015839c701a1b70b1",
+   "tamanho": 166912
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_ckdtree.cp312-win_amd64.pyd",
+   "sha256": "c7ba13c929c2cc4cf29bec12c35176575dfcd7ab52af3ad850d8262bce0e1cab",
+   "tamanho": 863232
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_distance_pybind.cp312-win_amd64.pyd",
+   "sha256": "3f7567c238ca2970586ce8a7a22420053c009f9be1113cb2cb59ccbde2411b64",
+   "tamanho": 1479168
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_distance_wrap.cp312-win_amd64.pyd",
+   "sha256": "eb9331555f5e41913cf427588277fd54ae6abb6e84a67feb66e103efcf3d3967",
+   "tamanho": 128512
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_hausdorff.cp312-win_amd64.pyd",
+   "sha256": "e475c94dbb2e89a0349135be436579c718ba51a288709e183f33ba4a3a4c4698",
+   "tamanho": 94208
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_qhull.cp312-win_amd64.pyd",
+   "sha256": "0fda7b02882cf95ac6e870b4472837366afe8bb45da148c9c7a91fe7f8678f47",
+   "tamanho": 871936
+  },
+  {
+   "caminho": "_internal/scipy/spatial/_voronoi.cp312-win_amd64.pyd",
+   "sha256": "c77df5feaf55ab9c54ef5290e6d5af51e3b92729841ea9db1c6ea9f21410cc84",
+   "tamanho": 88064
+  },
+  {
+   "caminho": "_internal/scipy/spatial/transform/_rigid_transform_cy.cp312-win_amd64.pyd",
+   "sha256": "7243e5be688306c3c024aef4372e8b7cbcb17880edce50838815d55758eec7b1",
+   "tamanho": 236032
+  },
+  {
+   "caminho": "_internal/scipy/spatial/transform/_rotation_cy.cp312-win_amd64.pyd",
+   "sha256": "3f9c4835b41355056dfc8e9a0070931edd5f7866063ef9623338a20411f14cd9",
+   "tamanho": 523776
+  },
+  {
+   "caminho": "_internal/scipy/special/_comb.cp312-win_amd64.pyd",
+   "sha256": "b11317038aba00d901591974e3ff3866be148424300e7324684729af94f5d178",
+   "tamanho": 48128
+  },
+  {
+   "caminho": "_internal/scipy/special/_ellip_harm_2.cp312-win_amd64.pyd",
+   "sha256": "86df2b3aa07f1fb3fa2849d63a0cc133099a518bf164465360099b1f088c5fe5",
+   "tamanho": 133632
+  },
+  {
+   "caminho": "_internal/scipy/special/_gufuncs.cp312-win_amd64.pyd",
+   "sha256": "3a0b65590282876be90bcbf6c4e7a0e407faab76f2cf8f99fb7adb715d136c65",
+   "tamanho": 937984
+  },
+  {
+   "caminho": "_internal/scipy/special/_specfun.cp312-win_amd64.pyd",
+   "sha256": "57218e37f6c0ac1da054745868e6e962e210013aa50d614c80850599a1ee9629",
+   "tamanho": 311296
+  },
+  {
+   "caminho": "_internal/scipy/special/_special_ufuncs.cp312-win_amd64.pyd",
+   "sha256": "7b8968e440aa7d613f0d90f5994f7c72268679409e0ea40685532452383a3cac",
+   "tamanho": 1630720
+  },
+  {
+   "caminho": "_internal/scipy/special/_ufuncs.cp312-win_amd64.pyd",
+   "sha256": "4ee53d84cd5fff84e7c82292aa3e986a91f0309b1952ae800fcb2af68fb2161d",
+   "tamanho": 1434624
+  },
+  {
+   "caminho": "_internal/scipy/special/_ufuncs_cxx.cp312-win_amd64.pyd",
+   "sha256": "11a9cdb4608a02bfef01f68f73aa033ba0e6474a2d9527cd300f0410e9c87f46",
+   "tamanho": 2673664
+  },
+  {
+   "caminho": "_internal/scipy/special/cython_special.cp312-win_amd64.pyd",
+   "sha256": "4f7b6a5e901044b8ee82bf45a09129598da71478c962e661127cee0549fb9e9f",
+   "tamanho": 2271744
+  },
+  {
+   "caminho": "_internal/scipy/stats/_ansari_swilk_statistics.cp312-win_amd64.pyd",
+   "sha256": "6bd2d42b8e6d22a1d4c4ec4af90aee02b8dc6fbaeb0acd62a6319c0797d4b3d5",
+   "tamanho": 107008
+  },
+  {
+   "caminho": "_internal/scipy/stats/_biasedurn.cp312-win_amd64.pyd",
+   "sha256": "6cd89cd9c564e82d07576ccfc7c9447df4ed2e4efce6060228ea6198dcb5d6e7",
+   "tamanho": 374784
+  },
+  {
+   "caminho": "_internal/scipy/stats/_levy_stable/levyst.cp312-win_amd64.pyd",
+   "sha256": "17265c24b0978d827b8366f706a54cb005fc8939422cbf0405443bbc66435b4a",
+   "tamanho": 46080
+  },
+  {
+   "caminho": "_internal/scipy/stats/_qmc_cy.cp312-win_amd64.pyd",
+   "sha256": "46cd196028df91704be4ea927178425cb5d83b5041c8cd190163fe038c8ced29",
+   "tamanho": 1071616
+  },
+  {
+   "caminho": "_internal/scipy/stats/_qmvnt_cy.cp312-win_amd64.pyd",
+   "sha256": "9b9b0cc4916000266c426460d99c8f1bb9388727ba029bda6cf19d7c78cf607e",
+   "tamanho": 127488
+  },
+  {
+   "caminho": "_internal/scipy/stats/_rcont/rcont.cp312-win_amd64.pyd",
+   "sha256": "fcfeb902482d2ed3f1cf8733c0e86df4fa9210b51e18bd39b3b34b1e1bace8b9",
+   "tamanho": 111616
+  },
+  {
+   "caminho": "_internal/scipy/stats/_sobol.cp312-win_amd64.pyd",
+   "sha256": "ee5fcd62c8d7f327aaff3d43ee84ac95d5c507ffcfa795d2eeaba615a33f504a",
+   "tamanho": 168960
+  },
+  {
+   "caminho": "_internal/scipy/stats/_stats.cp312-win_amd64.pyd",
+   "sha256": "93d050e77912aec0db0cae5d283298a3c0c69910e7e8918a2043e877a632d3a9",
+   "tamanho": 453632
+  },
+  {
+   "caminho": "_internal/scipy/stats/_stats_pythran.cp312-win_amd64.pyd",
+   "sha256": "94a6b599baacd810a57746517ffc56741a9173defd611983553204ffd3ad0128",
+   "tamanho": 1044992
+  },
+  {
+   "caminho": "_internal/scipy.libs/libscipy_openblas-197ee2fc9b4d071f7e048078cac74115.dll",
+   "sha256": "197ee2fc9b4d071f7e048078cac741151a6585d871061cf5f88c0c73e31963a5",
+   "tamanho": 20262912
+  },
+  {
+   "caminho": "_internal/select.pyd",
+   "sha256": "d4d7181b11db0bd22a6cd5cda6f8583d1f5c77615fd0a6ca33350619d6e0438a",
+   "tamanho": 33136
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/INSTALLER",
+   "sha256": "e6184ce10e266134fdcfa401e8f1a95005bcd4f18d16b62b757323e2833fe9a9",
+   "tamanho": 2
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/licenses/LICENSE",
+   "sha256": "458502e12d97bbf64438606a20044aa85eb05fb0a8a807bb35dbec253fd1fc04",
+   "tamanho": 10278
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/METADATA",
+   "sha256": "a3e38b9ee4326289d4864704f30e299ee769e2309ce9f4a75f0de1a50ad0a356",
+   "tamanho": 4670
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/RECORD",
+   "sha256": "52a6b8ee0de15cf7fd99625f43b97cd2e3942ac86f16054ea90de48e66f29355",
+   "tamanho": 1868
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/REQUESTED",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/top_level.txt",
+   "sha256": "08eddf0fdcb29403625e4acca38a872d5fe6a972f6b02e4914a82dd725804fe0",
+   "tamanho": 19
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/importlib_metadata-8.7.1.dist-info/WHEEL",
+   "sha256": "ff309ddcdd65ebd02bc724dbf2bcc4a0ff53a5b61792a44548d383e4ebb19d3b",
+   "tamanho": 91
+  },
+  {
+   "caminho": "_internal/setuptools/_vendor/jaraco/text/Lorem ipsum.txt",
+   "sha256": "37fedcffbf73c4eb9f058f47677cb33203a436ff9390e4d38a8e01c9dad28e0b",
+   "tamanho": 1335
+  },
+  {
+   "caminho": "_internal/sqlite3.dll",
+   "sha256": "8daa45684bf6688fca28d956b2e8942f2fa98f656675ce68e6d61dd869848a7a",
+   "tamanho": 1583608
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/api.js",
+   "sha256": "df513b32eb786c1b74083ee44ee0750a17d10bd99bc9d519856be975763dcedc",
+   "tamanho": 2353
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/base.css",
+   "sha256": "85c5550a876eb79376e9c1c05b94a3fc663ba71e33737e8499623bf33d7353e2",
+   "tamanho": 3933
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/buttons.css",
+   "sha256": "64c1903065b28e999c28ad3e80bd24238d3fd8f57ff800b0afe5e31385f9b86c",
+   "tamanho": 2627
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/caps.js",
+   "sha256": "735b9c79888a9cb94292b52b7f5b22b1272b925ec1c75f0004b84ab2468c382c",
+   "tamanho": 819
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/commands.js",
+   "sha256": "a1aab1b1e393ae81b39317037579311a765ad8406faaf68cd451e7d3fb0aee63",
+   "tamanho": 1427
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/connection.js",
+   "sha256": "0e0bd34d521d3e7d999fede60ab99e5e24059a55814270806abb163623b51fce",
+   "tamanho": 5319
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/covers.js",
+   "sha256": "018b131ec1a62b5e0c024433f8fa7fdd42356ef9fcf7a5022039288ae8fe0c4c",
+   "tamanho": 1832
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/deck.css",
+   "sha256": "a63ede3a91712d264244bb9ef8df0cf4553821470f6117a3f3f5a8eda6291a0a",
+   "tamanho": 4544
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/deck.js",
+   "sha256": "33f574f63eee20224bedd482e15976b65d865a9ddaa9da91eba4376704a3b8ca",
+   "tamanho": 72420
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/desk-buttons.js",
+   "sha256": "e10db21cd74463cef95397ba29e0d08fc15d343e288f7a3c5447d949e387627d",
+   "tamanho": 2416
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/desk-scale.js",
+   "sha256": "e708e3e5a7373302c54e4d6b1da020f32f26aad3ed335ba84a31c8f71c166290",
+   "tamanho": 3384
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/desktop-library.css",
+   "sha256": "770a40d5a40e2e1ec7d0b1a6eef6a100fdb2224e4905e929b1bad47ced84bccf",
+   "tamanho": 13478
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/desktop-wall.css",
+   "sha256": "6abbade14dcc2f44f2de1a1ca378cef4ea5469731403b5db560aa0ca68ff88d8",
+   "tamanho": 4145
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/devices.css",
+   "sha256": "1da3fc44e2b4ea664d71c3f0858d0ad595f43846c24fe12b52867203a8035974",
+   "tamanho": 4918
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/devices.js",
+   "sha256": "f1fa7625987001548ba677096affa315a9b8120569c3919eed51068fbbb80138",
+   "tamanho": 3991
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dialogs.css",
+   "sha256": "09cb05f1b4209f08b4e23b63da0d256a301557f7bcdb356f61028d6bf50803a5",
+   "tamanho": 15713
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dialogs.js",
+   "sha256": "b9855a93fef308ae4930aa4f9a7099da585539621f7345ae00a2f332d5ffb213",
+   "tamanho": 2131
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/disc-page.js",
+   "sha256": "23660e8fb43600f2df96a59295a8db610a09c2abf4b2a226416d1d8cc5808360",
+   "tamanho": 1316
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-desk-empty-shelf.css",
+   "sha256": "b8af45dfac79ef59918d88ee015ab369fd961d12475aa0ae5436267502de1b17",
+   "tamanho": 3523
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-desk-search-drag.css",
+   "sha256": "ce306ad74baeb4a4b04a4c72ddc052a4eec8b211c84bd1df0b60e6ecb74ae48b",
+   "tamanho": 3689
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-desk.css",
+   "sha256": "c15e3cd9871ef4d3da5ae5fff9140e45fec4a5c15875aa7a855324024de3ae39",
+   "tamanho": 33823
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-desk.js",
+   "sha256": "980f43a2619c773516087cdb3016da021a8e7e16548b68b66bb8e81231b107a7",
+   "tamanho": 26324
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-visor.css",
+   "sha256": "b1c716f66ddc84bd24b124cf91c7d07c6f0cd12f7802447605d310d706f90ed6",
+   "tamanho": 2659
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/dj-visor.js",
+   "sha256": "8e04d9f5eeebd3ea01792880e12bce2a9f64606bd621df7d5fd07577344a01bf",
+   "tamanho": 24351
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Archivo-latin-ext.woff2",
+   "sha256": "5717f37059660ca5c899bad6c48ee22c3ac55cb3c484055241689d0f905a1a86",
+   "tamanho": 86240
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Archivo-latin.woff2",
+   "sha256": "e3a28eade21a900c7155a247757f4b2834c07bb7ef07ad7efa55cebaac1e8f5e",
+   "tamanho": 90104
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Archivo-OFL.txt",
+   "sha256": "393a694c7dee6694a22c73049e95cea5d0808697a872c435862d33c0afc67091",
+   "tamanho": 4481
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Archivo-vietnamese.woff2",
+   "sha256": "332e6f66de84927cdffc60894e4e186ced783f5cb4b3e88200f45b7c1d306810",
+   "tamanho": 34464
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/DSEG14Classic-BoldItalic.woff2",
+   "sha256": "168176172ccc013c277a8c3868708681c01aef98e3e8d5499c34939b001c06c8",
+   "tamanho": 5940
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Jersey10-OFL.txt",
+   "sha256": "f61c1e05c894baafffeb06dbd58870f9e8c6eaf317da3c84c61d5e3cc6bfcb38",
+   "tamanho": 4488
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Jersey10.woff2",
+   "sha256": "a606eb9b440abe7386c0e8aa2c081fb40d4a241758e2b0e49fdd963741ac4590",
+   "tamanho": 13276
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/LICENSE.txt",
+   "sha256": "c6ee0567859cb7cc8d992149bbd96ad359ef65fb7355f7feae0547555ffacd23",
+   "tamanho": 4487
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Silkscreen-OFL.txt",
+   "sha256": "706f8f0f8ab3095c523fd11d5f73aa7bbf67fdd63c3d58964893e3bee27d0859",
+   "tamanho": 4487
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/Silkscreen.woff2",
+   "sha256": "41083c1578f60b692204005cbbf12b4c52c44c3a2e0ffa65c13697e3ad0490be",
+   "tamanho": 7500
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/VT323-latin-ext.woff2",
+   "sha256": "4435f062ebe744d097d0d618ac5ad6b8ea25ee3bd6004c5369c24518e70af1f0",
+   "tamanho": 16372
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/VT323-latin.woff2",
+   "sha256": "8ddbebcc1048154132e1d78eb9b1f7850bca1b7d857035ccf1cb4318ebc615b6",
+   "tamanho": 17936
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/VT323-OFL.txt",
+   "sha256": "e9703da7abe97795a41be19905323706502723a1eec104608c24f858e352f9a8",
+   "tamanho": 4460
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/fonts/VT323-vietnamese.woff2",
+   "sha256": "84b335a53b55c33f919f11b5cf83d857f053097171461eaba10d44be1c623609",
+   "tamanho": 7932
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/gerado/compactos.css",
+   "sha256": "6ad69f0d3459919d6c221fcd1508219afeefd841640145e63b983a04713ca6ea",
+   "tamanho": 33965
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/gerado/molduras.css",
+   "sha256": "9785d91ceb3fd9731960a266e8e26e52327b3ea669687a63ff20a27de81e0999",
+   "tamanho": 36612
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/gerado/pecas.css",
+   "sha256": "29ec6712e50499f44da101f7c1c7c2ae4c20508fdd7aabe953aae0e4d75c0d16",
+   "tamanho": 144448
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/gerado/pecas.js",
+   "sha256": "b178226c351eb260575b11b309adda50b2fe54fd1859bebdb4d930f93014ad8c",
+   "tamanho": 66367
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/grid.css",
+   "sha256": "75135087c08bee0be62404f464d244dff571928066067ff42005c77d17890e2b",
+   "tamanho": 3279
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/home.css",
+   "sha256": "ab27a31e5519036d97b9dd3408eed4610043b685b864eab4b0fc776b21301c6c",
+   "tamanho": 28542
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/i18n/i18n_en.properties",
+   "sha256": "b8ab74e1ee2f8a3b8b0573a561e967e77bb89c9398e02b4f354539289aaac36b",
+   "tamanho": 30995
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/i18n/i18n_pt_BR.properties",
+   "sha256": "e7c63c17bc86d90aac81a78c03324c573688d5759cce243168dec13a73d59474",
+   "tamanho": 32183
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/i18n.js",
+   "sha256": "ff23b0e4e482b92e73fb7d285b4a80e57272b9dee11b507347142906b0bab5e7",
+   "tamanho": 3093
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/index.html",
+   "sha256": "3830b6fc4987bdd1a0669970fdea3e167fa85550f563cdc30967b3d9e72d6b92",
+   "tamanho": 40527
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/letra-placa.js",
+   "sha256": "061cd13e3ee913f9eef3c1b38f4bed5bb03a8e56bc2b8bd37bbf1a0f3744a9aa",
+   "tamanho": 3240
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/low-screen.css",
+   "sha256": "caf881448dfb49b9ef947d6020bed81725b9bd007fc2039186a254cfca5251d1",
+   "tamanho": 325
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/maleta-b.css",
+   "sha256": "fad04aa4f0f564cf5ffa8f2978c255ecf949ea11044d60a0ecd7f502366044a1",
+   "tamanho": 21691
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/maleta-tit.js",
+   "sha256": "b8fd696eef2cf40046cc516a03a1f7c23aa2d0decd310e32c8328ebf0a30aacf",
+   "tamanho": 3446
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/maleta-vazia.js",
+   "sha256": "30153a9add70eaf98f8509826433c48d032c217a6f698d7642528df2c359c054",
+   "tamanho": 5318
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/mesa-topo.js",
+   "sha256": "cdf73dc9396aa47879fa7bb3a0c3f53e1fa119f28bb445447445f242ff99c3bf",
+   "tamanho": 2509
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/meta.json",
+   "sha256": "980dd697a081a6ce9d8dc427044ac2ac95eeae68c2bed6ae591e9629a5a1deb0",
+   "tamanho": 585
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/metrics.js",
+   "sha256": "2a6767ad483e983aa1b0f5132eb560c9db904fb2184623a40922e607a53bf2b7",
+   "tamanho": 2525
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/mix.css",
+   "sha256": "497d9fd281aa6395efe7371fea16d275d86b9ef56349334201888e290edbc55b",
+   "tamanho": 6407
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/mix.js",
+   "sha256": "0c18e9bcdd9974ce3d802d2f4b32b2c6e141913396248196e9aa651ac90fe904",
+   "tamanho": 118285
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/notice.js",
+   "sha256": "11b90642bf3bbc8aade49a735a1c485de2071a3f5d4447694e80aa2e243aebc7",
+   "tamanho": 761
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/options.js",
+   "sha256": "f47aa4e06e30e129007379787dc67d8d80b6f356c2497178cab19325e6121bde",
+   "tamanho": 9501
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/page-texts.js",
+   "sha256": "5fadcc3e54f1a571b9a3fdc92038374424614a82e6ad75cd27973fadfa2a20eb",
+   "tamanho": 155
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/pairing.js",
+   "sha256": "7ba9df8e6053b5f6abdc3db64580771b5454a9152b59d82243dac953f35cc89e",
+   "tamanho": 1880
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/pedal.css",
+   "sha256": "1e484b6de5bc57d7c62cf1b493f5fa529e9f11a5e59564824afd683a3ae35697",
+   "tamanho": 4723
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/pedal.js",
+   "sha256": "55c24626400835184b7d4e4756a074b50b1004753e1a6a140379374b61d0e427",
+   "tamanho": 92226
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/pedalboard.css",
+   "sha256": "d358c6d5e134c0390bc5c5e3bc7c8bb8945a0ce370309beb7988c1a0464412a3",
+   "tamanho": 13999
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/phone.css",
+   "sha256": "27754d56378deb85b065d065a8d0b8cbce146a9c6fed469345f2eb73c141c14b",
+   "tamanho": 18276
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/phone.js",
+   "sha256": "d718238027e6bed6598835dc557918185368e86ae520e6af2b18788ae818fe6b",
+   "tamanho": 5205
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/prateleira-cartao.css",
+   "sha256": "ca78b48b8b72ca68e1586b979ad26fa129fb64272cace90e007200a82cb37ae9",
+   "tamanho": 3614
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/prateleira.css",
+   "sha256": "0afdc8cb10894e2d358ce1a80270512088d6ef1ec96a74466eccc16a34c061cf",
+   "tamanho": 51689
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/prateleira.js",
+   "sha256": "eda46a0875e37d061d43f5aa4b3a311369311ad320df0166d3286a45596df83b",
+   "tamanho": 10660
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/preview_en.png",
+   "sha256": "1c9842ad50e4c9de3abe6edd5a86f5859421ec1b76aead3fe5899ae5762a0c7a",
+   "tamanho": 393498
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/preview_pt_BR.png",
+   "sha256": "fedc9eed364b0c524cd87e56d4f92596ec702b73f878b22712731f87b52a6040",
+   "tamanho": 393322
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/queue.js",
+   "sha256": "15de78c0b061a971c61ae7b48ebf477ab4085ba9b9720cf82d2144c82329d288",
+   "tamanho": 17382
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/receiver.css",
+   "sha256": "88222143d8b54744c8d5e315746f55d100d56232faf8290202197899ecfed69d",
+   "tamanho": 6907
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/receiver.js",
+   "sha256": "ca2eaadfa68a9e8263ff076f11357e4118405c3ad122164cd6ae10ebf5ebd10c",
+   "tamanho": 5194
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/reduced-motion.css",
+   "sha256": "3578eb3e60110a8faba458b7a7fe6345b03a99f05487d326867c22cdcf5611ab",
+   "tamanho": 913
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/screen-shape.css",
+   "sha256": "12acc76a698a7fb528fa492ee13ccf2e34903fac7f8e66966ad66c283bc01412",
+   "tamanho": 2977
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/search.js",
+   "sha256": "043bc55cce2ff8b170019c2155ee9edc74b3d705f31732d39e095f3eccc0e6ce",
+   "tamanho": 25955
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/shared.js",
+   "sha256": "486233b264c1fa34f8e14a19d4503fdcaf7219e27a9a4d69d9411c9cc98c21b4",
+   "tamanho": 4109
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/shelf.js",
+   "sha256": "a09d1836854652eb1ede1e0a379eee67fbb2031ceb5f60e0b58ed6525925039d",
+   "tamanho": 26377
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-cables.css",
+   "sha256": "fe129be92ed76e7deaf46aaef794070a4f7add321e15f41a0b854df6f86e9d44",
+   "tamanho": 1873
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-case.css",
+   "sha256": "eb73ecd7d4b73f52826591d672df77a55535ca67bf6a0c272f04636b2e12c76e",
+   "tamanho": 28120
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-feet.css",
+   "sha256": "462dceb48847df008ab3f05f9e84cc92fc29bc74b5fac4a0d9c855e20a2a2a47",
+   "tamanho": 1359
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-library.css",
+   "sha256": "5ce14bb3407bbc2e9755307a738d808fc17514e49800781c908f2ffe20d0bf1e",
+   "tamanho": 13770
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-receiver.css",
+   "sha256": "464eb66f06a9817e10d618ef430bb4f5042a2176511096aca19517b1faa4726f",
+   "tamanho": 15294
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-top.css",
+   "sha256": "332d6af1f559878bf6734fd4a853171c7ad958e15b0e9ad4d3aa8e8990195e30",
+   "tamanho": 32246
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-track-display.css",
+   "sha256": "aad894b7c6de0e8e9d021fb6f8ee39c2cf55213d6c08ea5b4bedf0938179a33f",
+   "tamanho": 2747
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-transport.css",
+   "sha256": "a864ba7b45cc208cd2cb7fdc428bacea04395f5f20b8b161bced513b11abe8f9",
+   "tamanho": 7677
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-turntable.css",
+   "sha256": "04f22be56b040b79ba646fe152fa27f35fb4517e6daa6d47c13ee2b2ed77e8b2",
+   "tamanho": 6955
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/skin-vars.css",
+   "sha256": "8c20b9a8e92c0c7727a0bd13017dfee6ef8024eb0255391421ce9f791682d5f0",
+   "tamanho": 1438
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/stage.js",
+   "sha256": "38e06ad4b85a1ad6ed53976264a3804c637dde42f7c07f7bc7ac0f61135bb8fb",
+   "tamanho": 8423
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/start.js",
+   "sha256": "1c19902a4b8a4482669a1b5b36e9b79d5503383c18cb824722e396a3f2319b03",
+   "tamanho": 1847
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/bibelo.png",
+   "sha256": "f06e712c4577f54fad44f0189046cd124ac3ca3e9544d02896e57d6c23d10069",
+   "tamanho": 1340
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/feltro-mancha.webp",
+   "sha256": "6e94644d8145696ede1924e36932c4386a2b045ca12ede28ed1b973f32c95ae8",
+   "tamanho": 40092
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/feltro-penugem.webp",
+   "sha256": "1de6591d0735a0b54bb261769a673685fe4ff652bab51fc1b2e64b1eaeb22298",
+   "tamanho": 273806
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/martelado.webp",
+   "sha256": "c4d242d8bce703e94f994d0bc8860c4747fbb5e860ee4833c447efb18c40c070",
+   "tamanho": 21764
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/mesa-fundo.png",
+   "sha256": "0dee01dc4a7d86859cc6d6970eed5f736be2ab76805a55c89ba8a16451cdc1da",
+   "tamanho": 785778
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/pelo.webp",
+   "sha256": "46c96ff9ba5d097fd2109ff7e98bd481c61773b638f808419f84712033bc1efb",
+   "tamanho": 161706
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/sala-iso.webp",
+   "sha256": "9f5a0ffbb633bd8d6dc672e0153d90ec7cd13ccb8b3d26b5907062d166ac3964",
+   "tamanho": 25456
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/veio-v.webp",
+   "sha256": "069a0fa1e20d624d69d5177cc8daa8779a52ce8260ea987550fb393f2215d811",
+   "tamanho": 263612
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/texturas/veio.webp",
+   "sha256": "f1fcf3b3d5eabf3f975126e8c09c1f5d6db03f912eb57b9584635b637210a768",
+   "tamanho": 251114
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/tonearm.js",
+   "sha256": "d571c75bf93b3bc0a3978ff1c6e9c605a159204fc3a57a01ce652d2f3db983a7",
+   "tamanho": 4320
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/top-bar.css",
+   "sha256": "57bdf910a965d67c1b6171ff1a57edcb530fe51130779b83e5422c7f8da6cd12",
+   "tamanho": 3834
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/transporte.js",
+   "sha256": "e209dce65d152e54335b3c320a35882678de6abd6e3b25c81ccdcf6acc99331b",
+   "tamanho": 2122
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/turntable.css",
+   "sha256": "5467412838364d5baa9fdac8954e09fd1bd3cd75cd86516b56fba32ed8c67207",
+   "tamanho": 8845
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/turntable.js",
+   "sha256": "67857feb989445c734055a3e00fc6ed9c8a88108769e4c0b11456299c34542c0",
+   "tamanho": 9139
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/ui-events.js",
+   "sha256": "b7ad0cca0807e17389995d380e978fb66ffa9852cc84c2c8bbac959de3a2ae9f",
+   "tamanho": 5691
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/update.js",
+   "sha256": "815bf851b622b35758f38d6a85923db70239de47d27fb1b17b0fe492059c437d",
+   "tamanho": 3271
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/voice-effects.js",
+   "sha256": "4188f5690f48057b308dcafc05d4e07a156325c5ad7278ea682eb7b14f53046e",
+   "tamanho": 93358
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/wall.css",
+   "sha256": "f28f9890fee7a0ef0fce2fce1b3f07ee57554843470a9fbf5dd6b11ce283f268",
+   "tamanho": 10866
+  },
+  {
+   "caminho": "_internal/themes/ritmelli/welcome.js",
+   "sha256": "12c06d96d1a47908644524b966a53bd249082748a7dd8472df6a643b88bb87c4",
+   "tamanho": 2716
+  },
+  {
+   "caminho": "_internal/ucrtbase.dll",
+   "sha256": "2e5fb14b7bf8540278f3614a12f0226e56a7cc9e64b81cbd976c6fcf2f71cbfb",
+   "tamanho": 1361448
+  },
+  {
+   "caminho": "_internal/unicodedata.pyd",
+   "sha256": "208ee1cd3cbad0828433ca7246b05be2b1ff5569983d27d296c0b38888585488",
+   "tamanho": 1140592
+  },
+  {
+   "caminho": "_internal/vcruntime140.dll",
+   "sha256": "052ad6a20d375957e82aa6a3c441ea548d89be0981516ca7eb306e063d5027f4",
+   "tamanho": 120400
+  },
+  {
+   "caminho": "_internal/vcruntime140_1.dll",
+   "sha256": "6a99bc0128e0c7d6cbbf615fcc26909565e17d4ca3451b97f8987f9c6acbc6c8",
+   "tamanho": 49776
+  },
+  {
+   "caminho": "_internal/vozes.json",
+   "sha256": "80a78a02da1141f8d6153702c9d049f1f9a78c5b1e0e3f161faf1ed083e18d90",
+   "tamanho": 3135
+  },
+  {
+   "caminho": "_internal/websockets/speedups.cp312-win_amd64.pyd",
+   "sha256": "3529146aa3008abc8259a07b945ede5c4712e96130416b2330e33924156f793f",
+   "tamanho": 11264
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/entry_points.txt",
+   "sha256": "0e7867e1d9b912c23864c02c1e574617a0b005766b1979d1edc9cadbe5d1ef36",
+   "tamanho": 51
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/INSTALLER",
+   "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+   "tamanho": 4
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/licenses/LICENSE",
+   "sha256": "0f44514998aca209d3482d10204a8adf2aa4296ff157a36a5c0922f2280632d3",
+   "tamanho": 1538
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/METADATA",
+   "sha256": "0f4dbbb04b659eb336bddd7ca16901e19f9252011c1f9fe03d3002b39cf8d653",
+   "tamanho": 6506
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/RECORD",
+   "sha256": "9fb1214c2613973f9c02de2da6ece9744bad714d6241aa9dc8965f3b2a06d353",
+   "tamanho": 8263
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/REQUESTED",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/top_level.txt",
+   "sha256": "08ca5d2a49712acbd980283296dc5458e1e26d95d9d6e60856971af71b10f079",
+   "tamanho": 11
+  },
+  {
+   "caminho": "_internal/websockets-17.4.dist-info/WHEEL",
+   "sha256": "b2601f60075ce318a1cf4b08f2b52cc397e708f776ca360504cd2ea7a3a21031",
+   "tamanho": 101
+  },
+  {
+   "caminho": "_internal/webview/js/api.js",
+   "sha256": "cb68b8bed427fa356aea26376e497552f55d91329c093c026a65230d074e2b27",
+   "tamanho": 8612
+  },
+  {
+   "caminho": "_internal/webview/js/customize.js",
+   "sha256": "ed14d0b594266dfe3834cc8565b44a8157420432aeef4f733ab505bd6ed89b8a",
+   "tamanho": 4443
+  },
+  {
+   "caminho": "_internal/webview/js/finish.js",
+   "sha256": "751443083dd1d2b2ef4142692f25bc4f6e04f8de4d82c455c73473700f00c8cb",
+   "tamanho": 357
+  },
+  {
+   "caminho": "_internal/webview/js/lib/dom_json.js",
+   "sha256": "70fae2a8a8ebc790dc616aa7976074cedd802275c173c90ad4bf3bd14163f9c4",
+   "tamanho": 26097
+  },
+  {
+   "caminho": "_internal/webview/js/lib/polyfill.js",
+   "sha256": "481a08f5337a770acf49b38c2f58dd0c95f92bf9dbd92bf82b596836ea343ab5",
+   "tamanho": 27434
+  },
+  {
+   "caminho": "_internal/webview/js/state.js",
+   "sha256": "68ee87ec01563cbcab77a57704a32f19b47436c9d5e254bfba9675a51c132075",
+   "tamanho": 1828
+  },
+  {
+   "caminho": "_internal/webview/lib/Microsoft.Web.WebView2.Core.dll",
+   "sha256": "8219a3135436c147f8eb02fb831e99596103eebc18b6d7b794ca93f4c67018a2",
+   "tamanho": 649800
+  },
+  {
+   "caminho": "_internal/webview/lib/Microsoft.Web.WebView2.WinForms.dll",
+   "sha256": "c48f8d729dc531288d2c53a6241effe7922ed1b947850b2442008a945c098c48",
+   "tamanho": 39016
+  },
+  {
+   "caminho": "_internal/webview/lib/pywebview-android.jar",
+   "sha256": "3f9d3eeeda09ce58badbd742a981a463c067c339c8b4e70b404c00ebb4ec73a3",
+   "tamanho": 14309
+  },
+  {
+   "caminho": "_internal/webview/lib/runtimes/win-arm64/native/WebView2Loader.dll",
+   "sha256": "0937030efc718f3da77c5e0978fb5046e381d0bb7b01acaad31a535a1b588a33",
+   "tamanho": 147016
+  },
+  {
+   "caminho": "_internal/webview/lib/runtimes/win-x64/native/WebView2Loader.dll",
+   "sha256": "eb5335edeaa6f2122c044e82aab2351dc8c9b4e0fe5e578c71922fb61be285e7",
+   "tamanho": 161864
+  },
+  {
+   "caminho": "_internal/webview/lib/runtimes/win-x86/native/WebView2Loader.dll",
+   "sha256": "04814b2c59314c6452d61b821a4a3a5c5f8e8577b55b985f6a7a4b59f8907ec5",
+   "tamanho": 121928
+  },
+  {
+   "caminho": "_internal/webview/lib/WebBrowserInterop.x64.dll",
+   "sha256": "f6a646470f0e1058224a52e8e2e217501dca46939b30bfc9a5dd4dcdd43f088d",
+   "tamanho": 7168
+  },
+  {
+   "caminho": "_internal/webview/lib/WebBrowserInterop.x86.dll",
+   "sha256": "4e527297fbea7c5a0419f3a6af307c2681787beb0bf0ef3fea849a7fd85a08dc",
+   "tamanho": 7168
+  },
+  {
+   "caminho": "_internal/yarl/_quoting_c.cp312-win_amd64.pyd",
+   "sha256": "4d5b5978bdb7a001fe9e79f5f62e1b496c11ac331204104b23307c51903cb69a",
+   "tamanho": 81920
+  },
+  {
+   "caminho": "_internal/yt_dlp_ejs/yt/solver/core.min.js",
+   "sha256": "18da6ce0758b416e7ae645084f4f8801f9f9d59d6c477c05eaa0ff94ebd8cc00",
+   "tamanho": 6945
+  },
+  {
+   "caminho": "_internal/yt_dlp_ejs/yt/solver/lib.min.js",
+   "sha256": "c55987fe697e5b9ee18830163f7af85327e9bb5c3e674b969d38c8d205eaa577",
+   "tamanho": 151561
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/ar/LC_MESSAGES/base.mo",
+   "sha256": "af2a1c4aa9c0b3ea99a48b6e8a919c196d9a7a0a15985be8738307a3920074dc",
+   "tamanho": 1507
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/cs/LC_MESSAGES/base.mo",
+   "sha256": "c11a13121826d213d7642330e0d246399a1cc59ac8103fdea53f4371fb0092a2",
+   "tamanho": 1225
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/de/LC_MESSAGES/base.mo",
+   "sha256": "ee2147dbdf348cf9446ff236e0c6702795ce02cb6c01e342a55799136fd46769",
+   "tamanho": 1253
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/en/LC_MESSAGES/base.mo",
+   "sha256": "bd3ebc8dd4426922e9092a696611cb7a026b17b3b600630ff7c324a4011873cb",
+   "tamanho": 836
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/es/LC_MESSAGES/base.mo",
+   "sha256": "b7868edcc68f5d70743aa6fb458e3b2245d3c5fd9fdc4f88427d0778dd412c9f",
+   "tamanho": 1362
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/fr/LC_MESSAGES/base.mo",
+   "sha256": "f70753b1d23e7d3d5a48b35537a3ca60f3a882368d93eeb21be6a13b04cfa6ee",
+   "tamanho": 1171
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/hi/LC_MESSAGES/base.mo",
+   "sha256": "c51dbc1534e5fb49d67ae400730f27619c24ce8cbf17200251588954e36f501b",
+   "tamanho": 1665
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/it/LC_MESSAGES/base.mo",
+   "sha256": "2e3e4cc436519863e0d1affdeb2e857f5816b5b43f84e5236d1f1b5a80df515f",
+   "tamanho": 1197
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/ja/LC_MESSAGES/base.mo",
+   "sha256": "cbc4b10610a22732618c0b0d9a032f8aa1dfd5c35131cc28bbda84972bf06bc1",
+   "tamanho": 1455
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/ko/LC_MESSAGES/base.mo",
+   "sha256": "b1921617824af81af4590e69e732487bd212e26df18d5d6ed7f21eaf89d55d12",
+   "tamanho": 1343
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/nl/LC_MESSAGES/base.mo",
+   "sha256": "70978e50f444dc3769d483442c98822b616eba3ec24b9fa181d69da44345f7d8",
+   "tamanho": 1313
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/pt/LC_MESSAGES/base.mo",
+   "sha256": "4c3a259515baa6e2efecda9ca0b5b8210a9eda812671bae6d8b70e1e958f9572",
+   "tamanho": 1258
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/README.rst",
+   "sha256": "00fe6bce31ebb66fa0288d285d33be83aac4cdd6d9f6fd2b0196b921f3243b71",
+   "tamanho": 1265
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/ru/LC_MESSAGES/base.mo",
+   "sha256": "d4faa159f46c29ad6ec087d5e43bf968576f2177661c4b11b5f78d1c171fa16d",
+   "tamanho": 1453
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/tr/LC_MESSAGES/base.mo",
+   "sha256": "379f9a9a865b04654a06061004a8911dc57b65a261f11680b50080fbe42385ce",
+   "tamanho": 1231
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/ur/LC_MESSAGES/base.mo",
+   "sha256": "dbdf58d82eb4c9837ccb5d31ebd7fd13a00525d0b871e424d689dfa3f78c778d",
+   "tamanho": 1422
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/zh_CN/LC_MESSAGES/base.mo",
+   "sha256": "e3fe06f4a8dde299e6f80f714e282f6cbfdf4bbaca247fbbf398b727b9841929",
+   "tamanho": 1327
+  },
+  {
+   "caminho": "_internal/ytmusicapi/locales/zh_TW/LC_MESSAGES/base.mo",
+   "sha256": "c8fd1c89a8c59229f660c50d0026f5b80dccecb41548a1c4731e6661f00c034d",
+   "tamanho": 1251
+  },
+  {
+   "caminho": "_internal/ytmusicapi/py.typed",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/entry_points.txt",
+   "sha256": "9dd7e2c86e2e0deaf18ca4e3d0fc6f6108156a8bd8408c80a0f91c3a6d3ab03a",
+   "tamanho": 53
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/INSTALLER",
+   "sha256": "ceebae7b8927a3227e5303cf5e0f1f7b34bb542ad7250ac03fbcde36ec2f1508",
+   "tamanho": 4
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/licenses/LICENSE",
+   "sha256": "b05992c95c907cdcc51d1f18e13cea85ab53f17bf00f2954aeec380a6b31b7c5",
+   "tamanho": 1064
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/METADATA",
+   "sha256": "905b7eea690531e22b5ad24df955d8458c7fc9f35770b882c9169d849b561b6b",
+   "tamanho": 4264
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/RECORD",
+   "sha256": "f85928775cc5210956114f1a4182212b5126344e3ef412e5e79c953411b67969",
+   "tamanho": 9921
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/REQUESTED",
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "tamanho": 0
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/top_level.txt",
+   "sha256": "31e70448a8167610b8ecdab832b4bb2d6ab2cfa4906217aee195b904e6d2afe3",
+   "tamanho": 11
+  },
+  {
+   "caminho": "_internal/ytmusicapi-1.12.3.dist-info/WHEEL",
+   "sha256": "61532836a2b3111b7ec23519c09df7c41180c27165fb872a6d8913b566b88ad1",
+   "tamanho": 91
+  },
+  {
+   "caminho": "ritmelli.exe",
+   "sha256": "f5413b5c056ce4ba1ee1a8c18f111a4cbe228060383eb81eb2094d7fef914123",
+   "tamanho": 19545569
+  },
+  {
+   "caminho": "bin/ffmpeg.exe",
+   "sha256": "ff8374f4d9830ac757ad478fb268c2cb051578ef2d69ffca005667ef1b5c728a",
+   "tamanho": 4400128
+  },
+  {
+   "caminho": "bin/ffprobe.exe",
+   "sha256": "c689105a81697712584e283be46a3f52bf00f528cfef5282da3f025bc9efc732",
+   "tamanho": 4187648
+  },
+  {
+   "caminho": "bin/FONTE.txt",
+   "sha256": "c62094bf04fc2ce4769b3a883b9a4f54471e773d99b469b27f3b9476054710d8",
+   "tamanho": 1294
+  },
+  {
+   "caminho": "bin/LICENCA-ffmpeg.txt",
+   "sha256": "37828f96b745455c387a19946bc005b5e0b7c4cef782bbd67e9de5130d7d0bdc",
+   "tamanho": 27019
+  },
+  {
+   "caminho": "bin/deno.exe",
+   "sha256": "924397800533d3eb0ed0c889b20ad70e18b970d93acd8135bc043f425e528266",
+   "tamanho": 98081568
+  }
+ ],
+ "notas_en": [
+  "Gets the app ready for the next versions"
+ ]
+}
