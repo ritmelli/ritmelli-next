@@ -12,6 +12,11 @@ CORE_FIX = (
     "audio/core imports only numpy, math, time, collections, dataclasses, typing"
     " and ritmelli.audio.messages. Move the code that needs it out of audio/core."
 )
+RULE_FILES = (
+    "ruff.toml .ruff.toml pyproject.toml pytest.ini pytest.toml .pytest.toml"
+    " conftest.py setup.cfg tox.ini pyrightconfig.json .importlinter"
+).split()
+SWITCHES = ("# pyright:", "# fmt:")
 
 
 def allowed(name: str) -> bool:
@@ -47,6 +52,16 @@ for path in sorted((ROOT / "src").rglob("*.py")):
         for name in imported(path):
             if not allowed(name):
                 found.append(f"{where}: imports {name}. {CORE_FIX}")
+    for number, text in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if any(switch in text for switch in SWITCHES):
+            found.append(
+                f"{where}:{number}: a rule switch in the code. Fix the code instead."
+            )
+for path in sorted((ROOT / "src").rglob("*")):
+    if path.name in RULE_FILES:
+        found.append(
+            f"{path.relative_to(ROOT).as_posix()}: rule files live only at the root."
+        )
 for line in found:
     print(line)
 sys.exit(1 if found else 0)
