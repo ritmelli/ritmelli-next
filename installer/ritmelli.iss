@@ -72,6 +72,8 @@ Type: filesandordirs; Name: "{app}\bin"
 ; to close audiodg.exe
 Source: "{#App}\*"; DestDir: "{app}"; Excludes: "\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
+; the text of each third-party part, which third_party.py writes next to the frozen folder
+Source: "{#App}\..\TERCEIROS.txt"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{autoprograms}\Ritmelli"; Filename: "{app}\ritmelli.exe"
