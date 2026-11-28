@@ -23,22 +23,30 @@ LATER_READERS = {
     ),
     "#85": (
         "src/ritmelli/machine/mic_setup.py",
-        "devices = dict.fromkeys(map(mic_check.device_of, report.silent))\n",
+        (
+            "from ritmelli.machine import mic_check\n"
+            "devices = dict.fromkeys(map(mic_check.device_of, report.silent))\n"
+        ),
     ),
 }
-NOT_CHECKED = """\
+NOT_READERS = {
+    "src/ritmelli/audio/capture_test.py": (
+        "def test_levels(installed, mic_check):\n"
+        "    return installed.APO_KEY, mic_check.device_of\n"
+    ),
+    "tools/lint/ruff/I001/pr68.py": LATER_READERS["#54"][1],
+}
+NOT_CHECKED = {
+    "src/ritmelli/limit_test.py": """\
 LIMIT = 3
 Target = tuple[int, str]
-found: list[str] = []
-
-
-class Report:
-    pass
 
 
 def test_the_limit() -> None:
     assert LIMIT == 3
-"""
+""",
+    "tools/lint/ruff/ERA001/pr31.py": "def stop(grace: float) -> float:\n    return grace\n",
+}
 
 
 def flagged(root: Path, files: dict[str, str]) -> list[str]:
@@ -56,7 +64,7 @@ def flagged(root: Path, files: dict[str, str]) -> list[str]:
 @pytest.mark.parametrize("pr", OCCURRENCES)
 def test_it_flags_each_occurrence(pr: str, tmp_path: Path) -> None:
     where, line, text = OCCURRENCES[pr]
-    files = {where: "\n" * (line - 1) + text}
+    files = {where: "\n" * (line - 1) + text, **NOT_READERS}
     assert flagged(tmp_path, files) == [f"{where}:{line}"]
 
 
@@ -68,7 +76,7 @@ def test_the_reader_a_later_commit_added_passes(pr: str, tmp_path: Path) -> None
 
 
 def test_a_read_in_the_same_file_and_what_it_skips_pass(tmp_path: Path) -> None:
-    assert flagged(tmp_path, {"src/ritmelli/limit_test.py": NOT_CHECKED}) == []
+    assert flagged(tmp_path, NOT_CHECKED) == []
 
 
 def test_an_annotated_constant_is_a_constant_too(tmp_path: Path) -> None:

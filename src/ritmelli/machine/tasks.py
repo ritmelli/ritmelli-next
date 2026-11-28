@@ -101,11 +101,6 @@ def exists(name: str) -> bool:
     return _schtasks("/query", "/tn", name) == 0
 
 
-def start(name: str) -> bool:
-    """Runs the task now, which a user may do. False when it is missing or did not run."""
-    return _schtasks("/run", "/tn", name) == 0
-
-
 def disarm(running: str) -> list[str]:
     """The app folder failed the protected folder rule in the run of one task. Both go:
     the other one first, each even if the other fails, and both are checked after. Only
