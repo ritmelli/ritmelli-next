@@ -1,0 +1,118 @@
+name: Proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  MAIN: 30d217055350979382d4defba8570d3704a46d0a
+  HEAD_SHA: ab8309b2ad66b1052a8fa79e1f1f449848d5b678
+  HEAD_RUN: "46113503231"
+
+jobs:
+  title:
+    name: Title step of main and of the head over the table
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run the table
+        run: |
+          git fetch --no-tags --depth 1 origin "$MAIN" "$HEAD_SHA"
+          for rev in "$MAIN" "$HEAD_SHA"; do
+            git show "$rev:.github/workflows/budget.yml" | bash proof/title/cut.sh Title > "$RUNNER_TEMP/title-${rev:0:7}.sh"
+            sha256sum "$RUNNER_TEMP/title-${rev:0:7}.sh"
+          done
+          diff "$RUNNER_TEMP/title-${MAIN:0:7}.sh" "$RUNNER_TEMP/title-${HEAD_SHA:0:7}.sh" || true
+          bash --version | head -n 1
+          locale | head -n 1
+          bash proof/title/table.sh "$RUNNER_TEMP/title-${MAIN:0:7}.sh" "$RUNNER_TEMP/title-${HEAD_SHA:0:7}.sh"
+
+  notices:
+    name: TERCEIROS.txt of the Build of the head and of main
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
+        with:
+          version: "0.12.15"
+      - uses: ./.github/actions/inno-setup
+      - name: The artifact of the Build of the head
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $run = gh api "repos/$env:GITHUB_REPOSITORY/actions/runs/$env:HEAD_RUN" | ConvertFrom-Json
+          "run $env:HEAD_RUN: $($run.name), head $($run.head_sha), $($run.event), $($run.conclusion)"
+          if ($run.name -ne 'Build' -or $run.head_sha -ne $env:HEAD_SHA -or $run.conclusion -ne 'success') { throw 'that run is not a green Build of the head' }
+          gh run download $env:HEAD_RUN --repo $env:GITHUB_REPOSITORY --name build-0.900.0 --dir "$env:RUNNER_TEMP\head"
+          if ($LASTEXITCODE -ne 0) { throw "gh run download exited with $LASTEXITCODE" }
+          $info = Get-Content "$env:RUNNER_TEMP\head\build-info.json" -Raw | ConvertFrom-Json
+          $setup = "$env:RUNNER_TEMP\head\Ritmelli-0.900.0-setup.exe"
+          $hash = (Get-FileHash $setup -Algorithm SHA256).Hash
+          "build-info.json: commit $($info.commit), setup sha256 $($info.artifacts.'Ritmelli-0.900.0-setup.exe'.sha256); downloaded setup sha256 $hash"
+          if ($hash -ne $info.artifacts.'Ritmelli-0.900.0-setup.exe'.sha256) { throw 'the setup is not the one in build-info.json' }
+          git fetch --no-tags --depth 1 origin $info.commit $env:HEAD_SHA
+          if ($LASTEXITCODE -ne 0) { throw "git fetch exited with $LASTEXITCODE" }
+          $built = git rev-parse "$($info.commit)^{tree}"
+          $tree = git rev-parse "$env:HEAD_SHA^{tree}"
+          "tree of the built commit $built, tree of the head $tree"
+          if ($built -ne $tree) { throw 'the Build built a tree other than the head' }
+      - name: Build main
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git fetch --no-tags --depth 1 origin $env:MAIN
+          if ($LASTEXITCODE -ne 0) { throw "git fetch exited with $LASTEXITCODE" }
+          git worktree add --detach "$env:RUNNER_TEMP\main" $env:MAIN
+          if ($LASTEXITCODE -ne 0) { throw "git worktree exited with $LASTEXITCODE" }
+          & "$env:RUNNER_TEMP\main\installer\build.ps1" -Version 0.900.0 -Channel test
+      - name: Install each setup and compare its TERCEIROS.txt
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $proof = (New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\proof").FullName
+          $app = "$env:ProgramFiles\Ritmelli"
+          $hook = 'HKLM:\SOFTWARE\Ritmelli\Atualizador'
+          New-Item -Path $hook -Force | Out-Null
+          New-ItemProperty -LiteralPath $hook -Name Manifesto -Value 'http://127.0.0.1:8765/v0.900.1/manifest.json' | Out-Null
+          function Notices($name, $setup) {
+            Remove-Item -LiteralPath "$app\TERCEIROS.txt" -ErrorAction SilentlyContinue
+            $p = Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$proof\$name-setup.log`"" -PassThru
+            $null = $p.Handle
+            if (-not $p.WaitForExit(600000)) { throw "${name}: the setup still runs after 10 min" }
+            if ($p.ExitCode -ne 0) { Get-Content "$proof\$name-setup.log" -Tail 30; throw "${name}: the setup exited with $($p.ExitCode)" }
+            Copy-Item "$app\TERCEIROS.txt" "$proof\$name-TERCEIROS.txt"
+            if ($name -eq 'head') { Copy-Item "$app\_internal" "$proof\head-_internal" -Recurse }
+            "${name}: installed, TERCEIROS.txt copied"
+          }
+          Notices 'head' "$env:RUNNER_TEMP\head\Ritmelli-0.900.0-setup.exe"
+          Notices 'main' "$env:RUNNER_TEMP\main\dist\Ritmelli-0.900.0-setup.exe"
+          $files = "$proof\head-TERCEIROS.txt", "$proof\main-TERCEIROS.txt", "$env:RUNNER_TEMP\main\dist\TERCEIROS.txt"
+          $hashes = foreach ($f in $files) {
+            $h = (Get-FileHash $f -Algorithm SHA256).Hash
+            "$h $((Get-Item $f).Length) bytes $f" | Out-Host
+            $h
+          }
+          Get-ChildItem "$proof\head-_internal\*" -Name -Include 'libcrypto-*.dll', 'libssl-*.dll', 'libffi-*.dll', '_bz2.pyd' | Out-Host
+          Select-String "$proof\head-TERCEIROS.txt" -Pattern '^Python 3|Apache License|libffi - Copyright|libbzip2' | Select-Object -First 8 | Out-Host
+          if (@($hashes | Select-Object -Unique).Count -ne 1) { throw 'the TERCEIROS.txt of the setup of the head is not the one of main' }
+          'the TERCEIROS.txt of the setup of the head is byte for byte the one of the setup of main'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: ${{ !cancelled() }}
+        with:
+          name: proof-notices
+          path: ${{ runner.temp }}/proof
+          if-no-files-found: error
