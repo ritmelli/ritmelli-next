@@ -20,8 +20,6 @@ This file says when a review stops. Where another review rule disagrees, this fi
 
 ## Findings no lint rule catches
 
-Each of these came up in two PRs or more. They need judgment, so no lint rule checks them: the review looks for them.
-
 - `hand-rolled-library-call`: a loop or a walk that does what a library call already does (#34).
 - `assert-repeats-earlier-check`: an `assert` or a check that repeats an earlier one (#37).
 - `guard-for-hand-built-state`: a `try` or an `if` that guards a state only a hand-built input reaches (#46).
