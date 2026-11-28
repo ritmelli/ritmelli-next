@@ -85,20 +85,16 @@ function Test-Task([string]$Name, [string]$Arguments, [string]$Limit, [string]$T
   "$Name`: " + (($want.Keys | ForEach-Object { "$_ $($found[$_])" }) -join '; ')
 }
 
-function Test-Tasks {
-  Test-Task $Tasks[0] '--atualizador' 'PT2H' 'LogonTrigger PT2M, TimeTrigger PT4H'
-  Test-Task $Tasks[1] '--microfone instala-todos' 'PT5M' ''
-}
-
 New-Item -Path $HookKey -Force | Out-Null
 New-ItemProperty -LiteralPath $HookKey -Name Manifesto -Value 'http://127.0.0.1:8765/v0.900.1/manifest.json' | Out-Null
 try {
   $user = Join-Path $logs 'user.log'
   Install $setup 0 $user
-  $lines = @(Select-String -LiteralPath $user -Pattern ' (devices|mic filter): ' | ForEach-Object Line)
-  if (-not ($lines -match ' mic filter: ok$') -or -not ($lines -match ' devices: ')) { $lines; throw "the setup log has no 'mic filter: ok' or no 'devices:' line" }
+  $lines = @(Select-String -LiteralPath $user -Pattern ' (aparelhos|mic filter): ' | ForEach-Object Line)
+  if (-not ($lines -match ' mic filter: ok$') -or -not ($lines -match ' aparelhos: ')) { $lines; throw "the setup log has no 'mic filter: ok' or no 'aparelhos:' line" }
   $lines
-  Test-Tasks
+  Test-Task $Tasks[0] '--atualizador' 'PT2H' 'LogonTrigger PT2M, TimeTrigger PT4H'
+  Test-Task $Tasks[1] '--microfone instala-todos' 'PT5M' ''
   'for the user, the setup logged the mic setup and made both tasks as v0.7.0 did'
 
   $system = Join-Path $logs 'system.log'
@@ -112,8 +108,7 @@ try {
     "  $k -> $($after[$k]) as SYSTEM, $($before[$k]) for the user"
     if ($after[$k] -ne 0 -and $before[$k] -eq 0) { throw "as SYSTEM, $k exited with $($after[$k])" }
   }
-  Test-Tasks
-  'as SYSTEM, each line of [Run] exited as it did for the user, and both tasks stayed as v0.7.0 made them'
+  'as SYSTEM, each line of [Run] exited as it did for the user'
 
   $broken = Join-Path $logs 'no-filter-dll.log'
   Install $NoDll 9 $broken

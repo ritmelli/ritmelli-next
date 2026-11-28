@@ -120,7 +120,8 @@ begin
       Summary := JsonString(String(Json), 'conferencia');
       if Summary = '' then
         Summary := 'devices: not checked (the audio did not restart, or the mic setup stopped before)';
-      Log(Summary);
+      // the label v0.7.0 logs, which the crossing looks for
+      Log('aparelhos: ' + Summary);
       SilentDevices := JsonList(String(Json), 'aparelhos');
       if SilentDevices <> '' then
         Log('silent devices: "' + SilentDevices + '"');
@@ -130,7 +131,7 @@ begin
       else
         Log('mic filter: failed: ' + JsonString(String(Json), 'erro'));
     end else
-      Log('devices: no microfone.json');
+      Log('aparelhos: no microfone.json');
   end;
   Result := SilentDevices;
 end;
