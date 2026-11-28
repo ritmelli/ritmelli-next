@@ -9,6 +9,7 @@ on:
       - src/ritmelli/ports/**
       - src/ritmelli/update/**
       - src/ritmelli/app.py
+      - src/ritmelli/__init__.py
       - .github/actions/inno-setup/**
   workflow_dispatch:
     inputs:
