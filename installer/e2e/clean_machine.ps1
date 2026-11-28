@@ -89,9 +89,8 @@ try {
   Start-Process -FilePath "$app\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$log`""
   # its copy in the temporary folder, _unins.tmp in Inno 6.7.3, removes the folder after
   # unins000.exe exits: its end is the state
-  $uninstalling = { (Get-Busy $app) -or (Get-CimInstance Win32_Process -Filter "Name = '_unins.tmp'") }
-  $null = Wait-Until 300 { -not ((& $uninstalling) -or (Test-Path -LiteralPath $app)) }
-  if (& $uninstalling) { throw 'the uninstaller still runs after 5 min' }
+  $null = Wait-Until 300 { -not ((Get-Busy $app) -or (Test-Path -LiteralPath $app)) }
+  if (Get-Busy $app) { throw 'the uninstaller still runs after 5 min' }
   $sys = [Environment]::SystemDirectory
   $five = "$app\ritmelli.exe --atualizador remove", "$sys\taskkill.exe /F /IM ritmelli.exe",
     "$app\ritmelli.exe --microfone remove", "$sys\netsh.exe advfirewall firewall delete rule name=`"Ritmelli`"",

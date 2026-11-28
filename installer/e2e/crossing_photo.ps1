@@ -105,7 +105,7 @@ function Read-State([string]$App) {
   $svc.Connect()
   foreach ($t in $Tasks) {
     try { $task = $svc.GetFolder('\').GetTask($t) } catch { continue }
-    $s["task|$t"] = $task.Xml + $task.GetSecurityDescriptor(4)
+    $s["task|$t"] = $task.Xml + ($task.GetSecurityDescriptor(4) -replace '\(A;ID;[^)]*\)')
   }
   $s['firewall'] = (Invoke-Tool netsh.exe advfirewall, firewall, show, rule, "name=$Rule", verbose).Out
   $shell = New-Object -ComObject WScript.Shell
@@ -120,7 +120,7 @@ function Read-State([string]$App) {
     $s['dll|signature'] = "$((Get-AuthenticodeSignature -LiteralPath $dll).Status)"
   }
   $state = Join-Path $App 'atualizacao\estado.json'
-  if (Test-Path -LiteralPath $state) { $s['estado'] = Get-Content -LiteralPath $state -Raw }
+  if (Test-Path -LiteralPath $state) { $s['estado'] = [IO.File]::ReadAllText($state) }
   Add-Hashes $s 'local|' $Local
   Add-Hashes $s 'vozes|' (Join-Path $App 'vozes')
   Add-Mics $s
@@ -168,7 +168,7 @@ function Find-NotAtOriginal($Ref, $Cur, [string[]]$Ids) {
 
 function Get-Busy([string]$App) {
   Get-CimInstance Win32_Process | Where-Object {
-    $_.Name -like 'Ritmelli-*-setup*' -or $_.Name -like 'unins000*' -or $_.Name -like '_iu*.tmp' -or
+    $_.Name -like 'Ritmelli-*-setup*' -or $_.Name -like 'unins000*' -or $_.Name -eq '_unins.tmp' -or
     ($_.Name -eq 'ritmelli.exe' -and $_.ExecutablePath -like "$App\*") }
 }
 
