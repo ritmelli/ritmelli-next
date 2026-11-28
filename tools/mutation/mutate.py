@@ -45,9 +45,7 @@ def sites(node: ast.AST, function: str) -> Iterator[Site]:
         for child in value if isinstance(value, list) else [value]:
             if isinstance(child, ast.AST):
                 yield function, node, field, child
-                named = isinstance(
-                    child, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef
-                )
+                named = isinstance(child, ast.FunctionDef | ast.ClassDef)
                 inner = f"{function}.{child.name}" if named else function
                 yield from sites(child, inner.removeprefix("<module>."))
 
@@ -64,7 +62,7 @@ def removals(parent: ast.AST, field: str, node: ast.AST) -> Iterator[ast.AST]:
         yield ast.Tuple([], ast.Load())
 
 
-def swaps(node: ast.AST) -> Iterator[ast.AST]:
+def swaps(node: ast.AST, lines: set[int]) -> Iterator[ast.AST]:
     if isinstance(node, ast.Compare):
         for i, op in enumerate(node.ops):
             ops = [*node.ops[:i], SWAP[type(op)](), *node.ops[i + 1 :]]
@@ -73,10 +71,11 @@ def swaps(node: ast.AST) -> Iterator[ast.AST]:
         yield ast.Constant(not node.value)
     if isinstance(node, ast.Tuple | ast.List | ast.Set):
         if all(isinstance(element, ast.Constant) for element in node.elts):
-            for i in range(len(node.elts)):
-                smaller = copy.copy(node)
-                smaller.elts = [*node.elts[:i], *node.elts[i + 1 :]]
-                yield smaller
+            for i, element in enumerate(node.elts):
+                if element.lineno in lines:
+                    smaller = copy.copy(node)
+                    smaller.elts = [*node.elts[:i], *node.elts[i + 1 :]]
+                    yield smaller
 
 
 def mutant(source: bytes, node: ast.AST, new: str) -> bytes:
@@ -99,13 +98,15 @@ def survivors(
 ) -> list[str]:
     file = root / path
     source = file.read_bytes()
-    tests = sorted(file.parent.glob("*_test.py"))
+    tests = sorted([*file.parent.glob("*_test.py"), *file.parent.glob("*_measure.py")])
+    if not passes(root, tests):
+        return [f"{path}: the tests next to it fail with no change"]
     found: list[str] = []
     try:
         for function, parent, field, node in sites(ast.parse(source), "<module>"):
-            made = [*removals(parent, field, node), *swaps(node)]
+            made = [*removals(parent, field, node), *swaps(node, lines)]
             for new in map(ast.unparse, made):
-                change = f"{ast.unparse(node).splitlines()[0]} -> {new}"
+                change = f"{ast.unparse(node)} -> {new}"
                 touched = lines & set(range(node.lineno, node.end_lineno + 1))
                 if touched and (path, function, change) not in equivalent:
                     file.write_bytes(mutant(source, node, new))
@@ -125,8 +126,7 @@ def main(root: Path, base: str) -> int:
         for path, numbers in changed(root, base).items()
         for line in survivors(root, path, numbers, equivalent)
     ]
-    for line in found:
-        print(line)
+    sys.stdout.buffer.write("".join(f"{line}\n" for line in found).encode())
     return 1 if found else 0
 
 

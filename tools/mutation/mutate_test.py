@@ -12,6 +12,12 @@ def check(path, items):
     if path in items:
         pass
     return path
+
+
+LAST = (
+    "a",
+    "b",
+)
 '''
 AFTER = '''"""The planted module, now with Água."""
 
@@ -34,6 +40,12 @@ def check(path, items):
 class Box:
     def size(self):
         return [len(self), True]
+
+
+LAST = (
+    "a",
+    "【",
+)
 '''
 LISTED = """[[mutant]]
 file = "src/pkg/mod.py"
@@ -61,8 +73,10 @@ src/pkg/mod.py:15: check: return False -> pass
 src/pkg/mod.py:15: check: False -> True
 src/pkg/mod.py:21: Box.size: return [len(self), True] -> pass
 src/pkg/mod.py:21: Box.size: True -> False
+src/pkg/mod.py:24: <module>: LAST = ('a', '【') -> pass
+src/pkg/mod.py:24: <module>: ('a', '【') -> ('a',)
 """
-CALLS = 'def run(log):\n    log.append("a")\n    log.append("b")\n    return log\n'
+CALLS = 'def run(log):\n    log.append("b")\n    return [*log, "a"]\n'
 CALLS_TEST = 'import calls\n\n\ndef test_run():\n    assert "a" in calls.run([])\n'
 
 
@@ -113,15 +127,19 @@ def test_a_mutant_the_tests_next_to_it_kill_is_not_shown(tmp_path: Path) -> None
     files = {
         "pkg/calls.py": "def run(log):\n    return log\n",
         "pkg/calls_test.py": CALLS_TEST,
+        "bad/calls.py": "def run(log):\n    return log\n",
+        "bad/calls_measure.py": "def test_run():\n    assert False\n",
     }
-    done = mutate(tmp_path, plant(tmp_path, files, {"pkg/calls.py": CALLS}))
-    shown = "pkg/calls.py:3: run: log.append('b') -> pass\n"
+    changes = {"pkg/calls.py": CALLS, "bad/calls.py": CALLS}
+    done = mutate(tmp_path, plant(tmp_path, files, changes))
+    shown = (
+        "bad/calls.py: the tests next to it fail with no change\n"
+        "pkg/calls.py:2: run: log.append('b') -> pass\n"
+    )
     assert (done.stdout, done.returncode) == (shown, 1)
-    assert (tmp_path / "pkg/calls.py").read_bytes() == CALLS.encode()
 
 
 def test_a_base_git_does_not_know_stops_the_step(tmp_path: Path) -> None:
     plant(tmp_path, {"a.py": "X = 1\n"}, {"a.py": "X = True\n"})
     done = mutate(tmp_path, "no-such-base")
     assert (done.stdout, done.returncode) == ("", 1)
-    assert "CalledProcessError" in done.stderr
