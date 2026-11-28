@@ -8,6 +8,7 @@ on:
       - src/ritmelli/machine/**
       - src/ritmelli/update/**
       - src/ritmelli/app.py
+      - .github/actions/inno-setup/**
   workflow_dispatch:
     inputs:
       version:
