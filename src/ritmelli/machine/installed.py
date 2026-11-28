@@ -30,6 +30,8 @@ CAPTURE_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Captur
 # At the root, _hospede<n> is the vendor MFX that host n runs, which the filter
 # reads, and what decides whether the filter DLL is replaced.
 SAVED_KEY, HOSTED, SAVED_VERSION = r"SOFTWARE\Ritmelli\Microfone", "_hospede", 3
+# Also at the root: the devices the last check found silent, which the app reads.
+SILENT = "_mudos"
 # Next to the original slots: the slots the mic setup created, 1 when the audio
 # enhancements were off, and the version of the copy.
 MISSING, ENHANCEMENTS_OFF, COPY_VERSION = "_ausentes", "_sem_melhorias", "_versao"
