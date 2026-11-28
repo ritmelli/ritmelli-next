@@ -91,6 +91,11 @@ after the fix (`the build stops when ...`). No PR number.
    "Its proof".
 5. `## Review`, the review rounds: each finding and what was done with it.
 
+Outside `## Proof` and `## Review`, the `Citations` step of the Budget check reads each `path:N` or `path:N-M` in
+backticks as a file at the head whose path ends with `path`, and fails when the head lacks the file or the line, unless
+the citation names its tree: `server.py:2414-2420` of `v0.7.0`, at `8cacd23`, or
+`ritmelli/ritmelli:app/server.py:2414`.
+
 Never in the body: a local path of a PC (`C:\Users\...`), a secret, or an output that carries one.
 
 ### Its kind

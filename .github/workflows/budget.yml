@@ -94,3 +94,8 @@ jobs:
           re='^Verdict: PASS on ([0-9a-f]{7,40})$'
           [[ $last =~ $re ]] || { echo "::error::the last line under '## Proof' must be 'Verdict: PASS on <head>': run the proof and write its verdict there"; exit 1; }
           [[ $HEAD == "${BASH_REMATCH[1]}"* ]] || { echo "::error::the proof ran on ${BASH_REMATCH[1]}, not on the head $HEAD: run it again on the head"; exit 1; }
+      - name: Citations
+        if: ${{ !cancelled() }}
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: python3 tools/check_citations.py "$HEAD" <<< "$BODY" | sed 's/^/::error::/'
