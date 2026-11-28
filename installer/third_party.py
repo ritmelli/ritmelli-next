@@ -26,8 +26,7 @@ from pathlib import Path
 OURS = {"ritmelli", "icone", "microfone"}
 LICENSE_NAME = re.compile(r"LICEN[CS]E|COPYING|NOTICE|COPYRIGHT", re.I)
 # a file in _internal\ that carries a library of Python, and a line of the text of
-# that library in the LICENSE.txt of the Python of python.org; the Python that uv
-# downloads has the same files and no text of OpenSSL or libffi
+# that library in the LICENSE.txt of the Python of python.org
 PYTHON_LIBRARIES = {
     "libcrypto-*.dll": "Apache License",  # OpenSSL
     "libssl-*.dll": "Apache License",
