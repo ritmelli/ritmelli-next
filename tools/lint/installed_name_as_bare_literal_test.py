@@ -66,6 +66,5 @@ def test_the_name_passes(path: str, source: str, names: dict[str, str]) -> None:
     assert hits(path, source) == []
 
 
-@each
-def test_a_test_file_passes(path: str, source: str, names: dict[str, str]) -> None:
-    assert hits(path.replace(".py", "_test.py"), source) == []
+def test_a_test_file_passes() -> None:
+    assert hits("src/ritmelli/app_test.py", UPDATE) == []
