@@ -1,10 +1,11 @@
 # Freezes ritmelli.exe into dist\ritmelli with ritmelli.spec, by the PyInstaller of the
 # build group, with our bootloaders in place of the ones it ships: the ready-made ones
 # are the start of many malware files, and antivirus marks the app with them. First it
-# builds the filter with the same version and writes its sources digest next to it. Last,
+# builds the filter with the same version and writes its sources digest next to it. After
+# the freeze, third_party.py writes the third-party notices into dist\TERCEIROS.txt. Last,
 # it compiles ritmelli.iss into dist\Ritmelli-<version>-setup.exe.
-# Usage: build.ps1 -Version 0.900.N [-Channel test]
-#   -Channel test makes a test build, whose setup refuses a PC without the hook
+# Usage: build.ps1 -Version <x.y.z> [-Channel test]
+#   -Channel test makes a test build, 0.900.N, whose setup refuses a PC without the hook
 param(
   [Parameter(Mandatory)][ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version,
   [ValidateSet('test')][string]$Channel
@@ -12,6 +13,7 @@ param(
 $ErrorActionPreference = 'Stop'
 # build_info.py names the channel by the version: the setup must do what it says
 if ($Channel -eq 'test' -and $Version -notmatch '^0\.900\.\d+$') { throw "a test build is 0.900.N, not $Version" }
+if ($Channel -ne 'test' -and $Version -match '^0\.900\.\d+$') { throw "$Version is the number of a test build: add -Channel test" }
 
 # PowerShell 5 makes each stderr line of a program an error: only the exit code counts
 function Run($name, [scriptblock]$cmd) {

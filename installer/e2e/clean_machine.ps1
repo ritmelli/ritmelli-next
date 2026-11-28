@@ -1,10 +1,10 @@
-# The setup of a build on a clean machine, as an administrator. Without the hook it exits
-# with 1 and changes nothing. With it, it installs in silence into a folder that is not the
-# default, and then again over itself, as an update does: it must find that folder alone.
-# The uninstaller then takes it all out, and of the lines both setups left in its log, each
-# RunOnceId runs once. Last, it installs once more with no folder given: it must go to the
-# default. Before all that, with the hook, a folder outside Program Files fails the protected
-# folder rule: the setup exits with 7 and changes nothing. It refuses a PC where Ritmelli is.
+# The setup of a build on a clean machine, as an administrator. It refuses a PC where
+# Ritmelli is. Without the hook, the setup exits with 1 and changes nothing. With it, a
+# folder outside Program Files fails the protected folder rule: the setup exits with 7 and
+# changes nothing. Then it installs in silence into a folder that is not the default, and
+# again over itself, as an update does: it must find that folder alone. The uninstaller then
+# takes it all out, and of the lines both setups left in its log, each RunOnceId runs once.
+# Last, it installs once more with no folder given: it must go to the default.
 # Usage: clean_machine.ps1 -Build <the folder with build-info.json and the setup>
 #Requires -RunAsAdministrator
 param([Parameter(Mandatory)][string]$Build)
