@@ -173,7 +173,7 @@ var
   Destination, Reason: String;
 begin
   Result := '';
-  Destination := RemoveBackslashUnlessRoot(WizardDirValue);
+  Destination := WizardDirValue;
   Reason := UnprotectedReason(Destination);
   if Reason <> '' then
     Result := FmtMessage(CustomMessage('UnprotectedFolder'), [Destination, Reason]);
