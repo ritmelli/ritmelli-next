@@ -4,6 +4,7 @@ One English name per concept. The Portuguese term is on the left. Use the Englis
 
 - achado = finding (a problem a review reproduced, kept as the GitHub issue `finding: <name>`)
 - anel = ring
+- aparelho mudo = silent device (one that opens with no error and gives no frame, until its cable is pulled)
 - ficha = kind (a kind of change, in kinds.toml)
 - filtro = filter (the audio effect DLL, an APO, that the microphone passes through)
 - folga = headroom
