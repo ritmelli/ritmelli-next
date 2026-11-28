@@ -69,6 +69,21 @@ def test_a_package_without_a_license_file_stops_the_build(
         third_party.package_sections(FROZEN | {"bare"})
 
 
+def test_a_library_of_python_whose_text_the_license_lacks_stops_the_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    app, python = tmp_path / "ritmelli", tmp_path / "python"
+    (app / "_internal").mkdir(parents=True)
+    (app / "_internal" / "libssl-3-x64.dll").write_bytes(b"")
+    python.mkdir()
+    monkeypatch.setattr(third_party.sys, "base_prefix", str(python))
+    (python / "LICENSE.txt").write_text("the license of Python\n")
+    with pytest.raises(SystemExit, match=r"lacks the text of \['libssl-3-x64.dll'\]"):
+        third_party.python_section(app)
+    (python / "LICENSE.txt").write_text("the license of Python\n\n  Apache License\n")
+    assert "Apache License" in third_party.python_section(app)[2]
+
+
 def test_a_name_of_no_package_stops_the_build(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
