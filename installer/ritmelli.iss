@@ -55,6 +55,8 @@ pt.Open=Abrir o Ritmelli
 en.Open=Open Ritmelli
 pt.Firewall=Liberando o Ritmelli no firewall para que o celular possa se conectar ao computador...
 en.Firewall=Allowing Ritmelli through the firewall so your phone can connect to the computer...
+pt.MicSetup=Preparando os microfones (o som pode ser interrompido por alguns segundos)...
+en.MicSetup=Preparing your microphones (the sound may cut out for a few seconds)...
 pt.UnprotectedFolder=O Ritmelli não pode ser instalado em %1, porque essa pasta não está protegida contra alterações de outros usuários e programas (%2).%n%nAs tarefas do Ritmelli rodam como sistema e só usam uma pasta que apenas os administradores podem alterar.
 en.UnprotectedFolder=Ritmelli can't be installed in %1, because that folder isn't protected from changes by other users and programs (%2).%n%nRitmelli's tasks run as the system and only use a folder that only administrators can change.
 
@@ -89,6 +91,12 @@ Name: "{autodesktop}\Ritmelli"; Filename: "{app}\ritmelli.exe"; Tasks: desktopic
 ; networks are public in Windows, and private alone left the phone out
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=""Ritmelli"""; Flags: runhidden
 Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall add rule name=""Ritmelli"" dir=in action=allow program=""{app}\ritmelli.exe"" enable=yes profile=private,public"; StatusMsg: "{cm:Firewall}"; Flags: runhidden
+; the filter on each microphone that lacks it, the filter DLL in {app}\microfone (replaced
+; only when its sources changed), and the task that does the same later. The audio
+; restarts only when something changed. The result goes to {tmp}, where mudos.iss reads it
+Filename: "{app}\ritmelli.exe"; Parameters: "--microfone instala-todos --tarefa --saida ""{tmp}\microfone.json"""; StatusMsg: "{cm:MicSetup}"; Flags: runhidden
+; the update task: at logon and every 4 hours, as SYSTEM
+Filename: "{app}\ritmelli.exe"; Parameters: "--atualizador tarefa"; Flags: runhidden
 ; as the person who installed, not as the administrator
 Filename: "{app}\ritmelli.exe"; Description: "{cm:Open}"; Flags: postinstall nowait skipifsilent runasoriginaluser
 
@@ -107,6 +115,11 @@ Filename: "{sys}\netsh.exe"; Parameters: "advfirewall firewall delete rule name=
 Type: filesandordirs; Name: "{app}\atualizacao"
 ; the voices v0.7.0 downloaded, which an install leaves in place
 Type: filesandordirs; Name: "{app}\vozes"
+
+; the result of the mic setup in the log, on the last page and in the exit code. Outside
+; [Code]: mudos.iss brings its own sections, and its events are marked so they do not
+; clash with these
+#include "mudos.iss"
 
 [Code]
 // The text in PowerShell single quotes: each single quote doubled, the typographic ones too,
