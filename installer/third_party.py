@@ -16,8 +16,7 @@ build: look and add it, rather than ship a setup that lacks a notice.
 
 import re
 import sys
-from collections.abc import Iterable
-from importlib.metadata import Distribution, distributions
+from importlib.metadata import Distribution, distribution, packages_distributions
 from pathlib import Path
 
 # the package, and the folders ritmelli.spec puts in _internal\
@@ -66,20 +65,6 @@ def frozen_names(app: Path) -> set[str]:
     return names
 
 
-def owners(packages: Iterable[Distribution]) -> dict[str, set[str]]:
-    """Top name (folder, module or .pyd) -> the packages that installed files in it."""
-    found: dict[str, set[str]] = {}
-    for package in packages:
-        for file in package.files or []:
-            top = file.parts[0]
-            if top.endswith((".dist-info", ".data")) or top in ("..", "__pycache__"):
-                continue
-            module = len(file.parts) == 1 and file.suffix in (".py", ".pyd")
-            name = top.split(".")[0] if module else top
-            found.setdefault(name, set()).add(package.metadata["Name"])
-    return found
-
-
 def kind(package: Distribution) -> str:
     """The short name of the license, when the metadata gives one in a line."""
     metadata = package.metadata
@@ -97,11 +82,10 @@ def texts(package: Distribution) -> list[tuple[str, str]]:
     ]
 
 
-def package_sections(names: set[str], packages: list[Distribution]) -> list[Section]:
+def package_sections(names: set[str]) -> list[Section]:
     """A section for each package of the venv that a frozen name came from, and for
     PyInstaller, whose bootloader is in every exe."""
-    by_name = {package.metadata["Name"]: package for package in packages}
-    found = owners(packages)
+    found = packages_distributions()
     theirs = {
         name
         for name in names - OURS
@@ -114,7 +98,7 @@ def package_sections(names: set[str], packages: list[Distribution]) -> list[Sect
     missing: list[str] = []
     shipped = {"pyinstaller"}.union(*(found[name] for name in theirs))
     for name in sorted(shipped, key=str.lower):
-        package = by_name[name]
+        package = distribution(name)
         body = "\n\n".join(f"--- {where}\n\n{text}" for where, text in texts(package))
         if not body:
             missing.append(name)
@@ -157,7 +141,7 @@ def main(args: list[str]) -> None:
     )
     sections = [
         (f"Python {sys.version.split()[0]}", components, python),
-        *package_sections(frozen_names(app), list(distributions())),
+        *package_sections(frozen_names(app)),
     ]
     version = (app / "_internal" / "version.txt").read_text(encoding="ascii")
     listing = write(out, version, sections)

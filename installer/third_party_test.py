@@ -1,5 +1,4 @@
 from codecs import BOM_UTF8
-from importlib.metadata import Distribution, distributions
 from pathlib import Path
 
 import pytest
@@ -10,9 +9,11 @@ import third_party
 FROZEN = {"pyimod01_archive", "_pyi_rth_utils", "json", "_ssl", "ritmelli", "icone"}
 
 
-def venv(site: Path, licensed: dict[str, str | None]) -> list[Distribution]:
-    """A site-packages with one package for each name, with its license file at that
-    path inside the .dist-info, or with none."""
+def venv(
+    site: Path, licensed: dict[str, str | None], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A site-packages on the path with one package for each name, with its license
+    file at that path inside the .dist-info, or with none."""
     for name, where in licensed.items():
         info = site / f"{name}-1.0.dist-info"
         (site / name).mkdir(parents=True)
@@ -26,21 +27,22 @@ def venv(site: Path, licensed: dict[str, str | None]) -> list[Distribution]:
             (info / where).write_text(f"the license of {name}\n")
             files.append(f"{info.name}/{where}")
         (info / "RECORD").write_text("".join(f"{f},,\n" for f in files))
-    return list(distributions(path=[str(site)]))
+    monkeypatch.syspath_prepend(site)
 
 
 def test_with_a_license_file_for_each_package_the_notices_hold_every_text(
-    tmp_path: Path,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    packages = venv(
+    venv(
         tmp_path / "site",
         {
             "pyinstaller": "licenses/COPYING.txt",
             "noted": "LICENSE",
             "not_shipped": None,
         },
+        monkeypatch,
     )
-    sections = third_party.package_sections(FROZEN | {"noted"}, packages)
+    sections = third_party.package_sections(FROZEN | {"noted"})
     out = tmp_path / "TERCEIROS.txt"
     listing = third_party.write(
         out, "0.900.1", [("Python", "PSF-2.0", "psf"), *sections]
@@ -58,15 +60,19 @@ def test_with_a_license_file_for_each_package_the_notices_hold_every_text(
     assert "the license of pyinstaller" in written
 
 
-def test_a_package_without_a_license_file_stops_the_build(tmp_path: Path) -> None:
-    packages = venv(tmp_path, {"pyinstaller": "COPYING.txt", "bare": None})
+def test_a_package_without_a_license_file_stops_the_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    venv(tmp_path, {"pyinstaller": "COPYING.txt", "bare": None}, monkeypatch)
     with pytest.raises(
         SystemExit, match=r"without a license file in the venv: \['bare'\]"
     ):
-        third_party.package_sections(FROZEN | {"bare"}, packages)
+        third_party.package_sections(FROZEN | {"bare"})
 
 
-def test_a_name_of_no_package_stops_the_build(tmp_path: Path) -> None:
-    packages = venv(tmp_path, {"pyinstaller": "COPYING.txt"})
+def test_a_name_of_no_package_stops_the_build(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    venv(tmp_path, {"pyinstaller": "COPYING.txt"}, monkeypatch)
     with pytest.raises(SystemExit, match=r"no package in the venv.*\['stray'\]"):
-        third_party.package_sections(FROZEN | {"stray"}, packages)
+        third_party.package_sections(FROZEN | {"stray"})
