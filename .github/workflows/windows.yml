@@ -46,6 +46,9 @@ jobs:
       - name: The two SYSTEM tasks, --atualizador remove and the hook
         if: ${{ !cancelled() }}
         run: ./installer/e2e/tasks.ps1
+      - name: The protected folder rule on the disk, the same in the setup and in the exe
+        if: ${{ !cancelled() }}
+        run: ./installer/e2e/protected_verdict.ps1
 
   filter:
     name: Windows filter
