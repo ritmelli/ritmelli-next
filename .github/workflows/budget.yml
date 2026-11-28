@@ -77,6 +77,8 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
         run: |
+          revert='^Revert ".+"$'
+          [[ $TITLE =~ $revert ]] && exit 0
           re='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([[:lower:][:digit:]-]+(,[[:lower:][:digit:]-]+)*\))?!?: [[:lower:]]'
           [[ $TITLE =~ $re ]] || { echo "::error::the PR title must be '<type>(<scope>): <description>' or '<type>: <description>', with a type of build, chore, ci, docs, feat, fix, perf, refactor, revert, style or test, a lower-case scope, and a description that starts with a lower-case letter, for example 'fix(installer): the build stops when the Python license lacks a library the exe carries'"; exit 1; }
           [[ $TITLE != *. ]] || { echo "::error::the PR title must not end with a period: drop it"; exit 1; }

@@ -3,9 +3,12 @@ the other does not, the new line stops finding what v0.7.0 left on the PC. A tes
 keeps the v0.7.0 value on its own, so the tests are left out."""
 
 import ast
+import re
 from pathlib import Path
 
 INSTALLED = "src/ritmelli/machine/installed.py"
+COMMON_WORD = re.compile(r"[a-z-]+")
+WHERE_THE_NAMES_ARE_USED = ("src/ritmelli/app.py", "src/ritmelli/machine")
 
 
 def text(node: ast.expr, known: dict[str, str]) -> str | None:
@@ -46,7 +49,9 @@ NAMES = names((Path(__file__).resolve().parents[2] / INSTALLED).read_text("utf-8
 def check(path: Path, tree: ast.Module, _source: str) -> list[tuple[int, str]]:
     if path.as_posix() == INSTALLED or path.name.endswith("_test.py"):
         return []
+    words = any(path.is_relative_to(used) for used in WHERE_THE_NAMES_ARE_USED)
+    known = {t: n for t, n in NAMES.items() if words or not COMMON_WORD.fullmatch(t)}
     texts = [n for n in ast.walk(tree) if isinstance(n, ast.Constant)]
-    hits = [n for n in texts if isinstance(n.value, str) and n.value in NAMES]
+    hits = [n for n in texts if isinstance(n.value, str) and n.value in known]
     use = "the text of {} in ritmelli.machine.installed. Use the name."
-    return [(n.lineno, use.format(" or ".join(NAMES[n.value]))) for n in hits]
+    return [(n.lineno, use.format(" or ".join(known[n.value]))) for n in hits]

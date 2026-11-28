@@ -98,7 +98,10 @@ class Registry:
             raise FileNotFoundError(name)
 
     def DeleteKey(self, root: str, sub: str) -> None:
-        del self.keys[f"{root}\\{sub}".lower()]
+        path = f"{root}\\{sub}".lower()
+        if any(p.startswith(path + "\\") for p in self.keys):
+            raise OSError(13, "Access is denied", None, 5)
+        del self.keys[path]
 
     def EnumValue(self, key: str, index: int) -> tuple[str, Data, int]:
         return _nth(list(self.keys[key].values()), index)
@@ -184,6 +187,8 @@ def test_an_echo_canceller_that_covers_raw_runs_inside_a_host(reg: Registry) -> 
     assert mic_slots.give_back(EP)
     assert reg.fx() == before
     mic_slots.forget_hosts()
+    with pytest.raises(OSError):
+        reg.DeleteKey("HKLM", rf"SOFTWARE\Classes\CLSID\{FILTER_CLSID}")
     mic_slots.remove_com()
     assert reg.values(SAVED_KEY) == {}
     assert not [path for path in reg.keys if any(c.lower() in path for c in OUR_CLSIDS)]
