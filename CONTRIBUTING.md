@@ -32,6 +32,67 @@ The Check also runs actionlint on `.github/workflows/`.
 
 ## A PR
 
+### Its title
+
+The title follows [Conventional Commits](https://www.conventionalcommits.org/), with the rules of
+`@commitlint/config-conventional`:
+
+```text
+<type>(<scope>): <description>
+<type>: <description>
+```
+
+- The type is one of the table below.
+- The scope is optional, in lower case: letters, digits and `-`. Two scopes take a comma:
+  `fix(machine,update): <description>`.
+- A `!` before the colon marks a change that breaks what an installed version relies on: `feat(update)!: <description>`.
+- The description comes after `: `, starts with a lower-case letter and does not end with a period.
+- The whole title has at most 100 characters.
+
+The `Title` step of the Budget check enforces these rules. It runs again when the title is edited.
+
+| Type | When |
+|---|---|
+| `feat` | Something the app, the setup or the update task did not do before. |
+| `fix` | Something that went wrong now goes right. |
+| `perf` | The same result, faster or lighter. |
+| `refactor` | The code changes shape, and nothing it does changes. |
+| `test` | Only tests, golden files or proof scripts. |
+| `docs` | Only text for people, such as the `.md` files. |
+| `style` | Only layout of the code: spaces, line breaks, the order of imports. |
+| `build` | How the exe, the filter DLL or the setup is built, or a pinned library. |
+| `ci` | The workflows in `.github/`. |
+| `chore` | Upkeep of the repo that is none of the above, such as a lint rule. |
+| `revert` | Undoes a merged PR. The description is the title of that PR. |
+
+The scope is the folder the PR is about: `machine`, `update`, `audio`, `features`, `kernel`, `storage`, `sources` or
+`ports` in `src/ritmelli/`, or `installer`, `filter`, `ui` or `tools` at the root. Use `lint` for `tools/lint/`, and
+the name of the workflow for `ci`. Leave the scope out when the PR spans the repo.
+
+Write the description in plain words, in the imperative (`port the silent device check`). In a `fix`, say what is true
+after the fix (`the build stops when ...`). No PR number.
+
+| Merged as | In this format |
+|---|---|
+| #85 Port the silent device check | `feat(machine): port the silent device check` |
+| #82 Stop the build when the Python license lacks a library the exe carries | `fix(installer): the build stops when the Python license lacks a library the exe carries` |
+| #72 Run the Build and the Windows jobs on every PR | `ci: run the Build and the Windows jobs on every PR` |
+| #22 Hold the filter's ring layout to a golden | `test(filter): hold the ring layout to a golden` |
+| #77 List the findings no lint rule catches | `docs: list the findings no lint rule catches` |
+
+### Its body
+
+`.github/pull_request_template.md` holds the parts of the body, in order. GitHub puts it in each new PR.
+
+1. `Kind: <name>`, the first line. The Budget check reads it: see "Its kind".
+2. Up to 15 lines on what changes for the person using the app, then one `Closes #N` line per issue the merge closes.
+3. `## What was cut`, when the PR ports or cuts something: what left, and why.
+4. `## Proof`, the proof card. It ends with `Verdict: PASS on <head>`, and the Budget check reads that line: see
+   "Its proof".
+5. `## Review`, the review rounds: each finding and what was done with it.
+
+Never in the body: a local path of a PC (`C:\Users\...`), a secret, or an output that carries one.
+
 ### Its kind
 
 The first line of the PR body is `Kind: <name>`, one entry of `kinds.toml`.

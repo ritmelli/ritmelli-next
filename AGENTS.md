@@ -4,6 +4,7 @@ Before you write anything, say which kind of change it is: one entry of kinds.to
 The first line of the PR body is `Kind: <name>`.
 Every file the PR changes must match one of that kind's paths.
 The Budget check enforces this with kinds.toml from the base branch.
+The PR title follows "Its title" in CONTRIBUTING.md, and the Budget check enforces it.
 If no kind fits, the change is core: stop and ask the owner. Write `Kind: core` only when the owner asked for the change.
 After the first line, the body has up to 15 lines on what changes for the person using the app.
 
