@@ -120,7 +120,7 @@ function Read-State([string]$App) {
     $s['dll|signature'] = "$((Get-AuthenticodeSignature -LiteralPath $dll).Status)"
   }
   $state = Join-Path $App 'atualizacao\estado.json'
-  if (Test-Path -LiteralPath $state) { $s['estado'] = Get-Content -LiteralPath $state -Raw }
+  if (Test-Path -LiteralPath $state) { $s['estado'] = [IO.File]::ReadAllText($state) }
   Add-Hashes $s 'local|' $Local
   Add-Hashes $s 'vozes|' (Join-Path $App 'vozes')
   Add-Mics $s
