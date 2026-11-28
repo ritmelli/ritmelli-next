@@ -118,14 +118,20 @@ def test_a_silent_device_that_then_refuses_is_not_checked(plug: Any) -> None:
     assert mic_check.run() == {"checked": [MIC], "silent": [], "failed": [UMC_IN]}
 
 
-def test_a_driver_error_counts_as_not_checked(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_the_check_waits_for_the_devices_and_a_driver_error_is_no_check(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[object] = []
+
     def broken() -> dict[str, list[str]]:
+        calls.append("run")
         raise RuntimeError("Error querying device -1")
 
     monkeypatch.setattr(mic_check, "run", broken)
-    monkeypatch.setattr(mic_check, "SETTLE_S", 0)
+    monkeypatch.setattr(mic_check.time, "sleep", calls.append)
     summary = "devices: not checked (RuntimeError: Error querying device -1)"
     assert mic_check.after_restart() == mic_check.Report(summary, [])
+    assert calls == [mic_check.SETTLE_S, "run"]
 
 
 def test_a_check_past_the_ceiling_does_not_hold_the_setup(

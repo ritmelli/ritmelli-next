@@ -1,4 +1,5 @@
 import ast
+import re
 import tokenize
 from pathlib import Path
 
@@ -10,7 +11,8 @@ def comment(token: tokenize.TokenInfo) -> bool:
     return token.type == tokenize.COMMENT and not shebang
 
 
-def check(_path: Path, _tree: ast.Module, source: str) -> list[tuple[int, str]]:
-    lines = iter(source.splitlines(keepends=True))
+def check(path: Path, _tree: ast.Module, source: str) -> list[tuple[int, str]]:
+    lines = iter(re.split(r"(?<=\n)", source))
     tokens = tokenize.generate_tokens(lambda: next(lines, ""))
-    return [(token.start[0], MESSAGE) for token in tokens if comment(token)]
+    found = [(token.start[0], MESSAGE) for token in tokens if comment(token)]
+    return [] if path.is_relative_to("tools/lint/ruff") else found

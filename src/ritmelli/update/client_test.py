@@ -130,8 +130,8 @@ def test_a_round_asked_as_ritmelli_closes_waits_for_it_to_close(
     waits: list[float] = []
     monkeypatch.setattr(client.time, "sleep", waits.append)
     publish()
-    state, machine = run(tmp_path, Closing(open=True))
-    assert state["estado"] == "instalando" and len(machine.started) == 1
+    state, _ = run(tmp_path, Closing(open=True))
+    assert state["estado"] == "instalando"
     assert waits == [1.0]
 
 

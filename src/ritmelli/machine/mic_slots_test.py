@@ -37,8 +37,8 @@ EP = "{4f6ea1d0-a906-4f42-83ac-2ab996490575}"
 EP2 = "{0b1c2d3e-4f50-4617-8899-aabbccddeeff}"
 LAPTOP_EFX = "{8338CED2-0837-11DC-8314-0800200C9A66}"
 ECHO_MFX = "{70306EF0-7851-11DC-8314-0800200C9A66}"
-MFX_2 = "{11111111-2222-4333-8444-555555555555}"
-SFX_2 = "{22222222-3333-4444-8555-666666666666}"
+OTHER_MFX = "{11111111-2222-4333-8444-555555555555}"
+OTHER_SFX = "{22222222-3333-4444-8555-666666666666}"
 MODES = [MODE_DEFAULT, MODE_RAW, "{98951333-B9CD-48B1-A0A3-FF40682D73F7}"]
 
 
@@ -133,7 +133,11 @@ class Registry:
 
     def laptop(self, mfx_modes: list[str], endpoint: str = EP) -> dict[str, Data]:
         """An EFX and two MFX in lists, the last MFX the echo canceller."""
-        lists = {EFX_LIST: [LAPTOP_EFX], MFX_LIST: [MFX_2, ECHO_MFX], EFX_MODES: MODES}
+        lists = {
+            EFX_LIST: [LAPTOP_EFX],
+            MFX_LIST: [OTHER_MFX, ECHO_MFX],
+            EFX_MODES: MODES,
+        }
         return self.mic(
             {ASSOCIATION: ANY_NODE, **lists, MFX_MODES: mfx_modes}, endpoint
         )
@@ -159,10 +163,10 @@ def reg(monkeypatch: pytest.MonkeyPatch) -> Registry:
 def test_the_vendor_original_is_saved_and_comes_back_value_by_value(
     reg: Registry,
 ) -> None:
-    before = reg.mic({ASSOCIATION: ANY_NODE, SFX: SFX_2, EFX: LAPTOP_EFX})
+    before = reg.mic({ASSOCIATION: ANY_NODE, SFX: OTHER_SFX, EFX: LAPTOP_EFX})
     assert mic_slots.put_on(EP)
     efx = {EFX_LIST: [LAPTOP_EFX, FILTER_CLSID], EFX_MODES: [MODE_DEFAULT, MODE_RAW]}
-    assert reg.fx() == {ASSOCIATION: ANY_NODE, SFX: SFX_2, LFX: FILTER_CLSID, **efx}
+    assert reg.fx() == {ASSOCIATION: ANY_NODE, SFX: OTHER_SFX, LFX: FILTER_CLSID, **efx}
     created = [LFX, SFX_MODES, EFX_LIST, EFX_MODES, MFX_LIST]
     saved = {ENHANCEMENTS_OFF: 0, MISSING: created, COPY_VERSION: 3}
     assert reg.values(rf"{SAVED_KEY}\{EP}") == {**before, **saved}
@@ -176,7 +180,7 @@ def test_an_echo_canceller_that_covers_raw_runs_inside_a_host(reg: Registry) -> 
     fx, host = reg.fx(), reg.values(rf"{APO_KEY}\{HOST_CLSIDS[0]}")
     assert (fx[EFX_LIST], fx[MFX_MODES]) == ([LAPTOP_EFX, FILTER_CLSID], MODES)
     assert (fx[MFX_LIST], reg.values(SAVED_KEY)) == (
-        [MFX_2, HOST_CLSIDS[0]],
+        [OTHER_MFX, HOST_CLSIDS[0]],
         {f"{HOSTED}0": ECHO_MFX},
     )
     assert host == {"FriendlyName": "Ritmelli Microfone", "Flags": 0xF}
@@ -192,7 +196,7 @@ def test_an_echo_canceller_that_covers_raw_runs_inside_a_host(reg: Registry) -> 
 def test_a_vendor_mfx_without_raw_keeps_its_list(reg: Registry) -> None:
     before = reg.laptop([MODE_DEFAULT])
     assert mic_slots.put_on(EP)
-    assert (reg.fx()[MFX_LIST], reg.values(SAVED_KEY)) == ([MFX_2, ECHO_MFX], {})
+    assert (reg.fx()[MFX_LIST], reg.values(SAVED_KEY)) == ([OTHER_MFX, ECHO_MFX], {})
     assert mic_slots.give_back(EP)
     assert reg.fx() == before
 

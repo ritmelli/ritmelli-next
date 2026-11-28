@@ -24,11 +24,12 @@ IN_STRINGS = """\
 #!/usr/bin/env python
 NAME = "#1"
 TAG = f"{x}#"
+TEXT = "a\u2028#b"
 """
 
 
-def flagged(source: str) -> list[int]:
-    found = no_comments.check(Path("src/a.py"), ast.parse(source), source)
+def flagged(source: str, path: str = "src/a.py") -> list[int]:
+    found = no_comments.check(Path(path), ast.parse(source), source)
     return [line for line, _ in found]
 
 
@@ -42,5 +43,6 @@ def test_the_same_lines_without_the_comments_pass(pr: str) -> None:
     assert flagged(re.sub(r"(?m)^#.*\n|  #.*$", "", MERGED[pr])) == []
 
 
-def test_a_hash_in_a_string_or_a_shebang_passes() -> None:
+def test_a_hash_in_a_string_a_shebang_or_a_ruff_case_passes() -> None:
     assert flagged(IN_STRINGS) == []
+    assert flagged(MERGED["#13"], "tools/lint/ruff/ERA001/pr13.py") == []
