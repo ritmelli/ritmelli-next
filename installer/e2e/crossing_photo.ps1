@@ -105,7 +105,7 @@ function Read-State([string]$App) {
   $svc.Connect()
   foreach ($t in $Tasks) {
     try { $task = $svc.GetFolder('\').GetTask($t) } catch { continue }
-    $s["task|$t"] = $task.Xml + $task.GetSecurityDescriptor(4)
+    $s["task|$t"] = $task.Xml + ($task.GetSecurityDescriptor(4) -replace '\(A;ID;[^)]*\)')
   }
   $s['firewall'] = (Invoke-Tool netsh.exe advfirewall, firewall, show, rule, "name=$Rule", verbose).Out
   $shell = New-Object -ComObject WScript.Shell
