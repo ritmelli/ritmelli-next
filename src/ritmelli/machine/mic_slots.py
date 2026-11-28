@@ -95,6 +95,14 @@ def ours(fx: winreg.HKEYType) -> bool:
     return FILTER_CLSID in singles or any(clsid in OUR_CLSIDS for clsid in lists)
 
 
+def has_filter(endpoint: str) -> bool:
+    try:
+        with _open(rf"{CAPTURE_KEY}\{endpoint}\FxProperties", winreg.KEY_READ) as fx:
+            return ours(fx)
+    except OSError:
+        return False
+
+
 def microphones(active_only: bool = False) -> list[tuple[str, str, str]]:
     """The id, name and device of each microphone. Without active_only, also the
     disabled and unplugged ones: the filter is on them when they come back."""
@@ -307,8 +315,7 @@ def _delete_tree(path: str) -> None:
 
 
 def remove_com() -> None:
-    """The keys DllUnregisterServer deletes, without loading the DLL: for a DLL in a
-    folder that failed the protected folder rule."""
+    """The keys DllUnregisterServer deletes, without loading the DLL."""
     for clsid in OUR_CLSIDS:
         _delete_tree(rf"SOFTWARE\Classes\CLSID\{clsid}")
         _delete_tree(rf"{APO_KEY}\{clsid}")
