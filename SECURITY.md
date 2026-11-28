@@ -1,6 +1,5 @@
 # Security
 
-Ritmelli updates itself on the PC of the person using it, and parts of it run as SYSTEM.
 Report a flaw in private, so it is not public before the fix.
 
 ## How to report
