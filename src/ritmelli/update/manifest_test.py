@@ -35,7 +35,7 @@ def test_the_test_seed_manifest_passes_with_the_seed_key() -> None:
 
 def test_a_version_with_a_suffix_is_refused() -> None:
     data = new_with(versao="1.0.0-beta")
-    with pytest.raises(Refused, match="1.0.0-beta"):
+    with pytest.raises(Refused, match=r"1\.0\.0-beta"):
         check(data, sign(data), SEED_KEYS)
 
 
