@@ -62,8 +62,8 @@ try {
   $firewall = Get-NetFirewallRule -DisplayName $Rule -ErrorAction SilentlyContinue | ForEach-Object {
     "$($_.Direction) $($_.Action) $($_.Enabled) $($_.Profile) $(($_ | Get-NetFirewallApplicationFilter).Program)"
   }
-  $there = @("$app\_internal\microfone\micfx.dll", "$app\LICENSE.txt", "$app\TERCEIROS.txt") + $kept
-  $left = @("$app\microfone", "$app\bin", $Links[1], "$env:ProgramFiles\Ritmelli") + $gone
+  $there = @("$app\_internal\microfone\micfx.dll", "$app\microfone\micfx.dll", "$app\LICENSE.txt", "$app\TERCEIROS.txt") + $kept
+  $left = @("$app\bin", $Links[1], "$env:ProgramFiles\Ritmelli") + $gone
   $found = [ordered]@{
     DisplayName = $entry.DisplayName; DisplayVersion = $entry.DisplayVersion
     InstallLocation = $entry.InstallLocation; UninstallString = $entry.UninstallString
