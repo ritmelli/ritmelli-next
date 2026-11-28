@@ -20,9 +20,6 @@ def text(node: ast.expr, known: dict[str, str]) -> str | None:
 
 
 def pairs(target: ast.expr, value: ast.expr, known: dict[str, str]) -> dict[str, str]:
-    if isinstance(target, ast.Tuple) and isinstance(value, ast.Tuple):
-        both = zip(target.elts, value.elts, strict=True)
-        return {k: v for t, e in both for k, v in pairs(t, e, known).items()}
     if not isinstance(target, ast.Name):
         return {}
     if isinstance(value, ast.Tuple):

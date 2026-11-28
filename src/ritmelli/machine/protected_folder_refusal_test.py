@@ -23,7 +23,8 @@ from ritmelli.machine.protected_folder_test import (
 )
 
 ME = "S-1-5-21-1111111111-2222222222-3333333333-1001"
-PARENT, NEW = ROOT + r"\Parent", ROOT + r"\Parent\Ritmelli"
+PARENT = ROOT + r"\Parent"
+NEW = ROOT + r"\Parent\Ritmelli"
 
 
 def test_a_write_right_for_anyone_else_fails() -> None:
