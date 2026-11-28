@@ -1,10 +1,11 @@
+import codecs
 import re
 import subprocess
 import sys
 from collections.abc import Callable, Iterator
 
 SPAN = re.compile(r"`([^`]+)`")
-CITATION = re.compile(r"([\w./-]*\.[A-Za-z]\w*):([1-9]\d*)(?:-([1-9]\d*))?", re.ASCII)
+CITATION = re.compile(r"([\w./-]*\.[A-Za-z]\w*):([1-9]\d*)(?:-([1-9]\d*))?")
 OTHER_TREE = re.compile(r"\s+(?:of|at)\s+`")
 UNCHECKED = ("## Proof", "## Review")
 
@@ -35,13 +36,19 @@ def wrong(body: str, names: list[str], length: Callable[[str], int]) -> list[str
     return found
 
 
+def lines(data: bytes) -> int:
+    if data.startswith(codecs.BOM_UTF16_LE):
+        data = data.decode("utf-16").encode()
+    return len(data.splitlines())
+
+
 def git(*args: str) -> bytes:
     return subprocess.run(["git", *args], capture_output=True, check=True).stdout
 
 
 def main(head: str) -> int:
     def length(name: str) -> int:
-        return len(git("show", f"{head}:{name}").splitlines())
+        return lines(git("show", f"{head}:{name}"))
 
     names = git("ls-tree", "-r", "--name-only", head).decode().splitlines()
     found = wrong(sys.stdin.buffer.read().decode(), names, length)
