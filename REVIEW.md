@@ -23,6 +23,11 @@ This file says when a review stops. Where another review rule disagrees, this fi
 - `hand-rolled-library-call`: a loop or a walk that does what a library call already does (#34).
 - `assert-repeats-earlier-check`: an `assert` or a check that repeats an earlier one (#37).
 - `guard-for-hand-built-state`: a `try` or an `if` that guards a state only a hand-built input reaches (#46).
+- `timeout-skips-the-restore`: a call that runs past its timeout and skips the step that puts the old state back (#43).
+- `cut-missing-from-pr-body`: a port that leaves something out that the PR body does not list (#55).
+- `comment-states-false-fact`: a comment that states something false, in a file that can have comments, such as a `.ps1`, `.iss` or `.yml` (#84).
+- `doc-rule-the-check-refuses`: docs that teach something a check refuses (#97).
+- `check-satisfied-by-generic-text`: a check that matches text so generic it passes without the thing it looks for (#111).
 
 ## What does not count
 
