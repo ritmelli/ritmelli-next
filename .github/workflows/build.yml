@@ -41,7 +41,8 @@ jobs:
           $runw = (Select-String installer\bootloader\bin\FONTE.txt -Pattern '^([0-9a-f]{64})  runw\.exe$').Matches[0].Groups[1].Value
           $venv = "$env:LOCALAPPDATA\ritmelli-next-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel"
           if ((Get-FileHash "$venv\runw.exe" -Algorithm SHA256).Hash -ne $runw) { throw 'the runw.exe of the venv is not the one in FONTE.txt' }
-          # a mode must not show a window, leave a process listening on a port, or create a file in LOCALAPPDATA
+          # a mode must not show a window, leave a process listening on a port, or create a file in LOCALAPPDATA\Ritmelli;
+          # the rest of LOCALAPPDATA does not count: other processes on the runner, such as Visual Studio telemetry, write there
           $watcher = [IO.FileSystemWatcher]::new($env:LOCALAPPDATA)
           $watcher.IncludeSubdirectories = $true
           $null = Register-ObjectEvent $watcher Created -SourceIdentifier created
@@ -62,7 +63,7 @@ jobs:
             $seconds = $clock.Elapsed.TotalSeconds
             Start-Sleep -Milliseconds 500
             $watcher.EnableRaisingEvents = $false
-            $files = @(Get-Event -SourceIdentifier created -ErrorAction SilentlyContinue | ForEach-Object { $_.SourceEventArgs.FullPath; Remove-Event -EventIdentifier $_.EventIdentifier })
+            $files = @(Get-Event -SourceIdentifier created -ErrorAction SilentlyContinue | ForEach-Object { if ($_.SourceEventArgs.Name -match '^Ritmelli(\\|$)') { $_.SourceEventArgs.FullPath }; Remove-Event -EventIdentifier $_.EventIdentifier })
             $ports = @(Get-NetTCPConnection -State Listen | Where-Object { (Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue).StartTime -ge $started } | ForEach-Object LocalPort)
             "ritmelli.exe $arguments exited with $($p.ExitCode) in $seconds s; window: $window; new ports: $ports; new files: $files"
             if ($p.ExitCode -ne $code -or $seconds -ge 5 -or $window -or $ports -or $files) { throw "ritmelli.exe $arguments should exit with $code in under 5 s and leave nothing" }
