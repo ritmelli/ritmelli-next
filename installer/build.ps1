@@ -38,6 +38,7 @@ try {
   if ($got -ne $runw) { throw "runw.exe in the venv has hash $got, not the $runw of FONTE.txt" }
   Run 'pyinstaller' { uv run --no-sync pyinstaller --noconfirm --log-level ERROR installer\ritmelli.spec }
   & filter\apo\check_version.ps1 -Folder dist\ritmelli\_internal\microfone -Version $Version
+  Run 'third_party.py' { uv run --no-sync python installer\third_party.py dist\ritmelli dist\TERCEIROS.txt }
   # the user folder first: .github/actions/inno-setup puts 6.7.3 there, and an older Inno
   # may not append to the uninstall log v0.7.0 left
   $iscc = "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe", "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" |
