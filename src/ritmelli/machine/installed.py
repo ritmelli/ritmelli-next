@@ -3,7 +3,6 @@
 import ctypes
 import ntpath
 
-APP_ID = "{320EB2BD-48BC-420D-8F52-C22F644E47D4}"
 UPDATE_TASK = "Ritmelli Atualiza"
 MIC_TASK = r"\Ritmelli\Microfone"
 UPDATE_MODE = "--atualizador"
