@@ -10,10 +10,11 @@ freezes the exe, with the python of the build venv:
 - Python, by the LICENSE.txt of its install, and PyInstaller, whose bootloader is the
   start of ritmelli.exe.
 
-A name of no package in the venv, or a package without a license file, stops the
-build rather than ship a setup that lacks a notice. The repo keeps no third-party
-license text: for a package that ships without its own, take a version that ships
-it, or add the text to the repo with the code that reads it.
+A name of no package in the venv, a package without a license file, or a library of
+Python in _internal\\ whose text that LICENSE.txt lacks, stops the build rather than
+ship a setup that lacks a notice. The repo keeps no third-party license text: for a
+package that ships without its own, take a version that ships it, or add the text to
+the repo with the code that reads it.
 """
 
 import re
@@ -24,6 +25,15 @@ from pathlib import Path
 # the package, and the folders ritmelli.spec puts in _internal\
 OURS = {"ritmelli", "icone", "microfone"}
 LICENSE_NAME = re.compile(r"LICEN[CS]E|COPYING|NOTICE|COPYRIGHT", re.I)
+# a file in _internal\ that carries a library of Python, and a line of the text of
+# that library in the LICENSE.txt of the Python of python.org; the Python that uv
+# downloads has the same files and no text of OpenSSL or libffi
+PYTHON_LIBRARIES = {
+    "libcrypto-*.dll": "Apache License",  # OpenSSL
+    "libssl-*.dll": "Apache License",
+    "libffi-*.dll": "libffi - Copyright",
+    "_bz2.pyd": "libbzip2",
+}
 SEE = "consulte o texto / see the text"
 BOOTLOADER = (
     "O bootloader do PyInstaller forma o início do ritmelli.exe; a exceção prevista na "
@@ -65,6 +75,29 @@ def frozen_names(app: Path) -> set[str]:
         elif path.suffix == ".pyd":
             names.add(path.name.split(".")[0])
     return names
+
+
+def python_section(app: Path) -> Section:
+    """Python, by the LICENSE.txt of its install, with the text of each library of it
+    that the exe carries."""
+    python = Path(sys.base_prefix) / "LICENSE.txt"
+    text = read(python)
+    lacking = sorted(
+        path.name
+        for pattern, line in PYTHON_LIBRARIES.items()
+        for path in (app / "_internal").glob(pattern)
+        if line not in text
+    )
+    if lacking:
+        sys.exit(
+            f"{python} lacks the text of {lacking}, which the exe carries: build "
+            "with the Python of python.org (UV_PYTHON=<its python.exe>)"
+        )
+    components = (
+        "PSF-2.0 e as licenças dos seus componentes / "
+        "PSF-2.0 and the licenses of its components"
+    )
+    return (f"Python {sys.version.split()[0]}", components, text)
 
 
 def terms(package: Distribution) -> str:
@@ -139,15 +172,7 @@ def main(args: list[str]) -> None:
     if len(args) != 2:
         sys.exit(__doc__)
     app, out = Path(args[0]), Path(args[1])
-    python = read(Path(sys.base_prefix) / "LICENSE.txt")
-    components = (
-        "PSF-2.0 e as licenças dos seus componentes / "
-        "PSF-2.0 and the licenses of its components"
-    )
-    sections = [
-        (f"Python {sys.version.split()[0]}", components, python),
-        *package_sections(frozen_names(app)),
-    ]
+    sections = [python_section(app), *package_sections(frozen_names(app))]
     version = (app / "_internal" / "version.txt").read_text(encoding="ascii")
     listing = write(out, version, sections)
     print("\n".join(listing))
