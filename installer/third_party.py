@@ -11,7 +11,9 @@ freezes the exe, with the python of the build venv:
   start of ritmelli.exe.
 
 A name of no package in the venv, or a package without a license file, stops the
-build: look and add it, rather than ship a setup that lacks a notice.
+build rather than ship a setup that lacks a notice. The repo keeps no third-party
+license text: for a package that ships without its own, take a version that ships
+it, or add the text to the repo with the code that reads it.
 """
 
 import re
@@ -65,7 +67,7 @@ def frozen_names(app: Path) -> set[str]:
     return names
 
 
-def kind(package: Distribution) -> str:
+def terms(package: Distribution) -> str:
     """The short name of the license, when the metadata gives one in a line."""
     metadata = package.metadata
     named = metadata.get("License-Expression") or metadata.get("License", "")
@@ -103,12 +105,15 @@ def package_sections(names: set[str]) -> list[Section]:
         if not body:
             missing.append(name)
         elif name == "pyinstaller":
-            terms = "GPL-2.0-or-later WITH Bootloader-exception"
             sections.append(
-                (f"{name} {package.version}", terms, f"{BOOTLOADER}\n\n{body}")
+                (
+                    f"{name} {package.version}",
+                    "GPL-2.0-or-later WITH Bootloader-exception",
+                    f"{BOOTLOADER}\n\n{body}",
+                )
             )
         else:
-            sections.append((f"{name} {package.version}", kind(package), body))
+            sections.append((f"{name} {package.version}", terms(package), body))
     if missing:
         sys.exit(f"packages without a license file in the venv: {missing}")
     return sections

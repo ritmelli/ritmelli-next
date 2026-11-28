@@ -6,6 +6,7 @@ on:
       - installer/**
       - filter/**
       - src/ritmelli/machine/**
+      - src/ritmelli/ports/**
       - src/ritmelli/update/**
       - src/ritmelli/app.py
       - .github/actions/inno-setup/**
