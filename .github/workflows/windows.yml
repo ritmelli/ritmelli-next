@@ -27,6 +27,14 @@ jobs:
       - name: The protected folder rule on the disk, the same in the setup and in the exe
         if: ${{ !cancelled() }}
         run: ./installer/e2e/protected_verdict.ps1
+      - name: The --microfone mode answers confere in JSON, with the audio service on
+        if: ${{ !cancelled() }}
+        run: |
+          Set-Service audiosrv -StartupType Manual
+          Start-Service audiosrv
+          $out = uv run python -m ritmelli.app --microfone confere
+          if ($LASTEXITCODE -ne 0) { throw "--microfone confere exited with $LASTEXITCODE" }
+          $out | ConvertFrom-Json | Format-List
 
   filter:
     name: Windows filter

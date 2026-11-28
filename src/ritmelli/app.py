@@ -15,8 +15,13 @@ from collections.abc import Callable, Sequence
 from pathlib import Path
 
 import ritmelli
-from ritmelli.machine import processes, protected_folder, tasks, update_hook
-from ritmelli.machine.installed import UPDATE_ACTIONS, UPDATE_MODE, UPDATE_TASK
+from ritmelli.machine import mic_setup, processes, protected_folder, tasks, update_hook
+from ritmelli.machine.installed import (
+    MIC_MODE,
+    UPDATE_ACTIONS,
+    UPDATE_MODE,
+    UPDATE_TASK,
+)
 from ritmelli.update import client, keys, manifest
 
 UNKNOWN = 2
@@ -110,6 +115,7 @@ def _create_task() -> int:
 MODES: dict[str, Callable[[Sequence[str]], int]] = {
     "--describe": describe,
     UPDATE_MODE: update,
+    MIC_MODE: mic_setup.main,
 }
 
 
