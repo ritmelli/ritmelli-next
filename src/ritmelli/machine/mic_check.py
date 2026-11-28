@@ -37,20 +37,6 @@ class Report:
     stuck: bool = False
 
 
-def device_of(name: str) -> str:
-    """What a Windows name is on, the device whose cable is pulled: the last
-    parenthesis, with those inside it. "Alto-falantes (Realtek(R) Audio)" gives
-    "Realtek(R) Audio". Without a parenthesis at the end, the name."""
-    if not name.endswith(")"):
-        return name
-    depth = 0
-    for i in range(len(name) - 1, 0, -1):
-        depth += {")": 1, "(": -1}.get(name[i], 0)
-        if depth == 0:
-            return name[i + 1 : -1]
-    return name
-
-
 def _listen(
     sd: Any, targets: list[Target], wait_s: float
 ) -> tuple[list[str], list[str]]:
