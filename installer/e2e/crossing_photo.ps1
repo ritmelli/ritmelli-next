@@ -168,7 +168,7 @@ function Find-NotAtOriginal($Ref, $Cur, [string[]]$Ids) {
 
 function Get-Busy([string]$App) {
   Get-CimInstance Win32_Process | Where-Object {
-    $_.Name -like 'Ritmelli-*-setup*' -or $_.Name -like 'unins000*' -or $_.Name -like '_iu*.tmp' -or
+    $_.Name -like 'Ritmelli-*-setup*' -or $_.Name -like 'unins000*' -or $_.Name -eq '_unins.tmp' -or
     ($_.Name -eq 'ritmelli.exe' -and $_.ExecutablePath -like "$App\*") }
 }
 
