@@ -1,4 +1,5 @@
 import json
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +17,7 @@ class FakeGh:
     def __call__(self, *args: str) -> str:
         verb, issues = args[:2], self.issues
         issue = issues[int(args[2]) - 1] if args[2].isdigit() else {}
-        arg = dict(zip(args[2:], args[3:], strict=False))
+        arg = dict(pairwise(args[2:]))
         if verb[0] == "api":
             keys = ("number", "title", "state", "url", "labels")
             newest = reversed(issues)
