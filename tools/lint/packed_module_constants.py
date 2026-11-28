@@ -16,5 +16,5 @@ def packed(node: ast.stmt) -> bool:
     return any(names(target, len(node.value.elts)) for target in node.targets)
 
 
-def check(path: Path, tree: ast.Module, source: str) -> list[tuple[int, str]]:
+def check(_path: Path, tree: ast.Module, _source: str) -> list[tuple[int, str]]:
     return [(node.lineno, MESSAGE) for node in tree.body if packed(node)]

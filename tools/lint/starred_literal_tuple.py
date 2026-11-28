@@ -12,5 +12,5 @@ def starred(node: ast.AST) -> bool:
     return any(isinstance(star.value, LITERALS) for star in stars)
 
 
-def check(path: Path, tree: ast.Module, source: str) -> list[tuple[int, str]]:
+def check(_path: Path, tree: ast.Module, _source: str) -> list[tuple[int, str]]:
     return [(node.lineno, MESSAGE) for node in ast.walk(tree) if starred(node)]
