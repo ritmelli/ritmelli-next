@@ -1,0 +1,11 @@
+﻿You can use, study, copy, modify, and distribute Ritmelli under the terms of the GNU General Public License, version 3 (GPLv3), as published by the Free Software Foundation.
+
+The source code of the app and of this installer is available at https://github.com/ritmelli/ritmelli-next.
+
+The license conditions apply to anyone who copies, modifies, or distributes Ritmelli.
+
+Ritmelli comes with ABSOLUTELY NO WARRANTY, not even the implied warranty of fitness for a particular purpose, to the extent permitted by law (sections 15 and 16 of the GPLv3).
+
+Ritmelli includes software and libraries from other projects, each under its own license.
+
+Ritmelli's installation folder contains the full text of the GPLv3 (LICENSE.txt) and the license of each third-party component (TERCEIROS.txt).

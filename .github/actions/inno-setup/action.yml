@@ -1,5 +1,5 @@
 name: Inno Setup
-description: Inno Setup 6.7.3 in the user folder, the first place instalador/monta.ps1 and dev/testa_aparelho_mudo.py look
+description: Inno Setup 6.7.3 in the user folder, the first place installer/build.ps1 looks
 runs:
   using: composite
   steps:
