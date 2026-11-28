@@ -21,13 +21,9 @@ from ritmelli.update.manifest import (
 )
 from ritmelli.update.verify import Refused
 
-# Ritmelli asks for a round as it closes, so it may still be closing.
 CLOSE_WAIT_S = 20.0
-# Setups of one version that ended without it. After that, only a newer version.
 SETUP_TRIES = 2
-# No /reabrir: run as SYSTEM, the setup would open Ritmelli as SYSTEM.
 SETUP_ARGS = ("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART")
-# The name v0.7.0 gives a download cut in the middle. Its clean-up deletes it.
 DOWNLOADING = ".baixando"
 PROGRESS_EVERY_S = 2.0
 
@@ -151,7 +147,6 @@ def _download(config: Config, found: Manifest) -> Path:
     """The setup in the app folder, checked against the manifest. A whole one that is
     already there is not downloaded again."""
     folder, installer = config.folder, found.installer
-    # The keys of v0.7.0. The new line has no partial setup.
     new = {
         "versao": found.version,
         "data": found.date,

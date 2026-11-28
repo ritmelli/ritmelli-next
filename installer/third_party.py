@@ -22,13 +22,10 @@ import sys
 from importlib.metadata import Distribution, distribution, packages_distributions
 from pathlib import Path
 
-# the package, and the folders ritmelli.spec puts in _internal\
 OURS = {"ritmelli", "icone", "microfone"}
 LICENSE_NAME = re.compile(r"LICEN[CS]E|COPYING|NOTICE|COPYRIGHT", re.IGNORECASE)
-# a file in _internal\ that carries a library of Python, and a line of the text of
-# that library in the LICENSE.txt of the Python of python.org
 PYTHON_LIBRARIES = {
-    "libcrypto-*.dll": "Apache License",  # OpenSSL
+    "libcrypto-*.dll": "Apache License",
     "libssl-*.dll": "Apache License",
     "libffi-*.dll": "libffi - Copyright",
     "_bz2.pyd": "libbzip2",
@@ -52,7 +49,6 @@ HEADER = (
     "license.\n\n"
 )
 
-# the title, the license and the text
 Section = tuple[str, str, str]
 
 
@@ -63,7 +59,6 @@ def read(path: Path) -> str:
 def frozen_names(app: Path) -> set[str]:
     """The top names of what PyInstaller took: the modules in the PYZ of the exe, and
     the folders and .pyd files in _internal\\."""
-    # the build group has PyInstaller; the Check, which runs the test, does not
     from PyInstaller.archive.readers import CArchiveReader
 
     pyz = CArchiveReader(str(app / "ritmelli.exe")).open_embedded_archive("PYZ.pyz")
@@ -160,7 +155,6 @@ def write(out: Path, version: str, sections: list[Section]) -> list[str]:
         for title, terms, text in sections
     ]
     head = HEADER.format(version=version)
-    # with the BOM: an old Notepad reads a file without it as ANSI
     out.write_text(
         head + "\n".join(listing) + "\n\n\n" + "\n\n".join(parts), encoding="utf-8-sig"
     )

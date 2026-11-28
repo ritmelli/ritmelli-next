@@ -8,8 +8,8 @@ from pathlib import Path
 
 from ritmelli.ports.process.run import spawn_detached
 
-SNAPSHOT_PROCESSES = 0x2  # TH32CS_SNAPPROCESS
-QUERY_LIMITED = 0x1000  # PROCESS_QUERY_LIMITED_INFORMATION
+TH32CS_SNAPPROCESS = 0x2
+PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
 
 
 class _Entry(ctypes.Structure):
@@ -35,7 +35,7 @@ def _processes() -> list[tuple[int, str]]:
     """Each process, by pid and exe name."""
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.CreateToolhelp32Snapshot.restype = ctypes.c_void_p
-    snapshot = kernel.CreateToolhelp32Snapshot(SNAPSHOT_PROCESSES, 0)
+    snapshot = kernel.CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
     if snapshot in (None, ctypes.c_void_p(-1).value):
         return []
     handle = ctypes.c_void_p(snapshot)
@@ -55,7 +55,7 @@ def _image(pid: int) -> str | None:
     """The full path of the exe of the process, or None when it cannot be read."""
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     kernel.OpenProcess.restype = ctypes.c_void_p
-    opened = kernel.OpenProcess(QUERY_LIMITED, False, pid)
+    opened = kernel.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
     if not opened:
         return None
     handle = ctypes.c_void_p(opened)
@@ -86,5 +86,4 @@ def alive(pid: int) -> bool:
     return any(found == pid for found, _ in _processes())
 
 
-# The setup, detached: it replaces the ritmelli.exe of the round, which exits right after.
 launch = spawn_detached

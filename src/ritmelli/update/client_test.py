@@ -119,6 +119,22 @@ def test_an_open_ritmelli_keeps_the_setup_ready_until_it_closes(
     assert started == ["instalando", PID, NEW, VERSION, log.name]
 
 
+def test_a_round_asked_as_ritmelli_closes_waits_for_it_to_close(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    class Closing(Fake):
+        def app_open(self) -> bool:
+            was, self.open = self.open, False
+            return was
+
+    waits: list[float] = []
+    monkeypatch.setattr(client.time, "sleep", waits.append)
+    publish()
+    state, machine = run(tmp_path, Closing(open=True))
+    assert state["estado"] == "instalando" and len(machine.started) == 1
+    assert waits == [1.0]
+
+
 def test_the_round_after_a_v0_7_0_install_settles_it_as_done(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

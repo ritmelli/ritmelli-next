@@ -16,6 +16,11 @@ STATUS = "(Get-Service audiosrv).Status"
 STOP = "Stop-Service audiosrv -Force -ErrorAction Stop"
 START = "Start-Service audiosrv -ErrorAction Stop"
 BUILDER = "Restart-Service AudioEndpointBuilder -Force -ErrorAction Stop"
+REPLACED = {
+    "new sources, only the DLL changed": (b"0.900.1", OTHER, True, ""),
+    "v0.7.0 put back by hand, a microphone changed": (b"0.7.0", DIGEST, False, ""),
+    "v0.7.0 put back, the builder past the timeout": (b"0.7.0", DIGEST, False, BUILDER),
+}
 Values = dict[str, object]
 Handle = contextlib.nullcontext[Values]
 
@@ -140,17 +145,8 @@ def test_the_same_dll_stays_and_gets_its_digest(pc: PC, tmp_path: Path) -> None:
 def test_new_sources_or_v0_7_0_put_back_stop_the_sound_once(
     pc: PC, tmp_path: Path
 ) -> None:
-    # The filter changed, and only the DLL; or v0.7.0, put back by hand, left its DLL
-    # under the digest of the new line and a microphone changed too. The last time the
-    # AudioEndpointBuilder, which stops the audio service with it, runs past the timeout.
     late = "the AudioEndpointBuilder didn't restart (-1): it ran past 60.0 s"
-    for n, (old, saved, only_service, pc.slow) in enumerate(
-        (
-            (b"0.900.1", OTHER, True, ""),
-            (b"0.7.0", DIGEST, False, ""),
-            (b"0.7.0", DIGEST, False, BUILDER),
-        )
-    ):
+    for n, (case, (old, saved, only_service, pc.slow)) in enumerate(REPLACED.items()):
         pc.calls.clear()
         pc.registry.keys[KEY] = {"_sources": saved, "_dll_sha256": sha(b"0.900.1")}
         dll, installed = app_dll(tmp_path / str(n), b"0.900.2", installed=old)
@@ -159,7 +155,7 @@ def test_new_sources_or_v0_7_0_put_back_stop_the_sound_once(
         assert filter_dll.restart(only_service) == (late if pc.slow else None)
         replaced = ["icacls.exe", STOP, STATUS, "copy", "regsvr32.exe", "mic setup"]
         builder = [] if only_service else [BUILDER]
-        assert pc.calls == [*replaced, *builder, START, STATUS]
+        assert pc.calls == [*replaced, *builder, START, STATUS], case
         assert installed.read_bytes() == b"0.900.2"
         assert pc.pair() == {"_sources": DIGEST, "_dll_sha256": sha(b"0.900.2")}
         assert pc.audio == "Running"

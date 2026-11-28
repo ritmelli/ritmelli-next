@@ -15,6 +15,7 @@ After the first line, the body has up to 15 lines on what changes for the person
 - A fix brings the input that failed, as a scenario next to the code.
 - Tests sit next to the code: at most 3 scenarios per command, 6 per test file elsewhere. A new voice effect, source or piece brings none; the catalog conformance covers it.
 - English everywhere, one name per concept, from GLOSSARY.md. No `utils.py`, `helpers.py`, `common/` or `Manager`. No date, round, PR number or song name in code. The exception is tools/lint/<name>_test.py: it cites the PRs of its occurrences as `#<n>`, and tools/lint/run.py requires it.
+- No comment in Python: the why goes in a name, a test, the PR or docs/. The rule is tools/lint/no_comments.py.
 
 ## Where things live
 

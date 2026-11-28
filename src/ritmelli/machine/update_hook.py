@@ -24,7 +24,7 @@ def read(path: str = HOOK_KEY, root: int | None = None) -> Config:
     .sig by a throwaway key passes only on a PC with the hook. SoHttps lets http in only
     as the DWORD 0: the text "0" does not.
     """
-    import winreg  # here, so the module imports on Linux
+    import winreg
 
     values: dict[str, object] = {}
     hive = winreg.HKEY_LOCAL_MACHINE if root is None else root

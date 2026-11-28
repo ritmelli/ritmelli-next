@@ -25,7 +25,6 @@ from ritmelli.machine.installed import (
 from ritmelli.update import client, keys, manifest
 
 UNKNOWN = 2
-# A log of months: past this, only the one before stays, as atualizador.anterior.log.
 LOG_MAX = 1 << 20
 
 
@@ -74,7 +73,6 @@ def update(args: Sequence[str]) -> int:
     if action not in (None, create):
         print(f"unknown mode: {action}")
         return UNKNOWN
-    # The task runs as SYSTEM: from the code, it would run a .py a user can change.
     if not getattr(sys, "frozen", False):
         print("the update task and its round only run in the installed executable")
         return 0

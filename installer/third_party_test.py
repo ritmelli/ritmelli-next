@@ -4,8 +4,7 @@ from pathlib import Path
 import pytest
 import third_party
 
-# what PyInstaller adds, the standard library and our folders: none needs a package
-FROZEN = {"pyimod01_archive", "_pyi_rth_utils", "json", "_ssl", "ritmelli", "icone"}
+NO_PACKAGE = {"pyimod01_archive", "_pyi_rth_utils", "json", "_ssl", "ritmelli", "icone"}
 
 
 def venv(
@@ -41,7 +40,7 @@ def test_with_a_license_file_for_each_package_the_notices_hold_every_text(
         },
         monkeypatch,
     )
-    sections = third_party.package_sections(FROZEN | {"noted"})
+    sections = third_party.package_sections(NO_PACKAGE | {"noted"})
     out = tmp_path / "TERCEIROS.txt"
     listing = third_party.write(
         out, "0.900.1", [("Python", "PSF-2.0", "psf"), *sections]
@@ -66,7 +65,7 @@ def test_a_package_without_a_license_file_stops_the_build(
     with pytest.raises(
         SystemExit, match=r"without a license file in the venv: \['bare'\]"
     ):
-        third_party.package_sections(FROZEN | {"bare"})
+        third_party.package_sections(NO_PACKAGE | {"bare"})
 
 
 def test_a_library_of_python_whose_text_the_license_lacks_stops_the_build(
@@ -89,4 +88,4 @@ def test_a_name_of_no_package_stops_the_build(
 ) -> None:
     venv(tmp_path, {"pyinstaller": "COPYING.txt"}, monkeypatch)
     with pytest.raises(SystemExit, match=r"no package in the venv.*\['stray'\]"):
-        third_party.package_sections(FROZEN | {"stray"})
+        third_party.package_sections(NO_PACKAGE | {"stray"})

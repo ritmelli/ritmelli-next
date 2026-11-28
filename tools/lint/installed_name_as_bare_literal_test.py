@@ -4,7 +4,6 @@ from pathlib import Path
 import installed_name_as_bare_literal as rule
 import pytest
 
-# update() in src/ritmelli/app.py, as #26 merged it.
 UPDATE = '''def update(args: Sequence[str]) -> int:
     """Alone, the round of the update task. The setup runs tarefa, which creates the
     task, and the uninstaller runs remove, which ends and deletes it."""
@@ -16,7 +15,6 @@ UPDATE = '''def update(args: Sequence[str]) -> int:
         print(f"unknown mode: {action}")
         return UNKNOWN
 '''
-# _save() in src/ritmelli/machine/mic_slots.py, as #54 merged it in a71b6ea.
 SAVE = """def _save(fx: winreg.HKEYType, saved: winreg.HKEYType, off: int) -> None:
     for name in SAVED_SLOTS:
         if (value := _read(fx, name)) is None:

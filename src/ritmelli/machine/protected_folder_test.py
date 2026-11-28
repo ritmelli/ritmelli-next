@@ -21,8 +21,7 @@ APP = r"C:\Program Files\Ritmelli"
 EXE = APP + r"\ritmelli.exe"
 DLL = APP + r"\_internal\python312.dll"
 LOG = APP + r"\microfone\log"
-# The ACL of Program Files, which a new folder in it inherits.
-FOLDER: tuple[Ace, ...] = (
+PROGRAM_FILES_ACL: tuple[Ace, ...] = (
     (0, 0, F, TI),
     (0, 0, M, SY),
     (0, 0, M, BA),
@@ -36,7 +35,7 @@ Disk = Mapping[str, Entry | OSError]
 
 
 def folder(owner: str = BA, *more: Ace) -> Entry:
-    return Entry(True, False, owner, FOLDER + more)
+    return Entry(True, False, owner, PROGRAM_FILES_ACL + more)
 
 
 def file(owner: str = BA, *more: Ace) -> Entry:
@@ -47,7 +46,6 @@ def denied() -> list[str]:
     raise PermissionError(13, "Access is denied")
 
 
-# The install as the setup leaves it. Above the root only a reparse point counts.
 BASE: dict[str, Entry] = {
     "C:\\": Entry(True, False, TI, ((0, 0, F, SY), (0, 0, 0x4, "S-1-5-11"))),
     ROOT: folder(TI),
@@ -85,8 +83,7 @@ def test_the_folder_the_setup_makes_passes() -> None:
     assert check(upper) == ""
 
 
-def test_what_audiodg_adds_to_the_filter_log_passes() -> None:
-    # After a rotation it owns the new log, and CREATOR OWNER gives it full control.
+def test_the_log_audiodg_owns_after_a_rotation_passes_with_full_control() -> None:
     new, old = file(LS, (0, 0, M, LS), (0, 0, F, LS)), file(BA, (0, 0, M, LS))
     assert check({LOG + r"\micfx.log": new, LOG + r"\micfx.1.log": old}) == ""
 

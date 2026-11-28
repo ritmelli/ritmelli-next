@@ -21,16 +21,51 @@ TRUSTED_INSTALLER = "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478
 LOCAL_SERVICE = "S-1-5-19"
 CREATOR_OWNER = "S-1-3-0"
 OWNERS = frozenset((SYSTEM, ADMINISTRATORS, TRUSTED_INSTALLER))
-CHANGE_ACL = 0x40000 | 0x80000 | 0x10000000  # WRITE_DAC, WRITE_OWNER, GENERIC_ALL
-# Write data, append or create, write EA, delete child, write attributes (enough
-# to turn an empty folder into a junction), delete, GENERIC_WRITE and CHANGE_ACL
-WRITE = 0x2 | 0x4 | 0x10 | 0x40 | 0x100 | 0x10000 | 0x40000000 | CHANGE_ACL
-# Inherit-only ACEs count: what is made after the check inherits them.
+FILE_WRITE_DATA = 0x2
+FILE_APPEND_DATA = 0x4
+FILE_WRITE_EA = 0x10
+FILE_DELETE_CHILD = 0x40
+FILE_WRITE_ATTRIBUTES = 0x100
+DELETE = 0x10000
+WRITE_DAC = 0x40000
+WRITE_OWNER = 0x80000
+GENERIC_ALL = 0x10000000
+GENERIC_WRITE = 0x40000000
+CHANGE_ACL = WRITE_DAC | WRITE_OWNER | GENERIC_ALL
+WRITE = (
+    FILE_WRITE_DATA
+    | FILE_APPEND_DATA
+    | FILE_WRITE_EA
+    | FILE_DELETE_CHILD
+    | FILE_WRITE_ATTRIBUTES
+    | DELETE
+    | GENERIC_WRITE
+    | CHANGE_ACL
+)
 INHERIT_ONLY = 0x08
-ALLOW = (0, 9)  # ACCESS_ALLOWED and its callback
-DENY = (1, 6, 10, 12)  # They only take access away.
-# Without \\?\ Windows says a longer path does not exist, and it would pass unchecked.
+ACCESS_ALLOWED_ACE_TYPE = 0
+ACCESS_DENIED_ACE_TYPE = 1
+ACCESS_DENIED_OBJECT_ACE_TYPE = 6
+ACCESS_ALLOWED_CALLBACK_ACE_TYPE = 9
+ACCESS_DENIED_CALLBACK_ACE_TYPE = 10
+ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE = 12
+ALLOW = (ACCESS_ALLOWED_ACE_TYPE, ACCESS_ALLOWED_CALLBACK_ACE_TYPE)
+DENY = (
+    ACCESS_DENIED_ACE_TYPE,
+    ACCESS_DENIED_OBJECT_ACE_TYPE,
+    ACCESS_DENIED_CALLBACK_ACE_TYPE,
+    ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE,
+)
 MAX_PATH = 260
+READ_CONTROL = 0x20000
+FILE_READ_ATTRIBUTES = 0x80
+OPEN_EXISTING = 3
+FILE_FLAG_BACKUP_SEMANTICS = 0x02000000
+FILE_FLAG_OPEN_REPARSE_POINT = 0x00200000
+BY_HANDLE_FILE_INFORMATION = 52
+SE_FILE_OBJECT = 1
+OWNER_SECURITY_INFORMATION = 0x1
+DACL_SECURITY_INFORMATION = 0x4
 
 Ace = tuple[int, int, int, str | None]
 Read = Callable[[str], "Entry | None"]
@@ -64,7 +99,11 @@ def _aces(kernel: ctypes.CDLL, advapi: ctypes.CDLL, dacl: int) -> tuple[Ace, ...
             raise ctypes.WinError(ctypes.get_last_error())
         start = ace.value or 0
         kind, flags = ctypes.string_at(start, 2)
-        known = kind in (0, 1, 9, 10)  # the mask at +4 and the SID at +8
+        known = kind in (
+            *ALLOW,
+            ACCESS_DENIED_ACE_TYPE,
+            ACCESS_DENIED_CALLBACK_ACE_TYPE,
+        )
         mask = ctypes.c_uint32.from_address(start + 4).value if known else 0
         sid = _sid(kernel, advapi, start + 8) if known else None
         aces.append((kind, flags, mask, sid))
@@ -77,9 +116,9 @@ def _read_disk(path: str) -> Entry | None:
     kernel = ctypes.WinDLL("kernel32", use_last_error=True)
     advapi = ctypes.WinDLL("advapi32", use_last_error=True)
     kernel.CreateFileW.restype = ctypes.c_void_p
-    # READ_CONTROL | FILE_READ_ATTRIBUTES, OPEN_EXISTING,
-    # FILE_FLAG_BACKUP_SEMANTICS (opens a folder) | FILE_FLAG_OPEN_REPARSE_POINT
-    opened = kernel.CreateFileW(path, 0x20080, 7, None, 3, 0x02200000, None)
+    access = READ_CONTROL | FILE_READ_ATTRIBUTES
+    flags = FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT
+    opened = kernel.CreateFileW(path, access, 7, None, OPEN_EXISTING, flags, None)
     if opened in (None, ctypes.c_void_p(-1).value):
         error = ctypes.get_last_error()
         if error in (2, 3):
@@ -88,13 +127,19 @@ def _read_disk(path: str) -> Entry | None:
     handle = ctypes.c_void_p(opened)
     owner, dacl, descriptor = ctypes.c_void_p(), ctypes.c_void_p(), ctypes.c_void_p()
     try:
-        info = ctypes.create_string_buffer(52)  # BY_HANDLE_FILE_INFORMATION
+        info = ctypes.create_string_buffer(BY_HANDLE_FILE_INFORMATION)
         if not kernel.GetFileInformationByHandle(handle, info):
             raise ctypes.WinError(ctypes.get_last_error())
         attributes = int.from_bytes(info.raw[:4], "little")
-        # SE_FILE_OBJECT; OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION
         error = advapi.GetSecurityInfo(
-            handle, 1, 0x5, byref(owner), None, byref(dacl), None, byref(descriptor)
+            handle,
+            SE_FILE_OBJECT,
+            OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION,
+            byref(owner),
+            None,
+            byref(dacl),
+            None,
+            byref(descriptor),
         )
         if error:
             raise ctypes.WinError(error)
@@ -130,14 +175,12 @@ def _object_reason(path: str, entry: Entry, in_log: bool) -> str | None:
         return f"{path} has a null DACL"
     for kind, flags, mask, sid in entry.dacl:
         inherit_only = flags & INHERIT_ONLY
-        # On a file, an inherit-only ACE applies to nothing.
         if (inherit_only and not entry.folder) or kind in DENY:
             continue
         if kind not in ALLOW:
             return f"{path} has an ACE of type {kind}"
         if sid in OWNERS or not mask & WRITE or (inherit_only and sid == CREATOR_OWNER):
             continue
-        # A log file LocalService owns gets full control from CREATOR OWNER.
         own_log = log_file and entry.owner == LOCAL_SERVICE
         if in_log and sid == LOCAL_SERVICE and (not mask & CHANGE_ACL or own_log):
             continue
@@ -149,7 +192,6 @@ def _tree_reason(path: str, entry: Entry, read: Read) -> str | None:
     stack: list[tuple[str, Entry, tuple[str, ...]]] = [(path, entry, ())]
     while stack:
         path, entry, rel = stack.pop()
-        # audiodg.exe writes the filter log as LocalService; a file named log is not it.
         in_log = tuple(p.lower() for p in rel[:2]) == ("microfone", "log")
         reason = _object_reason(path, entry, in_log and (len(rel) > 2 or entry.folder))
         if reason:
@@ -176,7 +218,6 @@ def _tree_reason(path: str, entry: Entry, read: Read) -> str | None:
 
 
 def _path_reason(folder: str, root: str) -> str | None:
-    # Before normpath: Windows drops a trailing dot or space and opens another object.
     names = re.split(r"[\\/]", folder)[1:] + re.split(r"[\\/]", root)[1:]
     cut = any(n not in (".", "..") and n[-1:] in (".", " ") for n in names)
     folder, root = ntpath.normpath(folder), ntpath.normpath(root)
