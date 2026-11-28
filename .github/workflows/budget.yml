@@ -72,6 +72,15 @@ jobs:
           outside=$(git diff --no-renames --name-only "$BASE...$HEAD" -- . "${patterns[@]/#/:(exclude,glob)}")
           while IFS= read -r file; do [ -z "$file" ] || echo "::error::$file is outside the kind $name"; done <<< "$outside"
           [ -z "$outside" ]
+      - name: Title
+        if: ${{ !cancelled() }}
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          re='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([[:lower:][:digit:]-]+(,[[:lower:][:digit:]-]+)*\))?!?: [[:lower:]]'
+          [[ $TITLE =~ $re ]] || { echo "::error::the PR title must be '<type>(<scope>): <description>' or '<type>: <description>', with a type of build, chore, ci, docs, feat, fix, perf, refactor, revert, style or test, a lower-case scope, and a description that starts with a lower-case letter, for example 'fix(installer): the build stops when the Python license lacks a library the exe carries'"; exit 1; }
+          [[ $TITLE != *. ]] || { echo "::error::the PR title must not end with a period: drop it"; exit 1; }
+          [ "${#TITLE}" -le 100 ] || { echo "::error::shorten the PR title (${#TITLE} characters, the limit is 100)"; exit 1; }
       - name: Proof
         if: ${{ !cancelled() }}
         env:
@@ -79,7 +88,7 @@ jobs:
         run: |
           body=$(tr -d '\r' <<< "$BODY")
           grep -qx '## Proof' <<< "$body" || { echo "::error::the PR body has no '## Proof' section: put the proof card under it"; exit 1; }
-          last=$(awk '/^## / {p = ($0 == "## Proof"); next} p && NF {line = $0} END {print line}' <<< "$body")
+          last=$(awk '/^## / {p = ($0 == "## Proof"); next} p && NF && !/^<!--.*-->$/ {line = $0} END {print line}' <<< "$body")
           re='^Verdict: PASS on ([0-9a-f]{7,40})$'
           [[ $last =~ $re ]] || { echo "::error::the last line under '## Proof' must be 'Verdict: PASS on <head>': run the proof and write its verdict there"; exit 1; }
           [[ $HEAD == "${BASH_REMATCH[1]}"* ]] || { echo "::error::the proof ran on ${BASH_REMATCH[1]}, not on the head $HEAD: run it again on the head"; exit 1; }
