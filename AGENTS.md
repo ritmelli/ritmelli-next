@@ -13,7 +13,7 @@ After the first line, the body has up to 15 lines on what changes for the person
 - At most 3 pushes after the PR opens. Past that, close it and start again with a smaller plan.
 - A fix brings the input that failed, as a scenario next to the code.
 - Tests sit next to the code: at most 3 scenarios per command, 6 per test file elsewhere. A new voice effect, source or piece brings none; the catalog conformance covers it.
-- English everywhere, one name per concept, from GLOSSARY.md. No `utils.py`, `helpers.py`, `common/` or `Manager`. No date, round, PR number or song name in code.
+- English everywhere, one name per concept, from GLOSSARY.md. No `utils.py`, `helpers.py`, `common/` or `Manager`. No date, round, PR number or song name in code. The exception is tools/lint/<name>_test.py: it cites the PRs of its occurrences as `#<n>`, and tools/lint/run.py requires it.
 
 ## Where things live
 
@@ -53,7 +53,7 @@ If this file and the code disagree, the code wins.
 The proof of a PR is what its kind says in `proof`.
 A verifier that did not write the code runs it and reports PASS or FAIL.
 The merge queue takes only PASS.
-Its report, the proof card, sits under `## Proof` in the PR body and ends with `Verdict: PASS on <head>`.
+The verifier's report, the proof card, sits under `## Proof` in the PR body and ends with `Verdict: PASS on <head>`.
 The Budget check reads it on the current head: a push after the proof asks for the proof again.
 
 ## Findings

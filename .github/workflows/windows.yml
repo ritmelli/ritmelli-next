@@ -25,7 +25,7 @@ jobs:
           HEAD: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
         run: |
           files=$(git diff --name-only "$BASE...$HEAD" -- src/ritmelli/machine/ src/ritmelli/ports/ src/ritmelli/update/ \
-            src/ritmelli/app.py filter/ installer/)
+            src/ritmelli/app.py src/ritmelli/app_test.py filter/ installer/)
           if [ -n "$files" ]; then echo run=true; else echo run=false; fi | tee -a "$GITHUB_OUTPUT"
 
   pytest:
