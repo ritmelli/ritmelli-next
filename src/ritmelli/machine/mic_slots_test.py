@@ -3,19 +3,23 @@ from __future__ import annotations
 import pytest
 
 from ritmelli.machine import mic_slots
-from ritmelli.machine.installed import ANY_NODE, ASSOCIATION, CAPTURE_KEY
+from ritmelli.machine.installed import ANY_NODE, APO_KEY, ASSOCIATION, CAPTURE_KEY
 from ritmelli.machine.installed import EFX, EFX_LIST, EFX_MODES, FILTER_CLSID, LFX
-from ritmelli.machine.installed import MFX_LIST, MODE_DEFAULT
-from ritmelli.machine.installed import MODE_RAW, NO_ENHANCEMENTS, SAVED_KEY
+from ritmelli.machine.installed import HOST_CLSIDS, MFX_LIST, MFX_MODES, MODE_DEFAULT
+from ritmelli.machine.installed import MODE_RAW, NO_ENHANCEMENTS, OUR_CLSIDS, SAVED_KEY
 from ritmelli.machine.installed import SFX, SFX_MODES
+from ritmelli.machine.installed import COPY_VERSION, ENHANCEMENTS_OFF, HOSTED, MISSING
 
 Data = str | int | list[str]
 SZ, DWORD, MULTI = 1, 4, 7
 EP = "{4f6ea1d0-a906-4f42-83ac-2ab996490575}"
 EP2 = "{0b1c2d3e-4f50-4617-8899-aabbccddeeff}"
-# The EFX of a laptop microphone, and the SFX of another vendor.
+# The EFX and the echo canceller of a laptop microphone, and two other vendors.
 EFX_FM = "{8338CED2-0837-11DC-8314-0800200C9A66}"
+MFX_FM = "{70306EF0-7851-11DC-8314-0800200C9A66}"
+MFX_2 = "{11111111-2222-4333-8444-555555555555}"
 SFX_2 = "{22222222-3333-4444-8555-666666666666}"
+MODES = [MODE_DEFAULT, MODE_RAW, "{98951333-B9CD-48B1-A0A3-FF40682D73F7}"]
 
 
 class Key(str):
@@ -72,6 +76,12 @@ class Registry:
         if self.keys[key].pop(name.lower(), None) is None:
             raise FileNotFoundError(name)
 
+    def DeleteKey(self, root: str, sub: str) -> None:
+        del self.keys[f"{root}\\{sub}".lower()]
+
+    def EnumValue(self, key: str, index: int) -> tuple[str, Data, int]:
+        return _nth(list(self.keys[key].values()), index)
+
     def EnumKey(self, key: str, index: int) -> str:
         inside = {
             p[len(key) + 1 :].split("\\")[0]
@@ -85,50 +95,112 @@ class Registry:
             name: data for name, data, _ in self.keys[rf"hklm\{path}".lower()].values()
         }
 
-    def fx(self) -> dict[str, Data]:
-        return self.values(rf"{CAPTURE_KEY}\{EP}\FxProperties")
+    def fx(self, endpoint: str = EP) -> dict[str, Data]:
+        return self.values(rf"{CAPTURE_KEY}\{endpoint}\FxProperties")
 
-    def mic(self, fx: dict[str, Data], off: int = 0) -> dict[str, Data]:
+    def mic(
+        self, fx: dict[str, Data], endpoint: str = EP, off: int = 0
+    ) -> dict[str, Data]:
         """A microphone in the PC with these slots, and its enhancements on or off."""
-        base = rf"{CAPTURE_KEY}\{EP}"
+        base = rf"{CAPTURE_KEY}\{endpoint}"
         self.SetValueEx(self.CreateKeyEx("HKLM", base), "DeviceState", 0, DWORD, 1)
         props = self.CreateKeyEx("HKLM", base + r"\Properties")
         self.SetValueEx(props, NO_ENHANCEMENTS, 0, DWORD, off)
         key = self.CreateKeyEx("HKLM", base + r"\FxProperties")
         for name, data in fx.items():
             self.SetValueEx(key, name, 0, MULTI if isinstance(data, list) else SZ, data)
-        return self.fx()
+        return self.fx(endpoint)
+
+    def laptop(self, mfx_modes: list[str], endpoint: str = EP) -> dict[str, Data]:
+        """An EFX and two MFX in lists, the last MFX the echo canceller."""
+        lists = {EFX_LIST: [EFX_FM], MFX_LIST: [MFX_2, MFX_FM], EFX_MODES: MODES}
+        return self.mic(
+            {ASSOCIATION: ANY_NODE, **lists, MFX_MODES: mfx_modes}, endpoint
+        )
 
 
 @pytest.fixture
 def reg(monkeypatch: pytest.MonkeyPatch) -> Registry:
+    """What regsvr32 writes for the filter and the hosts, and the APO registration of
+    the echo canceller."""
     fake = Registry()
     monkeypatch.setattr(mic_slots, "winreg", fake, raising=False)
+    for clsid in OUR_CLSIDS:
+        fake.CreateKeyEx("HKLM", rf"SOFTWARE\Classes\CLSID\{clsid}\InprocServer32")
+        ours = fake.CreateKeyEx("HKLM", rf"{APO_KEY}\{clsid}")
+        fake.SetValueEx(ours, "FriendlyName", 0, SZ, "Ritmelli Microfone")
+        fake.SetValueEx(ours, "Flags", 0, DWORD, 0xE)
+    vendor = fake.CreateKeyEx("HKLM", rf"{APO_KEY}\{MFX_FM}")
+    fake.SetValueEx(vendor, "FriendlyName", 0, SZ, "CFMAPOCAP")
+    fake.SetValueEx(vendor, "Flags", 0, DWORD, 0xF)
     return fake
 
 
-def test_the_vendor_original_is_saved_value_by_value(reg: Registry) -> None:
-    """In the form v0.7.0 reads to give it back."""
+def test_the_vendor_original_is_saved_and_comes_back_value_by_value(
+    reg: Registry,
+) -> None:
     before = reg.mic({ASSOCIATION: ANY_NODE, SFX: SFX_2, EFX: EFX_FM})
     assert mic_slots.put_on(EP)
     efx = {EFX_LIST: [EFX_FM, FILTER_CLSID], EFX_MODES: [MODE_DEFAULT, MODE_RAW]}
     assert reg.fx() == {ASSOCIATION: ANY_NODE, SFX: SFX_2, LFX: FILTER_CLSID, **efx}
     created = [LFX, SFX_MODES, EFX_LIST, EFX_MODES, MFX_LIST]
-    saved = {"_sem_melhorias": 0, "_ausentes": created, "_versao": 3}
+    saved = {ENHANCEMENTS_OFF: 0, MISSING: created, COPY_VERSION: 3}
     assert reg.values(rf"{SAVED_KEY}\{EP}") == {**before, **saved}
+    assert mic_slots.give_back(EP)
+    assert (reg.fx(), mic_slots.give_back(EP)) == (before, False)
 
 
-def test_what_the_filter_creates_is_listed_and_enhancements_turn_on(
+def test_an_echo_canceller_that_covers_raw_runs_inside_a_host(reg: Registry) -> None:
+    before = reg.laptop(MODES)
+    assert mic_slots.put_on(EP)
+    fx, host = reg.fx(), reg.values(rf"{APO_KEY}\{HOST_CLSIDS[0]}")
+    assert (fx[EFX_LIST], fx[MFX_MODES]) == ([EFX_FM, FILTER_CLSID], MODES)
+    assert (fx[MFX_LIST], reg.values(SAVED_KEY)) == (
+        [MFX_2, HOST_CLSIDS[0]],
+        {f"{HOSTED}0": MFX_FM},
+    )
+    assert host == {"FriendlyName": "Ritmelli Microfone", "Flags": 0xF}
+    assert mic_slots.give_back(EP)
+    assert reg.fx() == before
+    mic_slots.forget_hosts()
+    mic_slots.remove_com()
+    assert reg.values(SAVED_KEY) == {}
+    assert not [path for path in reg.keys if any(c.lower() in path for c in OUR_CLSIDS)]
+    assert reg.values(rf"{APO_KEY}\{MFX_FM}")["Flags"] == 0xF
+
+
+def test_a_vendor_mfx_without_raw_keeps_its_list(reg: Registry) -> None:
+    before = reg.laptop([MODE_DEFAULT])
+    assert mic_slots.put_on(EP)
+    assert (reg.fx()[MFX_LIST], reg.values(SAVED_KEY)) == ([MFX_2, MFX_FM], {})
+    assert mic_slots.give_back(EP)
+    assert reg.fx() == before
+
+
+def test_putting_the_filter_on_twice_changes_nothing(reg: Registry) -> None:
+    """The second run of the mic setup leaves the sound alone. Two microphones with
+    the same echo canceller share a host."""
+    reg.laptop(MODES)
+    reg.laptop(MODES, EP2)
+    assert mic_slots.put_on(EP) and mic_slots.put_on(EP2)
+    assert reg.values(SAVED_KEY) == {f"{HOSTED}0": MFX_FM}
+    after = {path: dict(values) for path, values in reg.keys.items()}
+    assert not (mic_slots.put_on(EP) or mic_slots.put_on(EP2))
+    assert reg.keys == after
+
+
+def test_what_the_filter_created_comes_off_and_enhancements_go_back_off(
     reg: Registry,
 ) -> None:
-    """What v0.7.0 reads to delete what we created and turn the enhancements off."""
     props = rf"{CAPTURE_KEY}\{EP}\Properties"
     assert reg.mic({}, off=1) == {}
     assert mic_slots.put_on(EP)
     assert (reg.fx()[ASSOCIATION], reg.values(props)[NO_ENHANCEMENTS]) == (ANY_NODE, 0)
     created = [ASSOCIATION, LFX, SFX, SFX_MODES, EFX_LIST, EFX_MODES, MFX_LIST]
-    saved = {"_sem_melhorias": 1, "_ausentes": created, "_versao": 3}
+    saved = {ENHANCEMENTS_OFF: 1, MISSING: created, COPY_VERSION: 3}
     assert reg.values(rf"{SAVED_KEY}\{EP}") == saved
+    assert mic_slots.give_back(EP)
+    assert (reg.fx(), reg.values(props)[NO_ENHANCEMENTS]) == ({}, 1)
 
 
 def test_a_microphone_gone_from_the_pc_is_left_out(reg: Registry) -> None:

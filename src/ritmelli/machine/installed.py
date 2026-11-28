@@ -24,11 +24,15 @@ HOST_CLSIDS = (
     "{1663A464-C189-435F-89BD-9C9E9BAF1C23}",
 )
 OUR_CLSIDS = (FILTER_CLSID, *HOST_CLSIDS)
+APO_KEY = r"SOFTWARE\Classes\AudioEngine\AudioProcessingObjects"
 CAPTURE_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Capture"
 # The key of the mic setup, in HKLM. Under each microphone id, its original slots.
 # At the root, _hospede<n> is the vendor MFX that host n runs, which the filter
 # reads, and what decides whether the filter DLL is replaced.
 SAVED_KEY, HOSTED, SAVED_VERSION = r"SOFTWARE\Ritmelli\Microfone", "_hospede", 3
+# Next to the original slots: the slots the mic setup created, 1 when the audio
+# enhancements were off, and the version of the copy.
+MISSING, ENHANCEMENTS_OFF, COPY_VERSION = "_ausentes", "_sem_melhorias", "_versao"
 # The slots, values of FxProperties. Without the association Windows reads none.
 # A driver with no processing modes reads only the LFX.
 _FX = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d}"
