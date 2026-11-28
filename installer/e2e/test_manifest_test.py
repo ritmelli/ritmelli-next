@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 import pytest
-
 import test_manifest
+
 from ritmelli.update.keys import KEYS
 from ritmelli.update.manifest import Installer, check
 from ritmelli.update.verify import Refused

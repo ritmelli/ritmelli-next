@@ -48,8 +48,17 @@ NO_ENHANCEMENTS = "{1da5d803-d492-4edd-8c23-e0c0ffee7f0e},5"
 # What the mic setup saves before it puts the filter on. Of the slots it may create,
 # the missing ones go in _ausentes, and come off when the original comes back.
 SAVED_SLOTS = (
-    *(ASSOCIATION, LFX, GFX, SFX, MFX, EFX, EFX_LIST, MFX_LIST),
-    *(SFX_MODES, MFX_MODES, EFX_MODES),
+    ASSOCIATION,
+    LFX,
+    GFX,
+    SFX,
+    MFX,
+    EFX,
+    EFX_LIST,
+    MFX_LIST,
+    SFX_MODES,
+    MFX_MODES,
+    EFX_MODES,
 )
 CREATED_SLOTS = (ASSOCIATION, LFX, SFX, SFX_MODES, EFX_LIST, EFX_MODES, MFX_LIST)
 

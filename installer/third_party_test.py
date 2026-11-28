@@ -2,7 +2,6 @@ from codecs import BOM_UTF8
 from pathlib import Path
 
 import pytest
-
 import third_party
 
 # what PyInstaller adds, the standard library and our folders: none needs a package

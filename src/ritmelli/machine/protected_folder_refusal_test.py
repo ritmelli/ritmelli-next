@@ -1,9 +1,26 @@
 from dataclasses import replace
 
 from ritmelli.machine.protected_folder import Entry
-from ritmelli.machine.protected_folder_test import APP, BA, DLL, EXE, F, IO, LOG, LS
-from ritmelli.machine.protected_folder_test import M, OICI, ROOT, RX, TI, US
-from ritmelli.machine.protected_folder_test import check, denied, file, folder
+from ritmelli.machine.protected_folder_test import (
+    APP,
+    BA,
+    DLL,
+    EXE,
+    IO,
+    LOG,
+    LS,
+    OICI,
+    ROOT,
+    RX,
+    TI,
+    US,
+    F,
+    M,
+    check,
+    denied,
+    file,
+    folder,
+)
 
 ME = "S-1-5-21-1111111111-2222222222-3333333333-1001"
 PARENT, NEW = ROOT + r"\Parent", ROOT + r"\Parent\Ritmelli"
