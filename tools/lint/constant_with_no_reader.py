@@ -13,7 +13,7 @@ def last(name: str | None) -> str:
 
 def module_reads(tree: ast.Module) -> set[tuple[str, str]]:
     imports = [n for n in ast.walk(tree) if isinstance(n, ast.Import | ast.ImportFrom)]
-    bound = {a.asname or a.name: last(a.name) for n in imports for a in n.names}
+    bound = {a.asname or a.name: a.name for n in imports for a in n.names}
     found: set[tuple[str, str]] = set()
     for node in ast.walk(tree):
         if isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
