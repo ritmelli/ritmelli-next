@@ -10,7 +10,8 @@ import pytest
 from ritmelli.machine import filter_dll
 
 KEY = filter_dll.SAVED_KEY
-DIGEST, OTHER = "a" * 64, "b" * 64
+DIGEST = "a" * 64
+OTHER = "b" * 64
 STATUS = "(Get-Service audiosrv).Status"
 STOP = "Stop-Service audiosrv -Force -ErrorAction Stop"
 START = "Start-Service audiosrv -ErrorAction Stop"

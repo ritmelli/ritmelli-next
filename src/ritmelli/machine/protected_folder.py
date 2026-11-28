@@ -15,9 +15,11 @@ from collections.abc import Callable
 from ctypes import byref
 from dataclasses import dataclass
 
-SYSTEM, ADMINISTRATORS = "S-1-5-18", "S-1-5-32-544"
+SYSTEM = "S-1-5-18"
+ADMINISTRATORS = "S-1-5-32-544"
 TRUSTED_INSTALLER = "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464"
-LOCAL_SERVICE, CREATOR_OWNER = "S-1-5-19", "S-1-3-0"
+LOCAL_SERVICE = "S-1-5-19"
+CREATOR_OWNER = "S-1-3-0"
 OWNERS = frozenset((SYSTEM, ADMINISTRATORS, TRUSTED_INSTALLER))
 CHANGE_ACL = 0x40000 | 0x80000 | 0x10000000  # WRITE_DAC, WRITE_OWNER, GENERIC_ALL
 # Write data, append or create, write EA, delete child, write attributes (enough

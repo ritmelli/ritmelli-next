@@ -8,7 +8,8 @@ from ritmelli.machine import tasks
 # The files v0.7.0 hands to schtasks, made by its own create_task.
 V070 = Path(__file__).with_name("fixtures") / "v0.7.0"
 EXE = r"C:\Program Files\Ritmelli\ritmelli.exe"
-UPDATE, MIC = tasks.UPDATE_TASK, tasks.MIC_TASK
+UPDATE = tasks.UPDATE_TASK
+MIC = tasks.MIC_TASK
 
 
 @pytest.fixture
