@@ -46,7 +46,7 @@ def names(source: str) -> dict[str, list[str]]:
 NAMES = names((Path(__file__).resolve().parents[2] / INSTALLED).read_text("utf-8"))
 
 
-def check(path: Path, tree: ast.Module, source: str) -> list[tuple[int, str]]:
+def check(path: Path, tree: ast.Module, _source: str) -> list[tuple[int, str]]:
     if path.as_posix() == INSTALLED or path.name.endswith("_test.py"):
         return []
     texts = [n for n in ast.walk(tree) if isinstance(n, ast.Constant)]
