@@ -6,7 +6,7 @@ from collections.abc import Callable, Iterator
 
 SPAN = re.compile(r"`([^`]+)`")
 CITATION = re.compile(r"([\w./-]*\.[A-Za-z]\w*):([1-9]\d*)(?:-([1-9]\d*))?")
-OTHER_TREE = re.compile(r"\s+(?:of|at)\s+`")
+OTHER_TREE = re.compile(r"\s+(?:of|at)\s+(?:`|v\d)")
 UNCHECKED = ("## Proof", "## Review")
 
 

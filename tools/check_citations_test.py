@@ -26,6 +26,7 @@ def test_a_file_of_another_tree_fails_until_the_citation_names_the_tree() -> Non
     ]
     assert wrong(SERVER.replace("2420`", "2420` of `v0.7.0`")) == []
     assert wrong(MIGRATION.replace("1057`", "1057` at `8cacd23`")) == []
+    assert wrong("`pastas.py:22` of v0.7.0") == []
 
 
 def test_a_line_past_the_end_of_the_file_fails() -> None:
