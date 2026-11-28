@@ -69,6 +69,7 @@ uv run python tools/finding.py record --name NAME --kind KIND --pr N --file PATH
 ```
 
 An issue with the label `promote` gets one PR that adds a lint rule and closes the issue.
+An issue that also has `no-lint` gets no lint rule: it stays open, and REVIEW.md lists it.
 A ready ruff rule comes first: its code in `select` in ruff.toml, and each occurrence in tools/lint/ruff/<CODE>/pr<n>.py.
 With no ruff rule, write tools/lint/<name>.py and a <name>_test.py that cites both PRs.
 CONTRIBUTING.md walks through a whole example.
