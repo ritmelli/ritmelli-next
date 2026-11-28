@@ -9,8 +9,10 @@ UPDATE_TASK = "Ritmelli Atualiza"
 MIC_TASK = r"\Ritmelli\Microfone"
 # The modes and the actions that the tasks, the setup and the uninstall log of v0.7.0
 # run. Alone, the update mode is the round of the update task.
-UPDATE_MODE, UPDATE_ACTIONS = "--atualizador", ("tarefa", "remove")
-MIC_MODE, MIC_ACTIONS = "--microfone", ("instala-todos", "remove")
+UPDATE_MODE = "--atualizador"
+UPDATE_ACTIONS = ("tarefa", "remove")
+MIC_MODE = "--microfone"
+MIC_ACTIONS = ("instala-todos", "remove")
 # The key of the hook, in HKLM, which only an administrator writes.
 HOOK_KEY = r"SOFTWARE\Ritmelli\Atualizador"
 
@@ -29,19 +31,31 @@ CAPTURE_KEY = r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Captur
 # The key of the mic setup, in HKLM. Under each microphone id, its original slots.
 # At the root, _hospede<n> is the vendor MFX that host n runs, which the filter
 # reads, and what decides whether the filter DLL is replaced.
-SAVED_KEY, HOSTED, SAVED_VERSION = r"SOFTWARE\Ritmelli\Microfone", "_hospede", 3
+SAVED_KEY = r"SOFTWARE\Ritmelli\Microfone"
+HOSTED = "_hospede"
+SAVED_VERSION = 3
 # Also at the root: the devices the last check found silent, which the app reads.
 SILENT = "_mudos"
 # Next to the original slots: the slots the mic setup created, 1 when the audio
 # enhancements were off, and the version of the copy.
-MISSING, ENHANCEMENTS_OFF, COPY_VERSION = "_ausentes", "_sem_melhorias", "_versao"
+MISSING = "_ausentes"
+ENHANCEMENTS_OFF = "_sem_melhorias"
+COPY_VERSION = "_versao"
 # The slots, values of FxProperties. Without the association Windows reads none.
 # A driver with no processing modes reads only the LFX.
 _FX = "{d04e05a6-594b-4fb6-a80d-01af5eed7d1d}"
 _MODES = "{d3993a3f-99c2-4402-b5ec-a92a0367664b}"
-ASSOCIATION, LFX, GFX, SFX = f"{_FX},0", f"{_FX},1", f"{_FX},2", f"{_FX},5"
-MFX, EFX, MFX_LIST, EFX_LIST = f"{_FX},6", f"{_FX},7", f"{_FX},14", f"{_FX},15"
-SFX_MODES, MFX_MODES, EFX_MODES = f"{_MODES},5", f"{_MODES},6", f"{_MODES},7"
+ASSOCIATION = f"{_FX},0"
+LFX = f"{_FX},1"
+GFX = f"{_FX},2"
+SFX = f"{_FX},5"
+MFX = f"{_FX},6"
+EFX = f"{_FX},7"
+MFX_LIST = f"{_FX},14"
+EFX_LIST = f"{_FX},15"
+SFX_MODES = f"{_MODES},5"
+MFX_MODES = f"{_MODES},6"
+EFX_MODES = f"{_MODES},7"
 MODE_DEFAULT = "{C18E2F7E-933D-4965-B7D1-1EEF228D2AF3}"
 MODE_RAW = "{9E90EA20-B493-4FD1-A1A8-7E1361A956CF}"
 ANY_NODE = "{00000000-0000-0000-0000-000000000000}"

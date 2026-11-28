@@ -1,4 +1,5 @@
 import argparse
+import contextlib
 import json
 import os
 import shutil
@@ -35,10 +36,9 @@ def _put_on_all() -> mic_check.Report | None:
     failures: list[str] = []
     for endpoint, name, device in mic_slots.microphones():
         try:
-            if mic_slots.put_on(endpoint):
-                changed += 1
-        except mic_slots.LeftOut:
-            continue
+            with contextlib.suppress(mic_slots.LeftOut):
+                if mic_slots.put_on(endpoint):
+                    changed += 1
         except OSError as error:
             failures.append(
                 f"the filter wasn't installed on {name} ({device}): {error}"

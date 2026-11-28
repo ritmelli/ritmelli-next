@@ -4,16 +4,32 @@ from dataclasses import replace
 
 from ritmelli.machine.protected_folder import Ace, Entry, unprotected_reason
 
-SY, BA, LS, US, CO = "S-1-5-18", "S-1-5-32-544", "S-1-5-19", "S-1-5-32-545", "S-1-3-0"
+SY = "S-1-5-18"
+BA = "S-1-5-32-544"
+LS = "S-1-5-19"
+US = "S-1-5-32-545"
+CO = "S-1-3-0"
 TI = "S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464"
-F, M, RX, GA, OICI, IO = 0x1F01FF, 0x1301BF, 0x1200A9, 0x10000000, 3, 8
-ROOT, APP = r"C:\Program Files", r"C:\Program Files\Ritmelli"
-EXE, DLL = APP + r"\ritmelli.exe", APP + r"\_internal\python312.dll"
+F = 0x1F01FF
+M = 0x1301BF
+RX = 0x1200A9
+GA = 0x10000000
+OICI = 3
+IO = 8
+ROOT = r"C:\Program Files"
+APP = r"C:\Program Files\Ritmelli"
+EXE = APP + r"\ritmelli.exe"
+DLL = APP + r"\_internal\python312.dll"
 LOG = APP + r"\microfone\log"
 # The ACL of Program Files, which a new folder in it inherits.
 FOLDER: tuple[Ace, ...] = (
-    *((0, 0, F, TI), (0, 0, M, SY), (0, 0, M, BA), (0, 0, RX, US)),
-    *((0, OICI | IO, GA, SY), (0, OICI | IO, GA, CO), (0, IO, 0xA0000000, US)),
+    (0, 0, F, TI),
+    (0, 0, M, SY),
+    (0, 0, M, BA),
+    (0, 0, RX, US),
+    (0, OICI | IO, GA, SY),
+    (0, OICI | IO, GA, CO),
+    (0, IO, 0xA0000000, US),
 )
 FILE: tuple[Ace, ...] = ((0, 0, F, SY), (0, 0, F, BA), (0, 0, RX, US))
 Disk = Mapping[str, Entry | OSError]

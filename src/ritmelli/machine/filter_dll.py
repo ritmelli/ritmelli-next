@@ -24,7 +24,8 @@ TIMEOUT_S = 60.0
 POWERSHELL = r"WindowsPowerShell\v1.0\powershell.exe"
 # At the root of the key: the sources digest of the DLL in {app}\microfone, and the
 # sha256 of that DLL.
-SOURCES, DLL_SHA256 = "_sources", "_dll_sha256"
+SOURCES = "_sources"
+DLL_SHA256 = "_dll_sha256"
 
 
 def _sha256(path: str) -> str:

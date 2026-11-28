@@ -12,7 +12,9 @@ import pytest
 from ritmelli.update import client, run_state
 from ritmelli.update.verify_test import FIXTURES, SEED_PUBLIC, sign
 
-VERSION, NEW, NEXT = "0.900.1", "0.900.2", "0.900.3"
+VERSION = "0.900.1"
+NEW = "0.900.2"
+NEXT = "0.900.3"
 SETUP = bytes(range(256)) * 64
 SHA256 = hashlib.sha256(SETUP).hexdigest()
 PID = 4343

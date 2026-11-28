@@ -109,15 +109,13 @@ def microphones(active_only: bool = False) -> list[tuple[str, str, str]]:
     found: list[tuple[str, str, str]] = []
     with contextlib.suppress(OSError), _open(CAPTURE_KEY, winreg.KEY_READ) as root:
         for endpoint in _each(winreg.EnumKey, root):
-            try:
+            with contextlib.suppress(OSError):
                 with winreg.OpenKey(root, endpoint) as key:
                     if active_only and _get(key, "DeviceState", 0) != 1:
                         continue
                 with winreg.OpenKey(root, endpoint + r"\Properties") as props:
                     name, device = _get(props, NAME, "?"), _get(props, DEVICE, "?")
                 found.append((endpoint, str(name), str(device)))
-            except OSError:
-                continue
     return found
 
 

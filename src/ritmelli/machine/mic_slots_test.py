@@ -30,7 +30,9 @@ from ritmelli.machine.installed import (
 )
 
 Data = str | int | list[str]
-SZ, DWORD, MULTI = 1, 4, 7
+SZ = 1
+DWORD = 4
+MULTI = 7
 EP = "{4f6ea1d0-a906-4f42-83ac-2ab996490575}"
 EP2 = "{0b1c2d3e-4f50-4617-8899-aabbccddeeff}"
 # The EFX and the echo canceller of a laptop microphone, and two other vendors.
