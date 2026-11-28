@@ -24,7 +24,7 @@ from pathlib import Path
 
 # the package, and the folders ritmelli.spec puts in _internal\
 OURS = {"ritmelli", "icone", "microfone"}
-LICENSE_NAME = re.compile(r"LICEN[CS]E|COPYING|NOTICE|COPYRIGHT", re.I)
+LICENSE_NAME = re.compile(r"LICEN[CS]E|COPYING|NOTICE|COPYRIGHT", re.IGNORECASE)
 # a file in _internal\ that carries a library of Python, and a line of the text of
 # that library in the LICENSE.txt of the Python of python.org
 PYTHON_LIBRARIES = {
