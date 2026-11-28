@@ -158,11 +158,8 @@ def _unhosted(clsid: str) -> str | None:
     if clsid.upper() not in HOST_CLSIDS:
         return clsid
     slot = HOST_CLSIDS.index(clsid.upper())
-    try:
-        with _open(SAVED_KEY, winreg.KEY_READ) as root:
-            return _get(root, f"{HOSTED}{slot}", None)
-    except OSError:
-        return None
+    with _open(SAVED_KEY, winreg.KEY_READ) as root:
+        return _get(root, f"{HOSTED}{slot}", None)
 
 
 def _host_slot(vendor: str) -> int | None:
