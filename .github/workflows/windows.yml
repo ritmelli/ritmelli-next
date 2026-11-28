@@ -8,30 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  paths:
-    name: Windows paths
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    outputs:
-      run: ${{ steps.diff.outputs.run }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - id: diff
-        env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
-          HEAD: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
-        run: |
-          files=$(git diff --name-only "$BASE...$HEAD" -- src/ritmelli/machine/ src/ritmelli/ports/ src/ritmelli/update/ \
-            src/ritmelli/app.py src/ritmelli/app_test.py filter/ installer/)
-          if [ -n "$files" ]; then echo run=true; else echo run=false; fi | tee -a "$GITHUB_OUTPUT"
-
   pytest:
     name: Windows pytest
-    needs: paths
-    if: ${{ !cancelled() && needs.paths.outputs.run != 'false' }}
     runs-on: windows-2025
     timeout-minutes: 10
     steps:
@@ -52,8 +30,6 @@ jobs:
 
   filter:
     name: Windows filter
-    needs: paths
-    if: ${{ !cancelled() && needs.paths.outputs.run != 'false' }}
     runs-on: windows-2025
     timeout-minutes: 10
     steps:
