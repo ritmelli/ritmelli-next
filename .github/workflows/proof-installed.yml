@@ -1,0 +1,51 @@
+name: Proof installed
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  installed:
+    name: The folder published 0.7.0 installed
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
+        with:
+          version: "0.12.15"
+      - run: uv sync --locked
+      - name: Install published 0.7.0
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          gh release download v0.7.0 --repo ritmelli/ritmelli-releases --pattern Ritmelli-0.7.0-setup.exe --dir $env:RUNNER_TEMP
+          if ($LASTEXITCODE -ne 0) { throw "gh release download exited with $LASTEXITCODE" }
+          $setup = Join-Path $env:RUNNER_TEMP 'Ritmelli-0.7.0-setup.exe'
+          $hash = (Get-FileHash -LiteralPath $setup -Algorithm SHA256).Hash.ToLower()
+          "sha256 $hash"
+          if ($hash -ne 'f0aee549cca67359b09e2b404ad864c34e4e9f834fa3fac1bb108e93992e5a1e') { throw 'not the published setup' }
+          $log = Join-Path $env:RUNNER_TEMP 'setup-070.log'
+          $p = Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$log`"" -PassThru
+          $null = $p.Handle
+          if (-not $p.WaitForExit(1800000)) { throw 'the setup still runs after 30 min' }
+          "setup exit $($p.ExitCode)"
+          if ($p.ExitCode -ne 0) { Get-Content -LiteralPath $log -Tail 60; throw "the setup exited with $($p.ExitCode)" }
+          $is1 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{320EB2BD-48BC-420D-8F52-C22F644E47D4}_is1'
+          $key = Get-ItemProperty -LiteralPath $is1
+          "DisplayVersion $($key.DisplayVersion); InstallLocation $($key.InstallLocation)"
+          if ($key.InstallLocation -ne 'C:\Program Files\Ritmelli\') { throw 'not installed in C:\Program Files\Ritmelli' }
+          Select-String -LiteralPath $log -Pattern 'protegida|microfone|atualizador|Exit code|Filename:' | Select-Object -Last 40 | ForEach-Object { $_.Line }
+          & icacls.exe 'C:\Program Files\Ritmelli'
+          & icacls.exe 'C:\Program Files\Ritmelli\microfone\log'
+          Get-ChildItem -LiteralPath 'C:\Program Files\Ritmelli\microfone' -Force | Select-Object Mode, Name
+          & schtasks.exe /query /tn 'Ritmelli Atualiza'
+          & schtasks.exe /query /tn '\Ritmelli\Microfone'
+          $global:LASTEXITCODE = 0
+      - name: The rule on the folder 0.7.0 installed, the same in the setup and in the exe
+        run: ./installer/e2e/protected_verdict.ps1 -Installed 'C:\Program Files\Ritmelli'
