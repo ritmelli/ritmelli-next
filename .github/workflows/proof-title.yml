@@ -1,0 +1,28 @@
+name: Proof title
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  table:
+    name: Title table
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Run the Title step over the table
+        run: |
+          bash proof/title/cut.sh Title < .github/workflows/budget.yml > "$RUNNER_TEMP/title.sh"
+          sha256sum "$RUNNER_TEMP/title.sh"
+          bash --version | head -n 1
+          locale | head -n 1
+          bash proof/title/table.sh "$RUNNER_TEMP/title.sh"
