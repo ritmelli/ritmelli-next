@@ -18,6 +18,12 @@ This file says when a review stops. Where another review rule disagrees, this fi
 - The fix for a finding changes a scenario of the command. It does not add one.
 - A finding that was turned down does not come back without a new argument.
 
+## Findings no lint rule catches
+
+- `hand-rolled-library-call`: a loop or a walk that does what a library call already does (#34).
+- `assert-repeats-earlier-check`: an `assert` or a check that repeats an earlier one (#37).
+- `guard-for-hand-built-state`: a `try` or an `if` that guards a state only a hand-built input reaches (#46).
+
 ## What does not count
 
 - No score from 0 to 10.

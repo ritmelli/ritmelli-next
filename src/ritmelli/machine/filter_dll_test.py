@@ -144,8 +144,11 @@ def test_new_sources_or_v0_7_0_put_back_stop_the_sound_once(
     # AudioEndpointBuilder, which stops the audio service with it, runs past the timeout.
     late = "the AudioEndpointBuilder didn't restart (-1): it ran past 60.0 s"
     for n, (old, saved, only_service, pc.slow) in enumerate(
-        ((b"0.900.1", OTHER, True, ""), (b"0.7.0", DIGEST, False, ""))
-        + ((b"0.7.0", DIGEST, False, BUILDER),)
+        (
+            (b"0.900.1", OTHER, True, ""),
+            (b"0.7.0", DIGEST, False, ""),
+            (b"0.7.0", DIGEST, False, BUILDER),
+        )
     ):
         pc.calls.clear()
         pc.registry.keys[KEY] = {"_sources": saved, "_dll_sha256": sha(b"0.900.1")}

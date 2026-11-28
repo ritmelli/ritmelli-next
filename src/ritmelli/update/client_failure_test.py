@@ -3,8 +3,16 @@ from pathlib import Path
 import pytest
 
 from ritmelli.update import run_state
-from ritmelli.update.client_test import NEW, NEXT, PID, SETUP, Fake, Served
-from ritmelli.update.client_test import publish, run
+from ritmelli.update.client_test import (
+    NEW,
+    NEXT,
+    PID,
+    SETUP,
+    Fake,
+    Served,
+    publish,
+    run,
+)
 from ritmelli.update.keys import KEYS
 
 

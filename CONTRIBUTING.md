@@ -241,3 +241,7 @@ structure. That is the owner's call, not a PR's. In this repo, structure looks l
 `.importlinter`. A rule that looks for `import subprocess` outside `ports/process/` finds each import, line by line.
 The contract states the boundary itself: `uv run lint-imports` fails when any module of the package but
 `ritmelli.ports.process` imports `subprocess`. With the contract in place, the rule goes.
+
+**9. No rule can see it.** Some promoted findings need judgment, and no lint rule can tell them from good code.
+The owner gives such an issue the label `no-lint` and a line under "Findings no lint rule catches" in REVIEW.md,
+where the review looks for it. The issue stays open, and `record` keeps adding the occurrences to it.
