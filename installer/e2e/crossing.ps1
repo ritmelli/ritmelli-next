@@ -10,7 +10,7 @@ param([Parameter(Mandatory)][string]$Proof, [Parameter(Mandatory)][string]$Setup
 $ErrorActionPreference = 'Stop'
 if (-not [Environment]::Is64BitProcess) { throw 'run it in the 64-bit PowerShell' }
 $Proof = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Proof)
-# the photo, the finish, Read-State, Compare-State, Wait-Until, Get-Busy and the names v0.7.0 left
+# the photo, the finish, Read-State, Compare-State, Wait-Until and the names v0.7.0 left
 . "$PSScriptRoot\crossing_photo.ps1" -Proof $Proof -Setup $Setup
 $root = (Resolve-Path "$PSScriptRoot\..\..").Path
 $Url = 'http://127.0.0.1:8765'
@@ -200,9 +200,8 @@ function Start-Trace {
   if ($r.Code) { throw "auditpol /backup: $($r.Out)" }
   $row = Import-Csv -LiteralPath $csv | Where-Object { $_.PSObject.Properties.Value -contains $ProcessCreation }
   $line = (Get-Values $AuditKey $CommandLine)[$CommandLine]
-  $script:audit = @{ Value = [int]@($row.PSObject.Properties.Value)[-1]; Key = Test-Path -LiteralPath $AuditKey; Line = $line }
+  $script:audit = @{ Value = [int]@($row.PSObject.Properties.Value)[-1]; Line = $line }
   "the process creation audit is on until the end of R12; before, $($audit | ConvertTo-Json -Compress)"
-  if (-not $audit.Key) { New-Item -Path $AuditKey | Out-Null }
   New-ItemProperty -LiteralPath $AuditKey -Name $CommandLine -Value 1 -PropertyType DWord -Force | Out-Null
   $r = Invoke-Tool auditpol.exe /set, "/subcategory:$ProcessCreation", /success:enable
   if ($r.Code) { throw "auditpol /set: $($r.Out)" }
@@ -215,7 +214,6 @@ function Stop-Trace {
   $r = Invoke-Tool auditpol.exe /set, "/subcategory:$ProcessCreation", "/success:$($set[[bool]($audit.Value -band 1)])"
   if ($audit.Line) { New-ItemProperty -LiteralPath $AuditKey -Name $CommandLine -Value ($audit.Line -replace $Kind) -PropertyType DWord -Force | Out-Null }
   else { Remove-ItemProperty -LiteralPath $AuditKey -Name $CommandLine }
-  if (-not $audit.Key) { Remove-Item -LiteralPath $AuditKey }
   $script:audit = $null
   if ($r.Code) { throw "auditpol /set back: $($r.Out)" }
 }
@@ -225,7 +223,7 @@ function Get-Started([datetime]$Since) {
     $d = @{}
     foreach ($x in ([xml]$e.ToXml()).Event.EventData.Data) { $d[$x.Name] = "$($x.'#text')".Trim() }
     if ($d.NewProcessName -ne "$app\ritmelli.exe") { continue }
-    $d.Account = @($d.TargetUserSid, $d.SubjectUserSid) | Where-Object { $_ -notin '', '-', 'S-1-0-0' } | Select-Object -First 1
+    $d.Account = @($d.TargetUserSid, $d.SubjectUserSid) | Where-Object { $_ -ne 'S-1-0-0' } | Select-Object -First 1
     [pscustomobject]$d
   }
 }
@@ -362,10 +360,10 @@ try {
   $null = Wait-Setup '0.900.2'
   $exe = "$app\ritmelli.exe"
   $reopened = Wait-Until 120 {
-    Get-Started $posted | Where-Object { $_.Account -eq $owner -and $_.CommandLine -in "`"$exe`"", $exe -and $_.MandatoryLabel -eq 'S-1-16-8192' }
+    Get-Started $posted | Where-Object { $_.Account -eq $owner -and $_.CommandLine -eq "`"$exe`"" -and $_.MandatoryLabel -eq 'S-1-16-8192' }
   }
   Get-Started $posted | ForEach-Object { "started: $($_.CommandLine) as $($_.Account) at $($_.MandatoryLabel)" }
-  $wrong = @(Get-Started $posted | Where-Object { $_.CommandLine -in "`"$exe`"", $exe -and ($_.Account -ne $owner -or $_.MandatoryLabel -ne 'S-1-16-8192') })
+  $wrong = @(Get-Started $posted | Where-Object { $_.CommandLine -eq "`"$exe`"" -and ($_.Account -ne $owner -or $_.MandatoryLabel -ne 'S-1-16-8192') })
   Stop-Trace
   $dll = (Get-FileHash -LiteralPath "$app\microfone\micfx.dll").Hash
   if (-not $reopened -or $wrong -or $dll -eq $photo['dll'] -or $dll -ne (Get-FileHash -LiteralPath "$app\_internal\microfone\micfx.dll").Hash) {
