@@ -67,7 +67,6 @@ def build_info(described: dict[str, Any], artifacts: list[Path]) -> dict[str, An
         "format": FORMAT,
         "version": version,
         "commit": git("rev-parse", "HEAD").strip(),
-        # a test build, whose setup installs only on a PC with the hook
         "channel": "test" if re.fullmatch(r"0\.900\.\d+", version) else "production",
         "artifacts": {
             path.name: {"sha256": sha256(path), "size": path.stat().st_size}

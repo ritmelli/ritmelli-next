@@ -43,7 +43,7 @@ from ritmelli.machine.installed import (
     SFX,
 )
 
-if sys.platform == "win32":  # the tests bring a registry of their own
+if sys.platform == "win32":
     import winreg
 
 NAME = "{a45c254e-df1c-4efd-8020-67d146a850e0},2"
@@ -205,7 +205,7 @@ def _host_slot(vendor: str) -> int | None:
             return None
     try:
         source = _open(rf"{APO_KEY}\{vendor}", winreg.KEY_READ)
-    except OSError:  # the vendor has none: the one regsvr32 wrote stays
+    except OSError:
         return slot
     host = rf"{APO_KEY}\{HOST_CLSIDS[slot]}"
     with source, _create(host, winreg.KEY_ALL_ACCESS) as target:

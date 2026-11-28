@@ -9,7 +9,6 @@ from ritmelli.update.keys import KEYS
 from ritmelli.update.verify import Refused, verify
 
 FIXTURES = Path(__file__).parent / "fixtures"
-# a fixed test seed, public on purpose: only a hook with its public key trusts it
 SEED = eddsa.import_private_key(bytes(range(32)))
 SEED_PUBLIC = base64.b64encode(SEED.public_key().export_key(format="raw")).decode()
 

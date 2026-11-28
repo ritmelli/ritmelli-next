@@ -76,7 +76,7 @@ def test_a_reparse_point_fails() -> None:
 def test_a_name_windows_cannot_open_or_check_fails() -> None:
     for name in (LOG + r"\x.", APP + r"\_internal\a "):
         assert "can't open" in check({name: file(LS)})
-    for parent in ("Foo ", "Foo.", "Foo. "):
+    for parent in ("Foo ", "Foo.", "Foo. ", r"Foo.\.."):
         assert "can't open" in check({}, f"{ROOT}\\{parent}\\Ritmelli")
     assert "can't open" in check({}, APP, ROOT + " ")
     for long in ("x" * 230, "\U0001f3b5" * 115):

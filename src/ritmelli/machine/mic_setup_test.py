@@ -24,7 +24,7 @@ from ritmelli.machine.installed import (
     SAVED_KEY,
     UPDATE_TASK,
 )
-from ritmelli.machine.mic_slots_test import EFX_FM, EP, MODES, Registry
+from ritmelli.machine.mic_slots_test import EP, LAPTOP_EFX, MODES, Registry
 
 UMC_IN = "IN 1-2 (BEHRINGER UMC 404HD 192k)"
 UMC_OUT = "OUT 1-2 (BEHRINGER UMC 404HD 192k)"
@@ -69,7 +69,7 @@ def pc(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> PC:
 def test_the_task_comes_first_and_each_device_is_named_once_in_ascii(
     pc: PC, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    pc.mic({EFX: EFX_FM})
+    pc.mic({EFX: LAPTOP_EFX})
     silent = [UMC_IN, UMC_OUT, REALTEK, SPDIF, ACCENT]
     summary = f"devices: 5 checked; silent: {'; '.join(silent)}"
     report = mic_check.Report(summary, silent)
@@ -126,7 +126,7 @@ def test_a_folder_that_fails_the_rule_takes_both_tasks_away(
     pc: PC, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(protected_folder, "unprotected_reason", lambda: "Users write")
-    before = pc.mic({EFX: EFX_FM})
+    before = pc.mic({EFX: LAPTOP_EFX})
     result = tmp_path / "microfone.json"
     assert mic_setup.main(["instala-todos", "--saida", str(result)]) == 1
     deleted = [("delete", UPDATE_TASK, True), ("delete", MIC_TASK, False)]
@@ -144,7 +144,7 @@ def test_a_check_stuck_in_a_driver_ends_the_process_after_the_result(
     monkeypatch.setattr(mic_check, "run", held.wait)
     monkeypatch.setattr(mic_check, "SETTLE_S", 0)
     monkeypatch.setattr(mic_check, "CHECK_MAX_S", 0.05)
-    pc.mic({EFX: EFX_FM})
+    pc.mic({EFX: LAPTOP_EFX})
     error = "the AudioEndpointBuilder didn't restart (1): stopping"
     monkeypatch.setattr(filter_dll, "restart", pc.record("restart", error))
     monkeypatch.setattr(os, "_exit", pc.record("exit"))

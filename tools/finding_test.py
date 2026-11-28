@@ -94,11 +94,11 @@ def test_twin_issues_count_as_one_and_fold_into_the_lowest_number(
     gh = FakeGh()
     record(gh, tmp_path)
     record(gh, tmp_path, name="long-lines", pr="8")
-    gh.issue["title"] = "finding: long-line"  # as if the list had not shown #1 yet
+    gh.issue["title"] = "finding: long-line"
     capsys.readouterr()
     finding.main(["list"], gh)
     assert capsys.readouterr().out == f"long-line  2 PRs  {ISSUES}/1\n"
-    record(gh, tmp_path, pr="7")  # the second PR comes only from the twin
+    record(gh, tmp_path, pr="7")
     first, twin = gh.issues
     bodies = [comment["body"] for comment in first["comments"]]
     assert "pr=7 " in bodies[0] and twin["body"].endswith(bodies[1])

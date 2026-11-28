@@ -15,15 +15,14 @@ from typing import Any
 
 from ritmelli.machine.installed import SAVED_KEY, SILENT
 
-if sys.platform == "win32":  # the tests bring a registry of their own
+if sys.platform == "win32":
     import winreg
 
-WAIT_S = 2.0  # what each device has for its first frame
-AGAIN_S = 1.0  # before the second chance
-SETTLE_S = 2.0  # from the restart to the check: the devices come back one by one
-CHECK_MAX_S = 30.0  # the whole check: a driver that hangs does not hold the setup
+WAIT_S = 2.0
+AGAIN_S = 1.0
+SETTLE_S = 2.0
+CHECK_MAX_S = 30.0
 
-# A stream to open: the PortAudio index, the device, "in" or "out", the channels.
 Target = tuple[int, dict[str, Any], str, int]
 
 
@@ -51,10 +50,9 @@ def _listen(
 
         def count(data: Any, n: int, *_: object, key: tuple[int, str] = key) -> None:
             if key[1] == "out":
-                data[:] = bytes(len(data))  # silence: the output checked plays nothing
+                data[:] = bytes(len(data))
             frames[key] += n
 
-        # Raw: frames are only counted, and the streams of arrays would need NumPy.
         stream_type = sd.RawInputStream if kind == "in" else sd.RawOutputStream
         try:
             stream = stream_type(
@@ -67,7 +65,7 @@ def _listen(
             )
             stream.start()
             opened.append((key, device["name"], stream))
-        except Exception:  # in exclusive use by another program, say: not silent
+        except Exception:
             failed.append(device["name"])
     end = time.monotonic() + wait_s
     while time.monotonic() < end and any(frames[key] == 0 for key, _, _ in opened):
@@ -102,7 +100,7 @@ def run() -> dict[str, list[str]]:
         time.sleep(AGAIN_S)
         again = [target for target in targets if target[1]["name"] in silent]
         silent, refused = _listen(sd, again, WAIT_S * 2)
-        failed += refused  # silent, then refused: not measured, so not checked
+        failed += refused
     checked = sorted({target[1]["name"] for target in targets} - set(failed))
     return {"checked": checked, "silent": silent, "failed": sorted(set(failed))}
 
@@ -133,7 +131,7 @@ def after_restart() -> Report:
     def check() -> None:
         try:
             box.append(run())
-        except Exception as error:  # any error of a driver: no check
+        except Exception as error:
             box.append(f"{type(error).__name__}: {error}")
 
     thread = threading.Thread(target=check, daemon=True)
