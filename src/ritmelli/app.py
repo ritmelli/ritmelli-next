@@ -16,7 +16,7 @@ from pathlib import Path
 
 import ritmelli
 from ritmelli.machine import processes, protected_folder, tasks, update_hook
-from ritmelli.machine.installed import UPDATE_MODE, UPDATE_TASK
+from ritmelli.machine.installed import UPDATE_ACTIONS, UPDATE_MODE, UPDATE_TASK
 from ritmelli.update import client, keys, manifest
 
 UNKNOWN = 2
@@ -62,10 +62,11 @@ def update(args: Sequence[str]) -> int:
     """Alone, the round of the update task. The setup runs tarefa, which creates the
     task, and the uninstaller runs remove, which ends and deletes it."""
     action = args[0] if args else None
-    if action == "remove":
+    create, remove = UPDATE_ACTIONS
+    if action == remove:
         tasks.delete(UPDATE_TASK, end=True)
         return 0
-    if action not in (None, "tarefa"):
+    if action not in (None, create):
         print(f"unknown mode: {action}")
         return UNKNOWN
     # The task runs as SYSTEM: from the code, it would run a .py a user can change.
