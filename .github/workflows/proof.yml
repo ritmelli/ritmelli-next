@@ -1,0 +1,95 @@
+name: Proof
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  HEAD_RUN: "46102238241"
+  MAIN: 33cc5ff2827af84ebb43d70f8da252949b4ccd36
+
+jobs:
+  notices:
+    name: TERCEIROS.txt of the setup of this head and of main
+    runs-on: windows-2025
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2
+        with:
+          version: "0.12.15"
+      - uses: ./.github/actions/inno-setup
+      - name: Build main
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git fetch --no-tags --depth 1 origin $env:MAIN
+          if ($LASTEXITCODE -ne 0) { throw "git fetch exited with $LASTEXITCODE" }
+          git worktree add --detach "$env:RUNNER_TEMP\main" $env:MAIN
+          if ($LASTEXITCODE -ne 0) { throw "git worktree exited with $LASTEXITCODE" }
+          & "$env:RUNNER_TEMP\main\installer\build.ps1" -Version 0.900.0 -Channel test
+      - name: The artifact of the Build of the head
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          gh run download $env:HEAD_RUN --repo $env:GITHUB_REPOSITORY --name build-0.900.0 --dir "$env:RUNNER_TEMP\head"
+          if ($LASTEXITCODE -ne 0) { throw "gh run download exited with $LASTEXITCODE" }
+          $info = Get-Content "$env:RUNNER_TEMP\head\build-info.json" -Raw | ConvertFrom-Json
+          $setup = "$env:RUNNER_TEMP\head\Ritmelli-0.900.0-setup.exe"
+          $hash = (Get-FileHash $setup -Algorithm SHA256).Hash
+          "build-info.json: commit $($info.commit), setup sha256 $($info.artifacts.'Ritmelli-0.900.0-setup.exe'.sha256); downloaded setup sha256 $hash"
+          if ($hash -ne $info.artifacts.'Ritmelli-0.900.0-setup.exe'.sha256) { throw 'the setup is not the one in build-info.json' }
+      - name: Install each setup and compare its TERCEIROS.txt
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $proof = (New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\proof").FullName
+          $app = "$env:ProgramFiles\Ritmelli"
+          $hook = 'HKLM:\SOFTWARE\Ritmelli\Atualizador'
+          New-Item -Path $hook -Force | Out-Null
+          New-ItemProperty -LiteralPath $hook -Name Manifesto -Value 'http://127.0.0.1:8765/v0.900.1/manifest.json' | Out-Null
+          function Notices($name, $setup) {
+            $p = Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$proof\$name-setup.log`"" -PassThru
+            $null = $p.Handle
+            if (-not $p.WaitForExit(600000)) { throw "${name}: the setup still runs after 10 min" }
+            if ($p.ExitCode -ne 0) { Get-Content "$proof\$name-setup.log" -Tail 30; throw "${name}: the setup exited with $($p.ExitCode)" }
+            Copy-Item "$app\TERCEIROS.txt" "$proof\$name-TERCEIROS.txt"
+            if ($name -eq 'head') { Copy-Item "$app\_internal" "$proof\head-_internal" -Recurse }
+            $p = Start-Process -FilePath "$app\unins000.exe" -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/LOG=`"$proof\$name-uninstall.log`"" -PassThru
+            $null = $p.Handle
+            $clock = [Diagnostics.Stopwatch]::StartNew()
+            while ((Test-Path $app) -or (Get-CimInstance Win32_Process -Filter "Name = '_unins.tmp'")) {
+              if ($clock.Elapsed.TotalSeconds -ge 300) { throw "${name}: the uninstaller still runs after 5 min" }
+              Start-Sleep -Milliseconds 500
+            }
+            "${name}: installed, TERCEIROS.txt copied, uninstalled"
+          }
+          try {
+            Notices 'head' "$env:RUNNER_TEMP\head\Ritmelli-0.900.0-setup.exe"
+            Notices 'main' "$env:RUNNER_TEMP\main\dist\Ritmelli-0.900.0-setup.exe"
+          } finally {
+            Remove-Item -LiteralPath 'HKLM:\SOFTWARE\Ritmelli' -Recurse -Force -ErrorAction SilentlyContinue
+          }
+          $files = "$proof\head-TERCEIROS.txt", "$proof\main-TERCEIROS.txt", "$env:RUNNER_TEMP\main\dist\TERCEIROS.txt"
+          $hashes = foreach ($f in $files) {
+            $h = (Get-FileHash $f -Algorithm SHA256).Hash
+            "$h $((Get-Item $f).Length) bytes $f" | Out-Host
+            $h
+          }
+          Get-ChildItem "$proof\head-_internal\*" -Name -Include 'libcrypto-*.dll', 'libssl-*.dll', 'libffi-*.dll', '_bz2.pyd' | Out-Host
+          Select-String "$proof\head-TERCEIROS.txt" -Pattern '^Python 3|Apache License|libffi - Copyright|libbzip2' | Select-Object -First 8 | Out-Host
+          if (@($hashes | Select-Object -Unique).Count -ne 1) { throw 'the TERCEIROS.txt of the setup of the head is not the one of main' }
+          'the TERCEIROS.txt of the setup of the head is byte for byte the one of the setup of main'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: ${{ !cancelled() }}
+        with:
+          name: proof-notices
+          path: ${{ runner.temp }}/proof
+          if-no-files-found: error
