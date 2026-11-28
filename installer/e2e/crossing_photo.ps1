@@ -311,12 +311,21 @@ function Invoke-Finish {
   $served = $pidFile, (Join-Path $Proof 'served'), (Join-Path $Proof 'public.txt')
   Remove-Item -LiteralPath $served -Recurse -Force -ErrorAction SilentlyContinue
   Restore-Registry $photo
+  $diff = @()
+  if (-not (Test-Path -LiteralPath $Is1) -and (Test-Path -LiteralPath $app)) {
+    $left = @(Get-ChildItem -LiteralPath $app -Force -Name)
+    if ($left) {
+      $diff += "$app was there before the 0.7.0 setup, with $($left -join ', '), so the next uninstall leaves it: " +
+        "uninstall Ritmelli, delete $app and run the finish again"
+    }
+    else { Remove-Item -LiteralPath $app }
+  }
+  $diff += @(Install-Published $photo)
   $voices = Join-Path $Proof 'vozes'
-  if (Test-Path -LiteralPath $voices) {
+  if ((Test-Path -LiteralPath $voices) -and (Test-Path -LiteralPath $Is1)) {
     $r = Invoke-Tool robocopy.exe $voices, (Join-Path $app 'vozes'), /MIR, /R:2, /W:1, /NJH, /NJS, /NP
     if ($r.Code -ge 8) { throw "the voices did not go back: $($r.Out)" }
   }
-  $diff = @(Install-Published $photo)
   foreach ($n in 'Ritmelli', 'Vitrola') {
     $copy = Join-Path $Proof "metricas-$n.json"
     if (Test-Path -LiteralPath $copy) {
