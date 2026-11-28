@@ -54,4 +54,4 @@ def check(path: Path, tree: ast.Module, _source: str) -> list[tuple[int, str]]:
     texts = [n for n in ast.walk(tree) if isinstance(n, ast.Constant)]
     hits = [n for n in texts if isinstance(n.value, str) and n.value in known]
     use = "the text of {} in ritmelli.machine.installed. Use the name."
-    return [(n.lineno, use.format(" or ".join(known[n.value]))) for n in hits]
+    return [(n.lineno, use.format(" or ".join(NAMES[n.value]))) for n in hits]
