@@ -89,3 +89,4 @@ def test_the_setup_makes_the_task_run_this_exe_and_the_uninstaller_ends_it(
     exe = str(tmp_path / "ritmelli.exe")
     create = ("create", UPDATE_TASK, tasks.UPDATE_XML, exe)
     assert frozen == [create, ("delete", UPDATE_TASK, True)]
+# a comment line for a throwaway proof
