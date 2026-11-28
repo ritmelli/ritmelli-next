@@ -124,7 +124,7 @@ function Test-Loaded {
   $log = "$app\microfone\log\micfx.log"
   $before = (Get-Item -LiteralPath $log -ErrorAction SilentlyContinue).LastWriteTimeUtc
   $checked = & "$app\ritmelli.exe" --microfone confere | Out-String | ConvertFrom-Json
-  $on = @(& "$app\ritmelli.exe" --microfone estado)
+  $on = @(& "$app\ritmelli.exe" --microfone estado | ForEach-Object { "$_" })
   $after = (Get-Item -LiteralPath $log -ErrorAction SilentlyContinue).LastWriteTimeUtc
   Write-Host "confere: $($checked | ConvertTo-Json -Compress)`n$($on -join "`n")`n$((Invoke-Tool tasklist.exe /m, micfx.dll).Out)"
   if ($checked.silent) { "silent: $($checked.silent -join '; ')" }
@@ -191,7 +191,6 @@ function Test-Settled([string]$Version) {
 
 $early = Join-Path $env:TEMP 'crossing.log'
 Start-Transcript -LiteralPath $early | Out-Null
-$at = 'R1'
 try {
   $testBuilds = foreach ($v in '0.900.1', '0.900.2') {
     $dir, $name = "$Builds\build-$v", "Ritmelli-$v-setup.exe"
