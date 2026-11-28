@@ -2,9 +2,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 import finding
+import pytest
 
 ISSUES = "https://github.com/ritmelli/ritmelli-next/issues"
 

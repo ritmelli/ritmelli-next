@@ -1,8 +1,7 @@
 from pathlib import Path
 
-import pytest
-
 import finding
+import pytest
 from finding_test import ISSUES, FakeGh, record
 
 

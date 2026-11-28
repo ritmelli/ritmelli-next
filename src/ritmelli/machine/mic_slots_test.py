@@ -3,12 +3,31 @@ from __future__ import annotations
 import pytest
 
 from ritmelli.machine import mic_slots
-from ritmelli.machine.installed import ANY_NODE, APO_KEY, ASSOCIATION, CAPTURE_KEY
-from ritmelli.machine.installed import EFX, EFX_LIST, EFX_MODES, FILTER_CLSID, LFX
-from ritmelli.machine.installed import HOST_CLSIDS, MFX_LIST, MFX_MODES, MODE_DEFAULT
-from ritmelli.machine.installed import MODE_RAW, NO_ENHANCEMENTS, OUR_CLSIDS, SAVED_KEY
-from ritmelli.machine.installed import SFX, SFX_MODES
-from ritmelli.machine.installed import COPY_VERSION, ENHANCEMENTS_OFF, HOSTED, MISSING
+from ritmelli.machine.installed import (
+    ANY_NODE,
+    APO_KEY,
+    ASSOCIATION,
+    CAPTURE_KEY,
+    COPY_VERSION,
+    EFX,
+    EFX_LIST,
+    EFX_MODES,
+    ENHANCEMENTS_OFF,
+    FILTER_CLSID,
+    HOST_CLSIDS,
+    HOSTED,
+    LFX,
+    MFX_LIST,
+    MFX_MODES,
+    MISSING,
+    MODE_DEFAULT,
+    MODE_RAW,
+    NO_ENHANCEMENTS,
+    OUR_CLSIDS,
+    SAVED_KEY,
+    SFX,
+    SFX_MODES,
+)
 
 Data = str | int | list[str]
 SZ, DWORD, MULTI = 1, 4, 7

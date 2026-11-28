@@ -12,8 +12,13 @@ from pathlib import Path
 from typing import Protocol, cast
 
 from ritmelli.update import download, run_state
-from ritmelli.update.manifest import MANIFEST_MAX, SIGNATURE_MAX, Manifest
-from ritmelli.update.manifest import check, parse_version
+from ritmelli.update.manifest import (
+    MANIFEST_MAX,
+    SIGNATURE_MAX,
+    Manifest,
+    check,
+    parse_version,
+)
 from ritmelli.update.verify import Refused
 
 # Ritmelli asks for a round as it closes, so it may still be closing.
