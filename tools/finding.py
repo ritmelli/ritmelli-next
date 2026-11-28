@@ -6,7 +6,7 @@ import re
 import subprocess
 import sys
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +44,7 @@ class Issue:
     open: bool
     labels: frozenset[str]
     prs: frozenset[int]
+    occurrences: tuple[str, ...]
 
 
 def valid_name(text: str) -> str:
@@ -92,7 +93,8 @@ def note(args: argparse.Namespace) -> str:
 
 def listed(gh: Callable[..., str]) -> list[dict[str, Any]]:
     found = gh("api", ISSUES, "--paginate", "--jq", SHAPE)
-    return [json.loads(line) for line in found.splitlines()]
+    items = [json.loads(line) for line in found.splitlines()]
+    return sorted(items, key=lambda item: item["number"])
 
 
 def read(gh: Callable[..., str], item: dict[str, Any]) -> Issue:
@@ -100,19 +102,29 @@ def read(gh: Callable[..., str], item: dict[str, Any]) -> Issue:
     view = json.loads(gh("issue", "view", number, "--json", "body,comments"))
     texts = [view["body"], *(comment["body"] for comment in view["comments"])]
     prs = frozenset(int(n) for text in texts for n in OCCURRENCE.findall(text))
+    found = tuple(text[m.start() :] for text in texts if (m := OCCURRENCE.search(text)))
     labels = frozenset(item["labels"])
-    return Issue(number, title, url, item["state"] == "open", labels, prs)
+    return Issue(number, title, url, item["state"] == "open", labels, prs, found)
 
 
-def find(gh: Callable[..., str], name: str) -> Issue | None:
-    for item in listed(gh):
-        if item["title"] == f"finding: {name}":
-            return read(gh, item)
-    return None
+def find(gh: Callable[..., str], name: str) -> list[Issue]:
+    """The issues with the title, lowest number first.
+
+    GitHub lists a new issue only seconds later, so two records of a new name can
+    each create one. The lowest number is the finding; the others are its twins.
+    """
+    title = f"finding: {name}"
+    return [read(gh, item) for item in listed(gh) if item["title"] == title]
 
 
 def table(gh: Callable[..., str]) -> list[str]:
-    issues = [read(gh, item) for item in listed(gh)]
+    groups: dict[str, list[Issue]] = {}
+    for item in listed(gh):
+        groups.setdefault(item["title"], []).append(read(gh, item))
+    issues = [
+        replace(group[0], prs=frozenset(pr for each in group for pr in each.prs))
+        for group in groups.values()
+    ]
     lines: list[str] = []
     for issue in sorted(issues, key=lambda i: ("promote" not in i.labels, i.title)):
         count = f"{len(issue.prs)} PR" + "s" * (len(issue.prs) != 1)
@@ -122,18 +134,35 @@ def table(gh: Callable[..., str]) -> list[str]:
     return lines or ["no findings yet"]
 
 
-def plan(name: str, pr: int, occurrence: str, issue: Issue | None) -> list[Step]:
+def plan(name: str, pr: int, occurrence: str, issues: list[Issue]) -> list[Step]:
     title = f"finding: {name}"
-    if issue is None:
+    if not issues:
         create = ["issue", "create", "--title", title, "--label", "finding"]
         return [(f"create issue {title}", [*create, "--body", INTRO + occurrence])]
+    issue, *twins = issues
     number = issue.number
     steps: list[Step] = []
     if not issue.open:
         steps.append((f"reopen issue #{number}", ["issue", "reopen", number]))
     comment = ["issue", "comment", number, "--body", occurrence]
     steps.append((f"comment on issue #{number}", comment))
-    due = {"rule-missed": not issue.open, "promote": len(issue.prs | {pr}) >= 2}
+    have = {text.splitlines()[0] for text in (*issue.occurrences, occurrence)}
+    for twin in twins:
+        other = twin.number
+        for text in twin.occurrences:
+            if (marker := text.splitlines()[0]) not in have:
+                have.add(marker)
+                where = f"{marker.strip('<!-> ')} of issue #{other}"
+                copy = ["issue", "comment", number, "--body", text]
+                steps.append((f"copy {where} to issue #{number}", copy))
+        duplicate = ["issue", "comment", other, "--body", f"Duplicate of #{number}"]
+        close = ["issue", "close", other, "--reason", "not planned"]
+        unlabel = ["issue", "edit", other, "--remove-label", "finding"]
+        steps.append((f"comment Duplicate of #{number} on issue #{other}", duplicate))
+        steps.append((f"close issue #{other}", close))
+        steps.append((f"remove label finding from issue #{other}", unlabel))
+    prs = {pr, *(n for each in issues for n in each.prs)}
+    due = {"rule-missed": not issue.open, "promote": len(prs) >= 2}
     for label, now in due.items():
         if now and label not in issue.labels:
             edit = ["issue", "edit", number, "--add-label", label]

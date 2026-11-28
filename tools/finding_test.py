@@ -20,7 +20,8 @@ class FakeGh:
         arg = dict(zip(args[2:], args[3:], strict=False))
         if verb[0] == "api":
             keys = ("number", "title", "state", "url", "labels")
-            return "\n".join(json.dumps({key: i[key] for key in keys}) for i in issues)
+            newest = reversed(issues)
+            return "\n".join(json.dumps({key: i[key] for key in keys}) for i in newest)
         if verb == ("issue", "view"):
             return json.dumps(issue)
         if verb == ("issue", "create"):
@@ -34,8 +35,12 @@ class FakeGh:
             issue["comments"].append({"body": arg["--body"]})
         elif verb == ("issue", "reopen"):
             issue["state"] = "open"
-        elif verb == ("issue", "edit"):
+        elif verb == ("issue", "edit") and "--add-label" in arg:
             issue["labels"].append(arg["--add-label"])
+        elif verb == ("issue", "edit"):
+            issue["labels"].remove(arg["--remove-label"])
+        elif verb == ("issue", "close"):
+            issue["state"] = "closed"
         return ""
 
 
@@ -81,6 +86,25 @@ def test_a_closed_issue_reopens_with_rule_missed(tmp_path: Path) -> None:
     assert gh.issue["state"] == "open"
     assert "pr=9 " in gh.issue["comments"][1]["body"]
     assert gh.issue["labels"] == ["finding", "promote", "rule-missed"]
+
+
+def test_twin_issues_count_as_one_and_fold_into_the_lowest_number(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    gh = FakeGh()
+    record(gh, tmp_path)
+    record(gh, tmp_path, name="long-lines", pr="8")
+    gh.issue["title"] = "finding: long-line"  # as if the list had not shown #1 yet
+    capsys.readouterr()
+    finding.main(["list"], gh)
+    assert capsys.readouterr().out == f"long-line  2 PRs  {ISSUES}/1\n"
+    record(gh, tmp_path, pr="9")
+    first, twin = gh.issues
+    bodies = [comment["body"] for comment in first["comments"]]
+    assert "pr=9 " in bodies[0] and twin["body"].endswith(bodies[1])
+    assert first["labels"] == ["finding", "promote"]
+    assert twin["state"] == "closed" and twin["labels"] == []
+    assert twin["comments"] == [{"body": "Duplicate of #1"}]
 
 
 def test_a_missing_field_or_a_bad_name_exits_with_2(
