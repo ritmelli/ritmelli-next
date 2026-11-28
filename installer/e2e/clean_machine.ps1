@@ -3,7 +3,8 @@
 # default, and then again over itself, as an update does: it must find that folder alone.
 # The uninstaller then takes it all out, and of the lines both setups left in its log, each
 # RunOnceId runs once. Last, it installs once more with no folder given: it must go to the
-# default. It refuses a PC where Ritmelli is.
+# default. Before all that, with the hook, a folder outside Program Files fails the protected
+# folder rule: the setup exits with 7 and changes nothing. It refuses a PC where Ritmelli is.
 # Usage: clean_machine.ps1 -Build <the folder with build-info.json and the setup>
 #Requires -RunAsAdministrator
 param([Parameter(Mandatory)][string]$Build)
@@ -43,6 +44,14 @@ if ($diff -or (Test-Path "$env:ProgramFiles\Ritmelli*") -or -not $refused) {
 New-Item -Path $HookKey -Force | Out-Null
 New-ItemProperty -LiteralPath $HookKey -Name Manifesto -Value 'http://127.0.0.1:8765/v0.900.1/manifest.json' | Out-Null
 try {
+  $log = Join-Path $logs 'outside.log'
+  Install 7 $log 'C:\Ritmelli'
+  $diff = @(Compare-State $before (Read-State $app) '') -notmatch '^hook'
+  $refused = Select-String -LiteralPath $log -Pattern 'unprotected folder: C:\\Ritmelli: .* is outside' -Quiet
+  if ($diff -or (Test-Path 'C:\Ritmelli') -or (Test-Path "$env:ProgramFiles\Ritmelli*") -or -not $refused) {
+    $diff; throw 'with /DIR=C:\Ritmelli, the setup changed the lines above, made a folder, or did not say why it refused'
+  }
+  'with /DIR=C:\Ritmelli, the setup exited with 7 and changed nothing'
   Install 0 (Join-Path $logs 'first.log') $app
   # of the version before, what the setup takes out and what it leaves
   $gone = "$app\_internal\old.pyd", "$app\bin\ffmpeg.exe"
