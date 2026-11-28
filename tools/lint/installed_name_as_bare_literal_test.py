@@ -1,9 +1,8 @@
 import ast
 from pathlib import Path
 
-import pytest
-
 import installed_name_as_bare_literal as rule
+import pytest
 
 # update() in src/ritmelli/app.py, as #26 merged it.
 UPDATE = '''def update(args: Sequence[str]) -> int:
