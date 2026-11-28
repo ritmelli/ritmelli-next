@@ -63,5 +63,7 @@ def test_the_name_passes(path: str, source: str, names: dict[str, str]) -> None:
     assert hits(path, source) == []
 
 
-def test_a_test_file_passes() -> None:
+def test_a_test_file_passes_and_elsewhere_a_common_word_does() -> None:
     assert hits("src/ritmelli/app_test.py", UPDATE) == []
+    planted = 'ACTION = "remove"\nX = "_ausentes"\n'
+    assert [n for n, _ in hits("src/ritmelli/update/planted_word.py", planted)] == [2]

@@ -63,7 +63,7 @@ The `Title` step of the Budget check enforces these rules. It runs again when th
 | `build` | How the exe, the filter DLL or the setup is built, or a pinned library. |
 | `ci` | The workflows in `.github/`. |
 | `chore` | Upkeep of the repo that is none of the above, such as a lint rule. |
-| `revert` | Undoes a merged PR. |
+| `revert` | Undoes a merged PR. The title the Revert button of GitHub writes, `Revert "<title>"`, passes as it is. |
 
 The scope is the folder the PR is about: `machine`, `update`, `audio`, `features`, `kernel`, `storage`, `sources` or
 `ports` in `src/ritmelli/`, or `installer`, `filter`, `ui` or `tools` at the root. Use `lint` for `tools/lint/`, and

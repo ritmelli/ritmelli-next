@@ -28,7 +28,6 @@ PYTHON_LIBRARIES = {
     "libcrypto-*.dll": "Apache License",
     "libssl-*.dll": "Apache License",
     "libffi-*.dll": "libffi - Copyright",
-    "_bz2.pyd": "libbzip2",
 }
 SEE = "consulte o texto / see the text"
 BOOTLOADER = (
