@@ -70,7 +70,7 @@ def hits(path: str, source: str) -> list[tuple[int, str]]:
 def test_it_flags_each_occurrence(
     path: str, source: str, count: int, fixed: list[str]
 ) -> None:
-    assert hits(path, source) == [(1, rule.MESSAGE.format(count, 6))]
+    assert hits(path, source) == [(1, rule.MESSAGE.format(count, 6, rule.SPLIT))]
 
 
 @each
@@ -82,11 +82,14 @@ def test_the_file_split_or_cut_passes(
 
 def test_a_command_holds_three_and_the_rest_of_its_feature_six() -> None:
     feature = "src/ritmelli/features/deck"
-    assert hits(f"{feature}/play_test.py", KEPT) == [(1, rule.MESSAGE.format(4, 3))]
+    assert hits(f"{feature}/play_test.py", KEPT) == [(1, rule.MESSAGE.format(4, 3, ""))]
     for name in ("on_end", "state", "tuning", "ops/load"):
         assert hits(f"{feature}/{name}_test.py", KEPT) == []
     assert hits(f"{feature}/play.py", KEPT) == []
 
 
 def test_a_loop_over_single_inputs_or_before_more_steps_counts_once() -> None:
-    assert hits("src/ritmelli/machine/protected_folder_test.py", KEPT + LOOPS) == []
+    inputs = "(APP, ROOT, LOG)"
+    numbered = LOOPS.replace(f"path in {inputs}", f"n, path in enumerate({inputs})")
+    path = "src/ritmelli/machine/protected_folder_test.py"
+    assert [hits(path, KEPT + loops) for loops in (LOOPS, numbered)] == [[], []]
